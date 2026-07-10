@@ -1,0 +1,395 @@
+{
+  "id": "DokP62ROJIrAKbgI",
+  "name": "Reddit Story Harvester - Auto Grab Top Stories",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f2cb2200-1bbf-474b-9e06-765a4fd639df",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "635c64f4-2f49-4dfd-8053-c6e5b6363326",
+      "name": "Subreddits List",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d3107dd-e0c7-460c-a908-f7fee7d679a1",
+              "name": "subreddits[0]",
+              "value": "=UnresolvedMysteries",
+              "type": "string"
+            },
+            {
+              "id": "7a3532e0-6a2a-4dde-95d2-333531b7393b",
+              "name": "subreddits[1]",
+              "value": "=LetsNotMeet",
+              "type": "string"
+            },
+            {
+              "id": "5d0897bb-5c33-48a0-9497-d2e47dca1b12",
+              "name": "subreddits[2]",
+              "value": "=Glitch_in_the_Matrix",
+              "type": "string"
+            },
+            {
+              "id": "61e365bf-c83f-4dc4-84fc-d00810a5c7cd",
+              "name": "subreddits[3]",
+              "value": "=Paranormal",
+              "type": "string"
+            },
+            {
+              "id": "3b946ecb-a46b-465d-96b5-2667e934a239",
+              "name": "subreddits[4]",
+              "value": "=HighStrangeness",
+              "type": "string"
+            },
+            {
+              "id": "4dfa5ebc-1773-4dce-9bca-7c98b339e68f",
+              "name": "subreddits[5]",
+              "value": "nosleep",
+              "type": "string"
+            },
+            {
+              "id": "241aed82-8889-4e6d-8808-f8b0d2159eb2",
+              "name": "subreddits[6]",
+              "value": "horrorlit",
+              "type": "string"
+            },
+            {
+              "id": "274d5a4e-0137-406c-806f-fda5380106b3",
+              "name": "subreddits[7]",
+              "value": "mystery",
+              "type": "string"
+            },
+            {
+              "id": "56a2ea3a-2d42-49b1-b13c-2ecdc274a6c4",
+              "name": "subreddits[8]",
+              "value": "stories",
+              "type": "string"
+            },
+            {
+              "id": "20cae840-d7e7-43d1-bdd7-9867ff713980",
+              "name": "subreddits[9]",
+              "value": "longform",
+              "type": "string"
+            },
+            {
+              "id": "f637d9e5-9698-4481-bdc0-cb75b17f6b8c",
+              "name": "subreddits[10]",
+              "value": "CrazyIdeas",
+              "type": "string"
+            },
+            {
+              "id": "7bdd2f0c-f771-433b-bf1a-25a632b1d63b",
+              "name": "subreddits[11]",
+              "value": "TrueOffMyChest",
+              "type": "string"
+            },
+            {
+              "id": "65de71c5-d8f8-42c5-aaaf-d8b8da066482",
+              "name": "subreddits[12]",
+              "value": "confession",
+              "type": "string"
+            },
+            {
+              "id": "8ab7e695-78bf-422a-a358-83fcaadc56cc",
+              "name": "subreddits[13]",
+              "value": "TIFU",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -784,
+        112
+      ],
+      "id": "57056312-de22-4332-a54c-fd6fa0072b9b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "subreddits",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        112
+      ],
+      "id": "bb17f849-f6d0-4b9b-a20a-fb8ffa5b3f07",
+      "name": "subreddits"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst output = [];\n\nfor (const item of items) {\n  // 1. \u53d6\u6a21\u578b\u8fd4\u56de\u7684\u5b57\u7b26\u4e32\n  const raw = item.json.content.parts[0].text;\n\n  // 2. \u89e3\u6790\u6210\u771f\u6b63\u7684 JSON\n  let parsed;\n  try {\n    parsed = JSON.parse(raw);\n  } catch (err) {\n    throw new Error(\"JSON parse failed: \" + err + \"\\nRaw:\\n\" + raw);\n  }\n\n  // 3. parsed \u5e94\u8be5\u662f\u4e00\u4e2a array\n  if (!Array.isArray(parsed)) continue;\n\n  // 4. \u4e00\u6761\u6761\u8f93\u51fa\n  for (const post of parsed) {\n    output.push({\n      chatInput: post\n    });\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        112
+      ],
+      "id": "85bc492a-456f-4353-986e-abc057cd97de",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst grouped = {};\n\nfor (const item of items) {\n  const listing = item.json.data;\n  const children = listing.children || [];\n\n  for (const child of children) {\n    const d = child.data;\n    const subreddit = d.subreddit;\n\n    // \u6ca1 subreddit \u2192 \u8df3\u8fc7\n    if (!subreddit) continue;\n\n    // \ud83d\uded1 \u6ca1\u5185\u5bb9 \u2192 \u76f4\u63a5\u8df3\u8fc7\n    if (!d.selftext || d.selftext.trim() === \"\") continue;\n\n    // \u521d\u59cb\u5316 subreddit\n    if (!grouped[subreddit]) {\n      grouped[subreddit] = {};\n    }\n\n    // \u751f\u6210 post_1, post_2, ...\n    const idx = Object.keys(grouped[subreddit]).length + 1;\n\n    grouped[subreddit][`post_${idx}`] = {\n      id: d.id,\n      title: d.title,\n      content: d.selftext,\n      author: d.author,\n      url: \"https://www.reddit.com\" + d.permalink,\n      score: d.score,\n      num_comments: d.num_comments,\n      created_utc: d.created_utc\n    };\n  }\n}\n\nreturn [\n  { json: grouped }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -784,
+        -112
+      ],
+      "id": "dc25d3f5-7dbd-4f76-8db7-871a93886059",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst grouped = {};\n\nfor (const item of items) {\n  const listing = item.json.data;\n  const children = listing.children || [];\n\n  for (const child of children) {\n    const d = child.data;\n    const subreddit = d.subreddit;\n\n    // \u6ca1 subreddit \u2192 \u8df3\u8fc7\n    if (!subreddit) continue;\n\n    // \ud83d\uded1 \u6ca1\u5185\u5bb9 \u2192 \u76f4\u63a5\u8df3\u8fc7\n    if (!d.selftext || d.selftext.trim() === \"\") continue;\n\n    // \u521d\u59cb\u5316 subreddit\n    if (!grouped[subreddit]) {\n      grouped[subreddit] = {};\n    }\n\n    // \u751f\u6210 post_1, post_2, ...\n    const idx = Object.keys(grouped[subreddit]).length + 1;\n\n    grouped[subreddit][`post_${idx}`] = {\n      id: d.id,\n      title: d.title,\n      content: d.selftext,\n      author: d.author,\n      url: \"https://www.reddit.com\" + d.permalink,\n      score: d.score,\n      num_comments: d.num_comments,\n      created_utc: d.created_utc\n    };\n  }\n}\n\nreturn [\n  { json: grouped }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -784,
+        768
+      ],
+      "id": "28bdf7b7-5aeb-40a4-85ff-421a56845817",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/{{ $json.subreddits }}/top/.json?sort=top&t=week&limit=10",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "52768b42-1770-4826-90fa-bab8d8bbab5a",
+      "name": "weekly top",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/{{ $json.subreddits }}/top/.json?t=day&limit=3&sort=top",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "45fe472d-cd24-4848-856f-1970a29019f9",
+      "name": "experiment - daily top",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1008,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/{{ $json.subreddits }}/top/.json?sort=top&t=month&limit=20",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "8d878697-28cd-44c4-b073-050e084783b1",
+      "name": "support - monthly ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1008,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a YouTube content strategist and story editor.\n\nGoal:\nFrom a batch of Reddit posts, select ONLY those that are good candidates for long-form, faceless YouTube story videos (20\u201340 minutes) with AI narration and minimal editing.\n\nChannel style:\n- English narration\n- 20\u201340 minute videos\n- Slow, sleep-friendly pacing\n- No jump scares, no graphic gore\n- Faceless, simple AI-generated images as visuals\n\nEVALUATION CRITERIA (apply to EACH post):\n\n1) Story structure:\n- Good: Clear beginning (context), middle (escalation), and end or cliffhanger.\n- Good: At least one turning point or reveal.\n- Bad: Pure rant, no events, no narrative arc.\n\n2) Length / richness:\n- Good: Roughly 800\u20132000+ words, with multiple scenes or distinct moments.\n- OK for compilation: 400\u2013800 words.\n- Bad: Under 400 words or extremely repetitive/shallow.\n\n3) Emotional hook & tension:\n- Good: First 3\u20135 sentences create curiosity, unease, or strong emotion.\n- Good: Tension or emotional intensity changes over time.\n- Bad: Flat tone, no stakes, no mystery, no change.\n\n4) Visual potential:\n- Good: Concrete settings (house, street, office, forest, hospital, etc.), times (night, storm, holiday), and objects (doors, phones, photos, boxes\u2026).\n- Good: At least 3 distinct scenes that can be illustrated.\n- Bad: Almost all internal monologue, no setting or actions.\n\n5) Risk / safety:\n- Downrate or mark as risky if:\n  - Heavy graphic violence or gore.\n  - Real full names, exact addresses, doxxing.\n  - Obvious hate speech / politics / explicit sexual content.\n- It is OK if it can be anonymized and toned down easily.\n\nHere is the batch of Reddit posts (JSON array, each item has \"title\" and \"text\"):\n\n{{POSTS_ARRAY}}\n\nTASK:\nFor EACH post, evaluate it using the criteria above and return a JSON array with ONE object per input post, in the same order.\n\nOUTPUT FORMAT (JSON array only, no extra text):\n\n[\n  {\n    \"original_title\": \"...\",\n    \"score_0_to_10\": 0-10,\n    \"is_good_candidate\": true/false,\n    \"summary_one_sentence\": \"...\",\n    \"length\": {\n      \"estimated_word_count\": number,\n      \"estimated_minutes_if_narrated\": number,\n      \"suitable_for\": \"single_long_story\" | \"short_segment_in_compilation\" | \"too_short\"\n    },\n    \"structure\": {\n      \"has_clear_beginning\": true/false,\n      \"has_rising_tension\": true/false,\n      \"has_twist_or_climax\": true/false,\n      \"has_ending_or_cliffhanger\": true/false\n    },\n    \"hooks_and_emotion\": {\n      \"hook_strength_0_to_10\": number,\n      \"overall_tension_0_to_10\": number,\n      \"most_compelling_moment\": \"...\"\n    },\n    \"visual_potential_0_to_10\": number,\n    \"risk_flags\": {\n      \"graphic_violence\": true/false,\n      \"real_names_or_exact_locations\": true/false,\n      \"political_or_hate_speech\": true/false\n    },\n    \"recommendation\": {\n      \"use_for_video\": \"yes_full_story\" | \"yes_in_compilation\" | \"no\",\n      \"suggested_video_title\": \"...\",\n      \"suggested_video_length_minutes\": number,\n      \"notes_for_adaptation\": \"short paragraph with what to emphasize, what to remove, and suggested POV + pacing\"\n    }\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1008,
+        336
+      ],
+      "id": "d530b5cc-8da2-45b8-9906-4e36d64ec5ea",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        560
+      ],
+      "id": "9b1ae463-7ffa-48ad-854f-d904d9f463d8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"original_title\": \"Example title\",\n  \"score_0_to_10\": 8,\n  \"is_good_candidate\": true,\n  \"estimated_word_count\": 1200,\n  \"use_for_video\": \"yes_full_story\",\n  \"suggested_video_title\": \"The Night I Heard Footsteps in an Empty House\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -872,
+        560
+      ],
+      "id": "b4a55ceb-e434-462d-8dd4-7dde4f1eb1db",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here is the Reddit posts (JSON array, each item has \"title\" and \"content\"):\ntitle:{{ $json.title }}\ncontent:{{ $json.selftext }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=You are a YouTube content strategist and story editor.\n\nGoal:\nFrom a Reddit posts, mark good candidates for long-form, faceless YouTube story videos (20\u201340 minutes) with AI narration and minimal editing.\n\nChannel style:\n- English narration\n- 20\u201340 minute videos\n- Slow, sleep-friendly pacing\n- No jump scares, no graphic gore\n- Faceless, simple AI-generated images as visuals\n\n\n\n\nTASK:\nFor EACH post, evaluate it using the criteria above and return a JSON array with ONE object per input post, in the same order.\n\nOUTPUT FORMAT (JSON array only, no extra text):\n\n[\n  {\n    \"subreddit\":\"abc\"\n    \"original_title\": \"...\",\n    \"content\":\"...\",\n    \"author\":\"abc\"\n    \"url\":\"url\"\n    \"is_good_candidate\": true/false,\n    \"summary_one_sentence\": \"...\",\n    \"length\": \n    \"recommendation\": {\n      \"use_for_video\": \"yes_full_story\" | \"yes_in_compilation\" | \"no\",\n      \"suggested_video_title\": \"...\",\n      \"suggested_video_length_minutes\": number,\n      \"notes_for_adaptation\": \"short paragraph with what to emphasize, what to remove, and suggested POV + pacing\"\n    }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        112
+      ],
+      "id": "0b8a55e3-9a17-480d-ae90-b91180d6783c",
+      "name": "Message a model",
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a professional scriptwriter for a faceless YouTube sleep-story channel.\n\nGOAL:\nTake a real or claimed-to-be-real Reddit story and turn it into a MUCH LONGER sleep-story script,\nwhile keeping the core facts believable and consistent.\n\nChannel style:\n- English narration\n- Very calm, slow pacing, designed to help people fall asleep\n- Soft, atmospheric, slightly mysterious, but not shocking\n- No jump scares, no loud emotions, no graphic gore\n- Simple, dark, AI-generated visuals in the background\n\nORIGINAL REDDIT STORY:\n{{ $json.chatInput.content }}\n\nIMPORTANT PRINCIPLES:\n\n1) Respect the original facts:\n- Do NOT change the main events, the overall outcome, or who did what.\n- You may clarify ambiguous parts, but do not contradict clear statements from the original narrator.\n- You may slightly reorder or group minor details if it improves flow, but the story must still match the original version in spirit and key facts.\n\n2) Reasonable invention (controlled expansion):\nYou MUST expand the story a lot, but only in ways that feel realistic and plausible.\n\nYou ARE allowed to:\n- Add detailed descriptions of:\n  - Places and environments (layout of rooms, hallways, streets, weather, time of day, lighting, sounds, smells, textures, temperature).\n  - Small physical actions (walking, sitting, making tea, checking a phone, locking doors, looking through windows, etc.).\n- Add inner thoughts and emotions:\n  - What the narrator feared, hoped, remembered, doubted, or imagined at each moment.\n- Add short, believable interactions with background characters:\n  - Brief conversations with neighbors, coworkers, family members, waiters, etc., as long as they support the original story.\n- Add short memories or daydreams that appear in the narrator\u2019s mind and help explain why certain moments feel scary, sad, or strange.\n\nYou are NOT allowed to:\n- Introduce completely new supernatural entities, conspiracies, or plot twists that are not hinted at in the original text.\n- Turn a mundane story into extreme horror or wild fantasy.\n- Add impossible technology or obvious anachronisms.\n- Change who lives, who dies, or how the central mystery resolves.\n\nThink of your job as:\n\u201cFilling in all the quiet moments, details, thoughts, and small actions that the original narrator skipped,\nwhile keeping the same core story they told.\u201d\n\n3) Length & pacing (very important):\n- Minimum length of the final script: **2,500\u20133,500 English words**.\n- The final script must be **at least 3 times longer** than the original Reddit text if the original is short.\n- Do NOT summarize or shorten events. Instead, slow down and expand them.\n- Use everyday actions, observations, and thoughts to naturally stretch time between major beats.\n- Maintain a gentle, unhurried rhythm throughout.\n\n4) Sleep-friendly tone:\n- First-person POV (\u201cI\u201d).\n- Soft, calm, reflective, slightly dreamy voice.\n- Short\n\nfollow format:\n{\n  \"suggested_video_title\": \"<sleep-story style YouTube title in English>\",\n  \"video_description\":\"<youtube description>\",\n  \"keywords\":\"<video tags>\",\n  \"url\":\"<post url>\",\n  \"author\":\"author\",\n  \"chapters\": [\n    {\n      \"timestamp\": \"<in second>\",\n      \"label\": \"Soft intro \u2013 moving into the new apartment\",\n      \"image_prompt\": \"wide shot, cozy small apartment interior at night, warm lamp light, boxes half-unpacked, cinematic, soft focus, 16:9\",\n      \"script_segment\": \"Script text for this chapter...\"\n    },\n    {\n      \"timestamp\": \"60\",\n      \"label\": \"First strange footsteps above\",\n      \"image_prompt\": \"low angle shot of ceiling in a dimly lit bedroom, faint shadows, subtle texture, cinematic, 16:9\",\n      \"script_segment\": \"Script text for this chapter...\"\n    }\n  ]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        672,
+        112
+      ],
+      "id": "14823197-559d-43b1-80ee-1e736775ecbd",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        320
+      ],
+      "id": "fc7ebc15-3cd3-4d62-9696-0be22dad830b",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"id\": \"<same id as input>\",\n  \"suggested_video_title\": \"<sleep-story style YouTube title in English>\",\n  \"video_description\":\"\",\n  \"keywords\":\"<video tags>\",\n  \"url\":\"<post url>\",\n  \"author\":\"author\",\n  \"chapters\": [\n    {\n      \"timestamp\": \"<in second>\",\n      \"label\": \"Soft intro \u2013 moving into the new apartment\",\n      \"image_prompt\": \"wide shot, cozy small apartment interior at night, warm lamp light, boxes half-unpacked, cinematic, soft focus, 16:9\",\n      \"script_segment\": \"Script text for this chapter...\"\n    },\n    {\n      \"timestamp\": \"60\",\n      \"label\": \"First strange footsteps above\",\n      \"image_prompt\": \"low angle shot of ceiling in a dimly lit bedroom, faint shadows, subtle texture, cinematic, 16:9\",\n      \"script_segment\": \"Script text for this chapter...\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        320
+      ],
+      "id": "c6aa412a-86cb-4545-be5c-747341710468",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of $input.all()) {\n  // Reddit listing children\n  const children = item.json.data.children || [];\n\n  for (const child of children) {\n    const post = child.data || {};\n\n    output.push({\n      json: {\n        subreddit: post.subreddit,\n        title: post.title,\n        selftext: post.selftext,\n        author: post.author,\n        score: post.score,\n        url: post.url,\n      },\n    });\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        112
+      ],
+      "id": "b798d39b-c8fd-438b-b5d3-bbf9768e7197",
+      "name": "Code in JavaScript3"
+    }
+  ],
+  "node_count": 18
+}

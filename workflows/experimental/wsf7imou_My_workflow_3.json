@@ -1,0 +1,2596 @@
+{
+  "id": "wsf7imouaRqjX0TZ",
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        1456
+      ],
+      "id": "16b5ac1e-15e0-4ff2-95d8-902172faa8ae",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "authentication": "accessToken",
+        "resource": "product",
+        "operation": "getAll",
+        "returnAll": true,
+        "additionalFields": {
+          "product_type": "jewelry"
+        }
+      },
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        864
+      ],
+      "id": "f58e4b2d-78ef-4ac9-b43c-741e6b6a9ce1",
+      "name": "Get jewelry",
+      "executeOnce": true,
+      "credentials": {
+        "shopifyAccessTokenApi": {
+          "id": "ipo0CICFUz3NsEMa",
+          "name": "Shopify Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -80,
+        3648
+      ],
+      "id": "91fcba1a-67be-4880-b657-9dccee273a90",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 374357066,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=374357066"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "pending",
+            "productid": "={{ $json.id }}",
+            "title": "={{ $json.title }}",
+            "description": "={{ $json.body_html }}",
+            "images": "={{ $json.images[0].src }}",
+            "gid": "={{ $json.admin_graphql_api_id }}"
+          },
+          "matchingColumns": [
+            "status"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "productid",
+              "displayName": "productid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "images",
+              "displayName": "images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gid",
+              "displayName": "gid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        864
+      ],
+      "id": "ea71c3e7-1179-44bf-8f15-1c2f28a313b6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        4304
+      ],
+      "id": "e0a77052-f61a-48fd-8d63-6056f69f4373",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/oauth/access_token",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "client_credentials"
+            },
+            {
+              "name": "client_id",
+              "value": "<VENDOR1_TOKEN>"
+            },
+            {
+              "name": "client_secret",
+              "value": "<VENDOR1_TOKEN>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -448,
+        864
+      ],
+      "id": "f4bc3613-1b4b-4c53-b8ff-3934b84299e1",
+      "name": "get_admin_token"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "img"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        368,
+        4240
+      ],
+      "id": "7d3fc9ee-0326-45a3-9be4-330deccf15e3",
+      "name": "HTTP Request",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst bin = item.binary?.img;\n\nif (!bin) throw new Error('Missing binary img. Check HTTP Request: Response Format=File, Binary Property Name=img');\n\n// IMPORTANT: read real bytes (fixes \"filesystem-v2\")\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'img');\nconst imgBase64 = buf.toString('base64');\n\n// Fix mimeType: your file is .webp\nconst mimeType = 'image/webp';\n\n// Build Gemini request body\nconst basePrompt = item.json.basePrompt || 'Replace background with a premium studio setup and add packaging props.';\nconst prompt =\n  `Use the provided product image as the only source of truth.\nKeep the product geometry and design identical.\nDo NOT redraw the product. Do not change the gemstone cut, prongs, metal thickness, chain links, engraving, or proportions.\n\nRetouch like a luxury jewelry e-commerce studio shot:\n- Background: pure white (#FFFFFF), seamless.\n- Exposure: high-key, clean whites without clipping product highlights.\n- Lighting: two large softboxes left/right + gentle top light, soft but crisp shadow directly under the pendant (contact shadow).\n- Materials: realistic metal reflections, sharp edges, micro-contrast, no plastic look, no over-smoothing.\n- Output: very sharp, clean, realistic, minimal noise, no text, no watermark, no CGI, no 3D render.\nComposition: centered, product fills ~70% of frame height, symmetrical.\nShadow: a subtle soft gray shadow under the product, no floating.\nColor: neutral white balance, accurate metal color, accurate gemstone color.\nEdges: crisp anti-aliased edges, no jagged edges.\n\n`;\n\nreturn [{\n  json: {\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: prompt },\n          { inlineData: { mimeType, data: imgBase64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        3648
+      ],
+      "id": "3e428c9e-76aa-43a5-96da-ce36aecb7de4",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\n\n// \u627e\u5230\u7b2c\u4e00\u500b\u6709 inlineData \u7684 part\uff08\u5c31\u662f\u5716\u7247\uff09\nconst parts = res?.candidates?.[0]?.content?.parts ?? [];\nconst imgPart = parts.find(p => p.inlineData?.data);\n\nif (!imgPart) throw new Error('No inlineData image found in Gemini response');\n\nconst mimeType = imgPart.inlineData.mimeType || 'image/png';\nconst data = imgPart.inlineData.data; // base64 string\n\nconst ext = mimeType.split('/')[1] || 'png';\n\nreturn [{\n  json: { mimeType },\n  binary: {\n    gen: {\n      data,\n      mimeType,\n      fileName: `scene.${ext}`\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        3648
+      ],
+      "id": "0f668da0-c3f4-4022-b89c-bd4b8683f9ab",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation stagedUploadsCreate($input: [StagedUploadInput!]!) { stagedUploadsCreate(input: $input) { stagedTargets { url resourceUrl parameters { name value } } userErrors { field message } } }\",\n  \"variables\": {\n    \"input\": [\n      {\n        \"filename\": \"scene.png\",\n        \"mimeType\": \"image/png\",\n        \"httpMethod\": \"POST\",\n        \"resource\": \"FILE\"\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        368,
+        3568
+      ],
+      "id": "013d30c8-a485-4e26-9204-b82291e139f2",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$json.data.stagedUploadsCreate.stagedTargets[0].url}}",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].value }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "gen"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        816,
+        3648
+      ],
+      "id": "0d63ee6f-7a7c-4c46-8c55-f8d6a5f8fdec",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation fileCreate($files: [FileCreateInput!]!) { fileCreate(files: $files) { files { id fileStatus alt createdAt ... on MediaImage { image { width height } } } userErrors { field message } } }\",\n  \"variables\": {\n    \"files\": [\n      {\n        \"contentType\": \"IMAGE\",\n        \"alt\": \"Generated image\",\n        \"originalSource\": \"{{ $('Merge').item.json.data.stagedUploadsCreate.stagedTargets[0].resourceUrl }}\"\n\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1040,
+        3648
+      ],
+      "id": "223a5409-e8a2-45aa-83e6-3381d430ccf8",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        592,
+        3648
+      ],
+      "id": "8ec21ddf-6fd6-4cf8-b4f1-2f57b47a932b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prompts = [\n  { shotIndex: 1, promptText: `Professional High Jewelry photography of the necklace in the reference image. Centered on a pure white background (hex #FFFFFF). The pendant is suspended from a matching delicate chain that extends upwards in a symmetrical V-shape to the top of the frame. The lighting setup is specialized for diamonds and metal: creating sharp, high-contrast reflections that emphasize the cut of the stones and the polish of the metal. There is a subtle, elegant reflection of the necklace on the floor (grounding it), fading into white. 8k resolution, hyper-realistic, looking like a listing from a top-tier luxury brand. --iw 2, ar 1:1, 2k quality` },\n  { shotIndex: 2, promptText: `A high-resolution (2k), square format (1:1) candid lifestyle photograph. A tight close-up portrait framing the neck and upper chest of a woman with a light skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand gently rests near her collarbone, touching the pendant. She is dressed in a soft, light beige linen blouse. The background is a softly blurred, clean, minimalist sunlit wall with only very subtle, out-of-focus hints of a green plant leaf and a clean wooden shelf edge to suggest a cozy space without clutter. Soft, natural daylight highlights the textures of the skin, fabric, and jewelry realistically without excessive sparkle. Natural film grain.` },\n  { shotIndex: 3, promptText: `A high-resolution (2k), square format (1:1) natural portrait photograph. A tight close-up portrait framing the neck and d\u00e9colletage of a woman with a rich, dark skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand is gently raised near the pendant in a relaxed pose. She is dressed in a simple, high-quality light grey cotton t-shirt. The background is a clean, minimalist, warmly lit wall with a soft blur, with only a very subtle out-of-focus hint of a wooden surface and a single potted plant. Soft, diffused indoor lighting catches the necklace subtly. Authentic feel, natural film grain.` },\n  { shotIndex: 4, promptText: `A high-resolution (2k), square format (1:1) intimate, heartwarming photograph capturing a deeply emotional moment. A tight close-up framing focuses on the neck and upper chest of a couple, cropping the woman's face just above the nose. Her lips are curved into a soft, tender smile, conveying deep happiness and love as a man's hands gently and carefully fasten the clasp of the specific necklace shown in the provided reference image behind her neck. The woman's hand is raised, her fingers tenderly lingering on and intertwining with the man's hand near the pendant, expressing affection. She is wearing a cozy, soft cream-colored knit sweater. The scene is bathed in a warm, soft, golden glow from out-of-focus romantic Valentine's decorations, fairy lights, and candles, creating beautiful warm bokeh. The lighting highlights the textures and the joyful emotion. Shallow depth of field. Film grain.` },\n  { shotIndex: 5, promptText: `A high-resolution (2k), square format (1:1) luxury product photography. The specific necklace from the reference image is elegantly displayed inside an open, high-quality plush velvet jewelry box (choose a neutral tone like cream or soft grey to match any brand). The necklace is carefully arranged on the velvet cushion. Soft, warm studio lighting highlights the sparkle of the pendant and the texture of the chain against the soft fabric. The background is a blurred, expensive-looking marble or wooden tabletop with a hint of a satin ribbon nearby, suggesting a gift being opened. Sharp focus on the jewelry, shallow depth of field. High-end packaging vibe.` },\n  { shotIndex: 6, promptText: `A high-resolution (2k), square format (1:1) aesthetic flat lay photography. The specific necklace from the reference image is laid out organically on a rippled, champagne-colored silk or satin fabric. Dappled sunlight creates artistic shadows (gobo effect of leaves or blinds) across the scene, evoking a warm, golden hour feeling. The lighting is soft and dreamy, emphasizing the metal's gloss and the stone's sparkle against the soft fabric texture. No people, just the jewelry and the mood. Elegant, expensive atmosphere.` },\n  { shotIndex: 7, promptText: `A high-resolution (2k), square format (1:1) cinematic shot of a romantic date night. A tight close-up framing the neck and lower face of a woman who looks visibly touched and surprised, her lips parted in a gasp of delight. A man's hands (wearing a nice watch or suit cuff) are fastening the specific necklace from the reference image around her neck from behind. She is wearing a black evening dress (cocktail attire). The background is the bokeh of a high-end restaurant or city night lights, screaming \"special occasion.\" Emotional payoff.` },\n  { shotIndex: 8, promptText: `A high-resolution (2k), square format (1:1) \"Old Money\" aesthetic lifestyle shot. A tight framing the neck and lower face of a woman with light skin tone, exuding confidence and elegance. She is wearing the specific necklace from the reference image. She is dressed in a white silk satin robe or off-shoulder evening top, looking like she is getting ready for a gala. Her hand, with a perfect manicure, is adjusting the pendant near her collarbone. The lighting is \"glamour lighting\" \u2014 bright, flattering, making the jewelry pop and the skin glow. Background is a blurred luxury vanity mirror or walk-in closet. High-status vibe.` },\n  { shotIndex: 9, promptText: `A high-resolution (2k), square format (1:1) luxury lifestyle flat lay. The specific necklace from the reference image is draped carelessly but artistically over a marble tray or a silk scarf. Beside it, out of focus, are hints of a luxury life: a crystal champagne coupe glass, a designer perfume bottle, or a pearl clutch. The lighting captures the \"sparkle\" (scintillation) of the jewelry. The vibe is \"getting ready for a night out in Paris.\" Dreamy, aspirational, envy-inducing.` },\n];\n\n// \u628a\u539f item \u7684 product \u5b57\u6bb5\u5e26\u8fc7\u53bb\uff08gid/images/title\u7b49\uff09\nreturn prompts.map(p => ({\n  json: {\n    ...$json,\n    ...p\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        4304
+      ],
+      "id": "a6ed2d33-42cf-4702-ae98-701b96e5b038",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst bin = item.binary?.img;\n\nif (!bin) throw new Error('Missing binary img. Check HTTP Request: Response Format=File, Binary Property Name=img');\n\n// IMPORTANT: read real bytes (fixes \"filesystem-v2\")\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'img');\nconst imgBase64 = buf.toString('base64');\n\n// Fix mimeType: your file is .webp\nconst mimeType = 'image/webp';\n\n// Build Gemini request body\n\nconst prompt = $input.first().json.promptText;\n\nreturn [{\n  json: {\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: prompt },\n          { inlineData: { mimeType, data: imgBase64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        4240
+      ],
+      "id": "25ce2f35-1012-4f4c-aa42-b13fd9887a90",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "447a01f3-55d3-4681-9803-4533669c4f62",
+              "leftValue": "={{ $json.shotIndex }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        4304
+      ],
+      "id": "033f374b-635c-47fa-babe-5091aeb27207",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        816,
+        4240
+      ],
+      "id": "21e03212-8264-4100-b189-28cf20a55264",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\n\n// \u627e\u5230\u7b2c\u4e00\u500b\u6709 inlineData \u7684 part\uff08\u5c31\u662f\u5716\u7247\uff09\nconst parts = res?.candidates?.[0]?.content?.parts ?? [];\nconst imgPart = parts.find(p => p.inlineData?.data);\n\nif (!imgPart) throw new Error('No inlineData image found in Gemini response');\n\nconst mimeType = imgPart.inlineData.mimeType || 'image/png';\nconst data = imgPart.inlineData.data; // base64 string\n\nconst ext = mimeType.split('/')[1] || 'png';\n\nreturn [{\n  json: { mimeType },\n  binary: {\n    ref: {\n      data,\n      mimeType,\n      fileName: `hero_shot.${ext}`\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        4208
+      ],
+      "id": "e952727f-c8b9-4e3f-8f9e-1b5d5399b272",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// ref binary \u5728\u6bcf\u7b46 item \u90fd\u6709\uff08Merge all possible combinations \u7684\u7d50\u679c\uff09\nconst first = items[0];\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\nconst b64 = buf.toString('base64');\nconst mimeType = first.binary.ref.mimeType || 'image/png';\n\nreturn items.map(it => ({\n  json: {\n    ...it.json,\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: it.json.promptText },\n          { inlineData: { mimeType, data: b64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT','IMAGE'] }\n    }\n  },\n  binary: it.binary  // \u628a ref \u7ee7\u7eed\u5e26\u4e0b\u53bb\uff08\u53ef\u9009\uff09\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        4320
+      ],
+      "id": "0dff4769-15f0-4a30-8c48-06aa9011c616",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1744,
+        4320
+      ],
+      "id": "7bda01ee-3433-4f47-8d18-d7d2e1b2767f",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map((it) => {\n  const parts = it.json.candidates?.[0]?.content?.parts || [];\n  const imgPart = parts.find(p => p.inlineData?.data);\n  if (!imgPart) throw new Error(`No inlineData image found for shotIndex ${it.json.shotIndex}`);\n\n  const mimeType = imgPart.inlineData.mimeType || 'image/png';\n  const data = imgPart.inlineData.data;\n  const ext = mimeType.split('/')[1] || 'png';\n\n  return {\n    json: { ...it.json },\n    binary: {\n      gen: {\n        data,\n        mimeType,\n        fileName: 'shot'+ $('Merge1').first().json.shotIndex+'.'+ ext,\n      }\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1968,
+        4320
+      ],
+      "id": "6bdcde3a-3b2a-4896-836a-4524db2998f8",
+      "name": "Code in JavaScript8"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1328,
+        4288
+      ],
+      "id": "20a19e02-e61c-439f-a552-57c9fe59a244",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation stagedUploadsCreate($input:[StagedUploadInput!]!){ stagedUploadsCreate(input:$input){ stagedTargets{ url resourceUrl parameters{ name value } } userErrors{ field message } } }\",\n  \"variables\": {\n    \"input\": [{\n      \"filename\": \"{{$binary.gen.fileName || ('shot-'+ $('Code in JavaScript7').item.json.shotIndex + '.png')}}\",\n      \"mimeType\": \"{{$binary.gen.mimeType || 'image/png'}}\",\n      \"httpMethod\": \"POST\",\n      \"resource\": \"PRODUCT_IMAGE\"\n    }]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2272,
+        3648
+      ],
+      "id": "c46ef674-f702-4a14-afcf-04e8f582b91e",
+      "name": "HTTP Request8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2160,
+        3872
+      ],
+      "id": "2187f53e-91b8-4e8b-8b10-e9660e21717a",
+      "name": "gemini"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation stagedUploadsCreate($input:[StagedUploadInput!]!){ stagedUploadsCreate(input:$input){ stagedTargets{ url resourceUrl parameters{ name value } } userErrors{ field message } } }\",\n  \"variables\": {\n    \"input\": [{\n      \"filename\": \"{{$binary.gen.fileName || ('shot-' + $json.shotIndex + '.png')}}\",\n      \"mimeType\": \"{{$binary.gen.mimeType || 'image/png'}}\",\n      \"httpMethod\": \"POST\",\n      \"resource\": \"IMAGE\",\n      \"fileSize\": \"{{$json.genFileSize}}\"\n    }]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2416,
+        3952
+      ],
+      "id": "63a86489-bef5-44eb-b7da-7db688d52a56",
+      "name": "stagedUploadsCreate"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation productCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) { productCreateMedia(media: $media, productId: $productId) { media { alt mediaContentType status ... on MediaImage { image { url } } } mediaUserErrors { field message } product { id title } } }\",\n  \"variables\": {\n    \"productId\": \"{{ $('Merge1').item.json.gid }}\",\n    \"media\": [\n      {\n        \"mediaContentType\": \"IMAGE\",\n        \"originalSource\": \"{{ $('stagedUploadsCreate').item.json.data.stagedUploadsCreate.stagedTargets[0].resourceUrl }}\",\n        \"alt\": \"\"\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3504,
+        3936
+      ],
+      "id": "dafb37bd-fd95-4023-81eb-788859972723",
+      "name": "productCreateMedia",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -80,
+        3936
+      ],
+      "id": "9c63caab-f1b0-439d-b3d1-c65f26d80336",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "img"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        592,
+        3872
+      ],
+      "id": "24755d7d-6444-476c-8ff6-728b0f0daf42",
+      "name": "HTTP Request9",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const prompts = [\n  { shotIndex: 1, promptText: `Professional High Jewelry photography of the necklace in the reference image. Centered on a pure white background (hex #FFFFFF). The pendant is suspended from a matching delicate chain that extends upwards in a symmetrical V-shape to the top of the frame. The lighting setup is specialized for diamonds and metal: creating sharp, high-contrast reflections that emphasize the cut of the stones and the polish of the metal. There is a subtle, elegant reflection of the necklace on the floor (grounding it), fading into white. 8k resolution, hyper-realistic, looking like a listing from a top-tier luxury brand. --iw 2, ar 1:1, 2k quality` },\n  { shotIndex: 2, promptText: `A high-resolution (2k), square format (1:1) candid lifestyle photograph. A tight close-up portrait framing the neck and upper chest of a woman with a light skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand gently rests near her collarbone, touching the pendant. She is dressed in a soft, light beige linen blouse. The background is a softly blurred, clean, minimalist sunlit wall with only very subtle, out-of-focus hints of a green plant leaf and a clean wooden shelf edge to suggest a cozy space without clutter. Soft, natural daylight highlights the textures of the skin, fabric, and jewelry realistically without excessive sparkle. Natural film grain.` },\n  { shotIndex: 3, promptText: `A high-resolution (2k), square format (1:1) natural portrait photograph. A tight close-up portrait framing the neck and d\u00c3\u00a9colletage of a woman with a rich, dark skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand is gently raised near the pendant in a relaxed pose. She is dressed in a simple, high-quality light grey cotton t-shirt. The background is a clean, minimalist, warmly lit wall with a soft blur, with only a very subtle out-of-focus hint of a wooden surface and a single potted plant. Soft, diffused indoor lighting catches the necklace subtly. Authentic feel, natural film grain.` },\n  { shotIndex: 4, promptText: `A high-resolution (2k), square format (1:1) intimate, heartwarming photograph capturing a deeply emotional moment. A tight close-up framing focuses on the neck and upper chest of a couple, cropping the woman's face just above the nose. Her lips are curved into a soft, tender smile, conveying deep happiness and love as a man's hands gently and carefully fasten the clasp of the specific necklace shown in the provided reference image behind her neck. The woman's hand is raised, her fingers tenderly lingering on and intertwining with the man's hand near the pendant, expressing affection. She is wearing a cozy, soft cream-colored knit sweater. The scene is bathed in a warm, soft, golden glow from out-of-focus romantic Valentine's decorations, fairy lights, and candles, creating beautiful warm bokeh. The lighting highlights the textures and the joyful emotion. Shallow depth of field. Film grain.` },\n  { shotIndex: 5, promptText: `A high-resolution (2k), square format (1:1) luxury product photography. The specific necklace from the reference image is elegantly displayed inside an open, high-quality plush velvet jewelry box (choose a neutral tone like cream or soft grey to match any brand). The necklace is carefully arranged on the velvet cushion. Soft, warm studio lighting highlights the sparkle of the pendant and the texture of the chain against the soft fabric. The background is a blurred, expensive-looking marble or wooden tabletop with a hint of a satin ribbon nearby, suggesting a gift being opened. Sharp focus on the jewelry, shallow depth of field. High-end packaging vibe.` },\n  { shotIndex: 6, promptText: `A high-resolution (2k), square format (1:1) aesthetic flat lay photography. The specific necklace from the reference image is laid out organically on a rippled, champagne-colored silk or satin fabric. Dappled sunlight creates artistic shadows (gobo effect of leaves or blinds) across the scene, evoking a warm, golden hour feeling. The lighting is soft and dreamy, emphasizing the metal's gloss and the stone's sparkle against the soft fabric texture. No people, just the jewelry and the mood. Elegant, expensive atmosphere.` },\n  { shotIndex: 7, promptText: `A high-resolution (2k), square format (1:1) cinematic shot of a romantic date night. A tight close-up framing the neck and lower face of a woman who looks visibly touched and surprised, her lips parted in a gasp of delight. A man's hands (wearing a nice watch or suit cuff) are fastening the specific necklace from the reference image around her neck from behind. She is wearing a black evening dress (cocktail attire). The background is the bokeh of a high-end restaurant or city night lights, screaming \"special occasion.\" Emotional payoff.` },\n  { shotIndex: 8, promptText: `A high-resolution (2k), square format (1:1) \"Old Money\" aesthetic lifestyle shot. A tight framing the neck and lower face of a woman with light skin tone, exuding confidence and elegance. She is wearing the specific necklace from the reference image. She is dressed in a white silk satin robe or off-shoulder evening top, looking like she is getting ready for a gala. Her hand, with a perfect manicure, is adjusting the pendant near her collarbone. The lighting is \"glamour lighting\" \u00e2\u20ac\u201d bright, flattering, making the jewelry pop and the skin glow. Background is a blurred luxury vanity mirror or walk-in closet. High-status vibe.` },\n  { shotIndex: 9, promptText: `A high-resolution (2k), square format (1:1) luxury lifestyle flat lay. The specific necklace from the reference image is draped carelessly but artistically over a marble tray or a silk scarf. Beside it, out of focus, are hints of a luxury life: a crystal champagne coupe glass, a designer perfume bottle, or a pearl clutch. The lighting captures the \"sparkle\" (scintillation) of the jewelry. The vibe is \"getting ready for a night out in Paris.\" Dreamy, aspirational, envy-inducing.` },\n];\n\n// \u00e6\u0160\u0160\u00e5\u017d\u0178 item \u00e7\u0161\u201e product \u00e5\u00ad\u2014\u00e6\u00ae\u00b5\u00e5\u00b8\u00a6\u00e8\u00bf\u2021\u00e5\u017d\u00bb\u00ef\u00bc\u02c6gid/images/title\u00e7\u00ad\u2030\u00ef\u00bc\u2030\nreturn prompts.map(p => ({\n  json: {\n    ...$json,\n    ...p\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        3936
+      ],
+      "id": "c4f1f984-d8a9-4592-a3e7-c89f13b72be4",
+      "name": "Code in JavaScript9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst bin = item.binary?.img;\n\nif (!bin) throw new Error('Missing binary img. Check HTTP Request: Response Format=File, Binary Property Name=img');\n\n// IMPORTANT: read real bytes (fixes \"filesystem-v2\")\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'img');\nconst imgBase64 = buf.toString('base64');\n\n// Fix mimeType: your file is .webp\nconst mimeType = 'image/webp';\n\n// Build Gemini request body\n\nconst prompt = $input.first().json.promptText;\n\nreturn [{\n  json: {\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: prompt },\n          { inlineData: { mimeType, data: imgBase64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        3872
+      ],
+      "id": "53461341-26df-471e-b4d3-f857407e49a5",
+      "name": "Code in JavaScript10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "447a01f3-55d3-4681-9803-4533669c4f62",
+              "leftValue": "={{ $json.shotIndex }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        3936
+      ],
+      "id": "54a6b604-bc7f-4777-b4ce-c265ac696b90",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1040,
+        3872
+      ],
+      "id": "e3b75dfe-94d0-4cd2-9c52-3937d51bc467",
+      "name": "HTTP Request10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\n\n// \u00e6\u2030\u00be\u00e5\u02c6\u00b0\u00e7\u00ac\u00ac\u00e4\u00b8\u20ac\u00e5\u20ac\u2039\u00e6\u0153\u2030 inlineData \u00e7\u0161\u201e part\u00ef\u00bc\u02c6\u00e5\u00b0\u00b1\u00e6\u02dc\u00af\u00e5\u0153\u2013\u00e7\u2030\u2021\u00ef\u00bc\u2030\nconst parts = res?.candidates?.[0]?.content?.parts ?? [];\nconst imgPart = parts.find(p => p.inlineData?.data);\n\nif (!imgPart) throw new Error('No inlineData image found in Gemini response');\n\nconst mimeType = imgPart.inlineData.mimeType || 'image/png';\nconst data = imgPart.inlineData.data; // base64 string\n\nconst ext = mimeType.split('/')[1] || 'png';\n\nreturn [{\n  json: { mimeType },\n  binary: {\n    ref: {\n      data,\n      mimeType,\n      fileName: `hero_shot.${ext}`\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        3872
+      ],
+      "id": "04f03b34-c4aa-48f0-bbfd-7fe65cdc7971",
+      "name": "Code in JavaScript11"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// ref binary \u5728\u6bcf\u7b46 item \u90fd\u6709\uff08Merge all possible combinations \u7684\u7d50\u679c\uff09\nconst first = items[0];\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\nconst b64 = buf.toString('base64');\nconst mimeType = first.binary.ref.mimeType || 'image/png';\n\nreturn items.map(it => ({\n  json: {\n    ...it.json,\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: it.json.promptText },\n          { inlineData: { mimeType, data: b64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT','IMAGE'] }\n    }\n  },\n  binary: it.binary  // \u628a ref \u7ee7\u7eed\u5e26\u4e0b\u53bb\uff08\u53ef\u9009\uff09\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        4016
+      ],
+      "id": "5187db83-02e4-4039-983e-e92889918004",
+      "name": "Code in JavaScript12"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1712,
+        4016
+      ],
+      "id": "8bafc298-78b6-4f5f-a3af-4ff44c4afc3e",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3056,
+        3936
+      ],
+      "id": "e077ea0d-a409-4a9f-836a-a655ed7a042c",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].url }}",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].value }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "gen"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3280,
+        3936
+      ],
+      "id": "41237e03-9a57-4f03-812e-a43da1310e5b",
+      "name": "HTTP Request11"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: one item, has binary.ref from Code in JavaScript6\nconst item = $input.first();\n\nconst ref = item.binary.ref;\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\n\nreturn [{\n  json: {\n    ...item.json,\n    shotIndex: 0,\n    genFileName: ref.fileName || 'hero.png',\n    genMimeType: ref.mimeType || 'image/png',\n    genFileSize: buf.length,\n    alt: 'hero'\n  },\n  binary: {\n    gen: ref\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        3872
+      ],
+      "id": "bb0844be-a700-4e22-bebf-ef102b19c7e7",
+      "name": "Code in JavaScript14"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2608,
+        4192
+      ],
+      "id": "6c9c3025-c38c-4099-ad51-8bb60170165e",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: one item, has binary.ref from Code in JavaScript6\nconst item = $input.first();\n\nconst ref = item.binary.ref;\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\n\nreturn [{\n  json: {\n    ...item.json,\n    shotIndex: 0,\n    genFileName: ref.fileName || 'hero.png',\n    genMimeType: ref.mimeType || 'image/png',\n    genFileSize: buf.length,\n    alt: 'hero'\n  },\n  binary: {\n    gen: ref\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        4128
+      ],
+      "id": "bb30cc6f-1276-4a10-b8b3-47175baf8403",
+      "name": "Code in JavaScript13"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: one item, has binary.ref from Code in JavaScript6\nconst item = $input.first();\n\nconst ref = item.binary.ref;\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\n\nreturn [{\n  json: {\n    ...item.json,\n    shotIndex: $('Merge1').first().json.shotIndex,\n    genFileName: ref.fileName || 'hero.png',\n    genMimeType: ref.mimeType || 'image/png',\n    genFileSize: buf.length,\n    alt: 'hero'\n  },\n  binary: {\n    gen: ref\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        4352
+      ],
+      "id": "c0a03ded-9080-48f2-bd45-2de17b3195df",
+      "name": "Code in JavaScript15"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 374357066,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=374357066"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -672,
+        1456
+      ],
+      "id": "6936d8c9-8b8f-464a-b25a-d64beaeacd3a",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "img"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        496,
+        1424
+      ],
+      "id": "adf3038f-4a26-47ef-b4e4-f1a202b72d52",
+      "name": "HTTP Request12",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const prompts = [\n  { shotIndex: 1, promptText: `Professional High Jewelry photography of the necklace in the reference image. Centered on a pure white background (hex #FFFFFF). The pendant is suspended from a matching delicate chain that extends upwards in a symmetrical V-shape to the top of the frame. No sparkling on the product, keep it clean. The lighting setup is specialized for diamonds and metal: creating sharp, high-contrast reflections that emphasize the cut of the stones and the polish of the metal. There is a subtle, elegant reflection of the necklace on the floor (grounding it), fading into white. 8k resolution, hyper-realistic, looking like a listing from a top-tier luxury brand. --iw 2, ar 1:1, 2k quality` },\n  { shotIndex: 2, promptText: `A high-resolution (2k), square format (1:1) candid lifestyle photograph. A tight close-up portrait framing the neck and upper chest of a woman with a light skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand gently rests near her collarbone, touching the pendant. She is dressed in a soft, light beige linen blouse. The background is a softly blurred, clean, minimalist sunlit wall with only very subtle, out-of-focus hints of a green plant leaf and a clean wooden shelf edge to suggest a cozy space without clutter. Soft, natural daylight highlights the textures of the skin, fabric, and jewelry realistically without excessive sparkle. Natural film grain.` },\n  { shotIndex: 3, promptText: `A high-resolution (2k), square format (1:1) natural portrait photograph. A tight close-up portrait framing the neck and d\u00c3\u00a9colletage of a woman with a rich, dark skin tone, cropping her face just above the mouth. She is wearing the specific necklace shown in the provided reference image. Her hand is gently raised near the pendant in a relaxed pose. She is dressed in a simple, high-quality light grey cotton t-shirt. The background is a clean, minimalist, warmly lit wall with a soft blur, with only a very subtle out-of-focus hint of a wooden surface and a single potted plant. Soft, diffused indoor lighting catches the necklace subtly. Authentic feel, natural film grain.` },\n  { shotIndex: 4, promptText: `A high-resolution (2k), square format (1:1) intimate, heartwarming photograph capturing a deeply emotional moment. A tight close-up framing focuses on the neck and upper chest of a couple, cropping the woman's face just above the nose. Her lips are curved into a soft, tender smile, conveying deep happiness and love as a man's hands gently and carefully fasten the clasp of the specific necklace shown in the provided reference image behind her neck. The woman's hand is raised, her fingers tenderly lingering on and intertwining with the man's hand near the pendant, expressing affection. She is wearing a cozy, soft cream-colored knit sweater. The scene is bathed in a warm, soft, golden glow from out-of-focus romantic Valentine's decorations, fairy lights, and candles, creating beautiful warm bokeh. The lighting highlights the textures and the joyful emotion. Shallow depth of field. Film grain.` },\n  { shotIndex: 5, promptText: `A high-resolution (2k), square format (1:1) luxury product photography. The specific necklace from the reference image is elegantly displayed inside an open, high-quality plush velvet jewelry box (choose a neutral tone like cream or soft grey to match any brand). The necklace is carefully arranged on the velvet cushion. Soft, warm studio lighting highlights the sparkle of the pendant and the texture of the chain against the soft fabric. The background is a blurred, expensive-looking marble or wooden tabletop with a hint of a satin ribbon nearby, suggesting a gift being opened. Sharp focus on the jewelry, shallow depth of field. High-end packaging vibe.` },\n  { shotIndex: 6, promptText: `A high-resolution (2k), square format (1:1) aesthetic flat lay photography. The specific necklace from the reference image is laid out organically on a rippled, champagne-colored silk or satin fabric. Dappled sunlight creates artistic shadows (gobo effect of leaves or blinds) across the scene, evoking a warm, golden hour feeling. The lighting is soft and dreamy, emphasizing the metal's gloss and the stone's sparkle against the soft fabric texture. No people, just the jewelry and the mood. Elegant, expensive atmosphere.` },\n  { shotIndex: 7, promptText: `A high-resolution (2k), square format (1:1) cinematic shot of a romantic date night. A tight close-up framing the neck and lower face of a woman ONLY who touched and surprised, her lips parted in a gasp of delight. Do not show her face. A man's hands (wearing a nice watch or suit cuff) are fastening the specific necklace from the reference image around her neck from behind. She is wearing a black evening dress (cocktail attire). The background is the bokeh of a high-end restaurant or city night lights, screaming \"special occasion.\" Emotional payoff.` },\n  { shotIndex: 8, promptText: `A high-resolution (2k), square format (1:1) \"Old Money\" aesthetic lifestyle shot. A tight framing the neck and lower face of a woman with light skin tone, exuding confidence and elegance. She is wearing the specific necklace from the reference image. She is dressed in a white silk satin robe or off-shoulder evening top, looking like she is getting ready for a gala. Her hand, with a perfect manicure, is adjusting the pendant near her collarbone. The lighting is \"glamour lighting\" \u00e2\u20ac\u201d bright, flattering, making the jewelry pop and the skin glow. Background is a blurred luxury vanity mirror or walk-in closet. High-status vibe.` },\n  { shotIndex: 9, promptText: `A high-resolution (2k), square format (1:1) luxury lifestyle flat lay. The specific necklace from the reference image is draped carelessly but artistically over a marble tray or a silk scarf. Beside it, out of focus, are hints of a luxury life: a crystal champagne coupe glass, a designer perfume bottle, or a pearl clutch. The lighting captures the \"sparkle\" (scintillation) of the jewelry. The vibe is \"getting ready for a night out in Paris.\" Dreamy, aspirational, envy-inducing.` },\n];\n\n// \u00e6\u0160\u0160\u00e5\u017d\u0178 item \u00e7\u0161\u201e product \u00e5\u00ad\u2014\u00e6\u00ae\u00b5\u00e5\u00b8\u00a6\u00e8\u00bf\u2021\u00e5\u017d\u00bb\u00ef\u00bc\u02c6gid/images/title\u00e7\u00ad\u2030\u00ef\u00bc\u2030\nreturn prompts.map(p => ({\n  json: {\n    ...$json,\n    ...p\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        1488
+      ],
+      "id": "6aa6e877-ddea-4144-aa0a-fded5b461180",
+      "name": "Code in JavaScript16"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst bin = item.binary?.img;\n\nif (!bin) throw new Error('Missing binary img. Check HTTP Request: Response Format=File, Binary Property Name=img');\n\n// IMPORTANT: read real bytes (fixes \"filesystem-v2\")\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'img');\nconst imgBase64 = buf.toString('base64');\n\n// Fix mimeType: your file is .webp\nconst mimeType = 'image/webp';\n\n// Build Gemini request body\n\nconst prompt = $input.first().json.promptText;\n\nreturn [{\n  json: {\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: prompt },\n          { inlineData: { mimeType, data: imgBase64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1424
+      ],
+      "id": "bd563559-cf63-4350-89c3-b58e3c459983",
+      "name": "Code in JavaScript17"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "447a01f3-55d3-4681-9803-4533669c4f62",
+              "leftValue": "={{ $json.shotIndex }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        1488
+      ],
+      "id": "2423105f-e653-45f6-b311-48f57e04c157",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        944,
+        1408
+      ],
+      "id": "ac2d5c2d-e406-41c8-8100-5e960d97b337",
+      "name": "HTTP Request13"
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\n\n// \u00e6\u2030\u00be\u00e5\u02c6\u00b0\u00e7\u00ac\u00ac\u00e4\u00b8\u20ac\u00e5\u20ac\u2039\u00e6\u0153\u2030 inlineData \u00e7\u0161\u201e part\u00ef\u00bc\u02c6\u00e5\u00b0\u00b1\u00e6\u02dc\u00af\u00e5\u0153\u2013\u00e7\u2030\u2021\u00ef\u00bc\u2030\nconst parts = res?.candidates?.[0]?.content?.parts ?? [];\nconst imgPart = parts.find(p => p.inlineData?.data);\n\nif (!imgPart) throw new Error('No inlineData image found in Gemini response');\n\nconst mimeType = imgPart.inlineData.mimeType || 'image/png';\nconst data = imgPart.inlineData.data; // base64 string\n\nconst ext = mimeType.split('/')[1] || 'png';\n\nreturn [{\n  json: { mimeType },\n  binary: {\n    ref: {\n      data,\n      mimeType,\n      fileName: `hero_shot.${ext}`\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        1376
+      ],
+      "id": "9cba94c3-522d-4218-a9af-cf558ce1c405",
+      "name": "Code in JavaScript18"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// ref binary \u00e5\u0153\u00a8\u00e6\u00af\u008f\u00e7\u00ad\u2020 item \u00e9\u0192\u00bd\u00e6\u0153\u2030\u00ef\u00bc\u02c6Merge all possible combinations \u00e7\u0161\u201e\u00e7\u00b5\u0090\u00e6\u017e\u0153\u00ef\u00bc\u2030\nconst first = items[0];\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\nconst b64 = buf.toString('base64');\nconst mimeType = first.binary.ref.mimeType || 'image/png';\n\nreturn items.map(it => ({\n  json: {\n    ...it.json,\n    geminiBody: {\n      contents: [{\n        parts: [\n          { text: it.json.promptText },\n          { inlineData: { mimeType, data: b64 } }\n        ]\n      }],\n      generationConfig: { responseModalities: ['TEXT','IMAGE'] }\n    }\n  },\n  binary: it.binary  // \u00e6\u0160\u0160 ref \u00e7\u00bb\u00a7\u00e7\u00bb\u00ad\u00e5\u00b8\u00a6\u00e4\u00b8\u2039\u00e5\u017d\u00bb\u00ef\u00bc\u02c6\u00e5\u008f\u00af\u00e9\u20ac\u2030\u00ef\u00bc\u2030\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        1488
+      ],
+      "id": "536dde88-ab1e-419d-a9b3-49ff4be06e51",
+      "name": "Code in JavaScript19"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map((it, idx) => {\n  const parts = it.json.candidates?.[0]?.content?.parts || [];\n  const imgPart = parts.find(p => p.inlineData?.data);\n  if (!imgPart) throw new Error(`No inlineData image found for shotIndex ${it.json.shotIndex}`);\n\n  const mimeType = imgPart.inlineData.mimeType || 'image/png';\n  const data = imgPart.inlineData.data; // base64 (no data: prefix)\n  const ext = mimeType.split('/')[1] || 'png';\n\n  const buf = Buffer.from(data, 'base64');\n\n  return {\n    json: {\n      ...it.json,\n      genFileSize: buf.length,          // \u00e2\u0153\u2026 bytes\n      genMimeType: mimeType,\n      genFileName: `shot-${idx}.${ext}`,\n    },\n    binary: {\n      gen: {\n        data,                           // \u00e4\u00bb\u008d\u00e7\u201d\u00a8 base64 \u00e7\u00bb\u2122 n8n\n        mimeType,\n        fileName: `shot-${idx}.${ext}`,\n      }\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        1488
+      ],
+      "id": "2bc0919e-5ac8-49d5-8fdd-10872d40fad6",
+      "name": "Code in JavaScript20"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1392,
+        1488
+      ],
+      "id": "74152f4f-46a7-440b-a425-6163342c2a32",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2512,
+        1520
+      ],
+      "id": "615ed234-340d-4d33-ab39-1a00d4a0271f",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "<GOOGLE_API_KEY>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.geminiBody}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1840,
+        1488
+      ],
+      "id": "1a3f4f3b-b299-4511-b8e9-e89d1805925b",
+      "name": "gemini1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "={{ $('get_admin_token1').item.json.access_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation stagedUploadsCreate($input:[StagedUploadInput!]!){ stagedUploadsCreate(input:$input){ stagedTargets{ url resourceUrl parameters{ name value } } userErrors{ field message } } }\",\n  \"variables\": {\n    \"input\": [{\n      \"filename\": \"{{$binary.gen.fileName || ('shot-' + $json.shotIndex + '.png')}}\",\n      \"mimeType\": \"{{$binary.gen.mimeType || 'image/png'}}\",\n      \"httpMethod\": \"POST\",\n      \"resource\": \"IMAGE\",\n      \"fileSize\": \"{{$json.genFileSize}}\"\n    }]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2592,
+        1296
+      ],
+      "id": "900c6657-40e2-4b3f-ae05-65ee23edbb3d",
+      "name": "stagedUploadsCreate1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "={{ $('get_admin_token1').item.json.access_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation productCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) { productCreateMedia(media: $media, productId: $productId) { media { alt mediaContentType status ... on MediaImage { image { url } } } mediaUserErrors { field message } product { id title } } }\",\n  \"variables\": {\n    \"productId\": \"{{ $('Get row(s) in sheet2').item.json.gid }}\",\n    \"media\": [\n      {\n        \"mediaContentType\": \"IMAGE\",\n        \"originalSource\": \"{{ $('stagedUploadsCreate1').item.json.data.stagedUploadsCreate.stagedTargets[0].resourceUrl }}\",\n        \"alt\": \"\"\n      }\n    ]\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2960,
+        1488
+      ],
+      "id": "43598e8d-5c34-49fa-83b1-c7b37e1b4f7d",
+      "name": "productCreateMedia1",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].url }}",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[0].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[1].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[2].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[3].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[4].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[5].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[6].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[7].value }}"
+            },
+            {
+              "name": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].name }}",
+              "value": "={{ $json.data.stagedUploadsCreate.stagedTargets[0].parameters[8].value }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "gen"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2736,
+        1488
+      ],
+      "id": "9c91b70e-9416-464d-9f0e-bf5c0c0ae464",
+      "name": "HTTP Request14"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: one item, has binary.ref from Code in JavaScript6\nconst item = $input.first();\n\nconst ref = item.binary.ref;\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'ref');\n\nreturn [{\n  json: {\n    ...item.json,\n    shotIndex: 0,\n    genFileName: ref.fileName || 'hero.png',\n    genMimeType: ref.mimeType || 'image/png',\n    genFileSize: buf.length,\n    alt: 'hero'\n  },\n  binary: {\n    gen: ref\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        1232
+      ],
+      "id": "6a64f3b4-42ff-48e0-b56e-3396222d407a",
+      "name": "Code in JavaScript21"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2144,
+        1152
+      ],
+      "id": "f3179043-663f-4cef-ae1f-a88e8187d4fd",
+      "name": "Merge7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "done",
+            "row_number": "={{ $('Get row(s) in sheet2').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "productid",
+              "displayName": "productid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "images",
+              "displayName": "images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gid",
+              "displayName": "gid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3168,
+        1488
+      ],
+      "id": "cf1fd38b-11f3-4c44-8538-71c230c1c9ac",
+      "name": "Update row in sheet",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -224,
+        2224
+      ],
+      "id": "bc306b3b-6371-4f4a-a651-dcb0c2841d5f",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\nWrite high-converting, SEO-friendly Shopify copy for this product in English.\n\nStore / brand context:\n\nbrand_voice: {{ $json.brand_voice || \"clean, trustworthy, premium but approachable\" }}\n\ntarget_market: {{ $json.target_market || \"North America\" }}\n\nRaw product data (may be incomplete):\n\nproduct_id: {{ $json.productid }}\n\noriginal_title: {{ $json.title }}\n\n\noriginal_description_html: {{ $json.description || $json.body_html || \"\" }}\n\nSEO / strategy inputs:\n\nprimary_keyword_hint: {{ $json.primary_keyword_hint || \"\" }}\n\nmust_include_phrases: {{ JSON.stringify($json.must_include || []) }}\n\navoid_words: {{ JSON.stringify($json.avoid_words || [\"guaranteed\",\"cure\",\"100%\",\"best\",\"#1\"]) }}\n\nusp_hints: {{ JSON.stringify($json.usp_hint || []) }}\n\nOutput requirements:\n\nChoose the most likely \"primary_keyword\" based on the product. If primary_keyword_hint is present, use it.\n\nThe \"title\" must include the primary keyword naturally (no awkward stuffing).\n\nCreate \"descriptionHtml\" with this structure (adjust if needed):\n\nA short opening paragraph (1\u20132 sentences: what it is + biggest benefit).\n\nBullet list of benefits (3\u20136 bullets, 1 sentence each).\n\n\u201cPerfect for\u201d / use cases (2\u20134 bullets).\n\n\u201cKey details\u201d (only verified specs; if not verified, don\u2019t include it).\n\nOptional FAQ (2\u20134 Q&As) only if you can answer from input; otherwise omit.\n\nIf you\u2019re tempted to mention something that isn\u2019t clearly supported by the input (e.g., materials, dimensions, waterproof rating, warranty), add it to \"claims_to_verify\".\n\nReturn JSON only, matching the required schema.\n\nOptional add-on (conversion angle)\nIf you want a consistent style across all products, append this block:\n\naudience: {{ $json.audience || \"quality-focused shoppers\" }}\n\ntone: {{ $json.tone || \"confident, clear, and helpful\" }}\n\nconversion_goal: {{ $json.conversion_goal || \"increase add-to-cart rate\" }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=You are a senior Shopify eCommerce copywriter and SEO specialist. Your job is to rewrite product titles and product descriptions to improve conversion and search visibility for English-language product pages.\n\nHard rules:\n\nOutput only valid JSON. No extra text, no Markdown, no code fences.\n\nThe JSON must be directly parseable (double quotes, no trailing commas).\n\nDo NOT invent specs/certifications/origin/materials/warranties/claims. If the input data doesn\u2019t prove it, either omit it or add it to \"claims_to_verify\".\n\nAvoid medical claims, guarantees, absolute statements, and misleading superlatives (e.g., \u201ccures\u201d, \u201cguaranteed\u201d, \u201c100% effective\u201d, \u201cbest\u201d, \u201c#1\u201d).\n\nShopify-friendly HTML only for the description: use only <p>, <ul>, <li>, <strong>,\n. No inline CSS, no scripts.\n\nWrite in natural North American English. Keep it skimmable.\n\nPriorities: clarity of what it is \u2192 key benefits \u2192 key specs (only verified) \u2192 use cases \u2192 FAQs (optional).\n\nReturn JSON with exactly these keys:\n{\n\"title\": \"\",\n\"seo_title\": \"\",\n\"seo_description\": \"\",\n\"descriptionHtml\": \"\",\n}\n\nLength guidelines:\n\ntitle: 50\u201390 characters (aim to avoid truncation and keyword stuffing).\n\nseo_title: ~50\u201360 characters (SERP-friendly, don\u2019t cut mid-phrase).\n\nseo_description: ~140\u2013160 characters (clear value + intent match).\n\nsecondary_keywords: up to 6, highly relevant, no duplicates.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        2224
+      ],
+      "id": "eef8fb07-9106-457d-826b-53ee33170adc",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/api/2026-01/graphql.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "<VENDOR1_ACCESS>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation UpdateProductComprehensive($product: ProductUpdateInput!) { productUpdate(product: $product) { userErrors { field message } product { id title handle seo { title description } } } }\",\n  \"variables\": {\n    \"product\": {\n      \"id\": \"{{ $('Get row(s) in sheet3').item.json.gid }}\",\n      \"title\": {{ JSON.stringify(JSON.parse($json.content.parts[0].text).title) }},\n      \"descriptionHtml\": {{ JSON.stringify(JSON.parse($json.content.parts[0].text).descriptionHtml) }},\n      \"seo\": {\n        \"title\": {{ JSON.stringify(JSON.parse($json.content.parts[0].text).seo_title) }},\n        \"description\": {{ JSON.stringify(JSON.parse($json.content.parts[0].text).seo_description) }}\n      }\n    }\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        448,
+        2304
+      ],
+      "id": "c2d7a4c9-0160-4c04-8a21-f3c69b519ab5",
+      "name": "UpdateProductComprehensive",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE",
+          "mode": "list",
+          "cachedResultName": "kh_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aKuXfYUBv2UZ3dywKM-KCuMgHO8HbEsWzfOb_Cgu0FE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "updated",
+            "row_number": "={{ $('Get row(s) in sheet3').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "productid",
+              "displayName": "productid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "images",
+              "displayName": "images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gid",
+              "displayName": "gid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        2384
+      ],
+      "id": "77a30021-4388-489f-b5ca-65a444889d7d",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yfh4u7-m1.myshopify.com/admin/oauth/access_token",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "client_credentials"
+            },
+            {
+              "name": "client_id",
+              "value": "<VENDOR1_TOKEN>"
+            },
+            {
+              "name": "client_secret",
+              "value": "<VENDOR1_TOKEN>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -896,
+        1456
+      ],
+      "id": "6eefd757-df5d-4f64-bccc-2c640cea239e",
+      "name": "get_admin_token1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        1456
+      ],
+      "id": "1814d9c7-3517-42ab-890d-adac6fdc64e9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        1456
+      ],
+      "id": "06ae2fb4-fe7c-4eba-a38e-734f9e243526"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "get_admin_token1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get jewelry": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many products": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript13",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini": {
+      "main": [
+        []
+      ]
+    },
+    "stagedUploadsCreate": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request9": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript9": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript10": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request10": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript11": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript12": {
+      "main": [
+        []
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request11": {
+      "main": [
+        [
+          {
+            "node": "productCreateMedia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript14": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "stagedUploadsCreate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript13": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request12": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript16": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript17": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request13": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript18": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript21",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript19": {
+      "main": [
+        [
+          {
+            "node": "gemini1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript20": {
+      "main": [
+        [
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "stagedUploadsCreate1": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request14": {
+      "main": [
+        [
+          {
+            "node": "productCreateMedia1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript21": {
+      "main": [
+        [
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge7": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "stagedUploadsCreate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "productCreateMedia1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_admin_token": {
+      "main": [
+        [
+          {
+            "node": "Get jewelry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript15": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "UpdateProductComprehensive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateProductComprehensive": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        []
+      ]
+    },
+    "get_admin_token1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  }
+}

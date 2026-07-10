@@ -1,0 +1,125 @@
+{
+  "id": "0AfpMADprpkDJKfy",
+  "name": "\ud83d\udd27 Create Alpha Girl Sheet (Webhook)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "create-alpha-girl-sheet",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "alpha-girl-create"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "name": "Alpha Girl Revenge - Content Tracker",
+        "mimeType": "application/vnd.google-apps.spreadsheet"
+      },
+      "id": "create-spreadsheet",
+      "name": "Create Spreadsheet",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        460,
+        300
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WwvtG5cgsmvZj9Fz",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.id }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"requests\": [\n    {\n      \"updateSheetProperties\": {\n        \"properties\": {\n          \"sheetId\": 0,\n          \"title\": \"StoryQueue\"\n        },\n        \"fields\": \"title\"\n      }\n    },\n    {\n      \"appendCells\": {\n        \"sheetId\": 0,\n        \"rows\": [\n          {\n            \"values\": [\n              {\"userEnteredValue\": {\"stringValue\": \"story_id\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"generated_at\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"subreddit\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"original_title\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"original_url\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"upvotes\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"rewrite_level\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"drama_score\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"viral_potential\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"word_count\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"duration_seconds\"}},\n              {\"userEnteredValue\": {\"stringValue\": \"status\"}}\n            ]\n          }\n        ],\n        \"fields\": \"*\"\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"UsedStories\"\n        }\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"Episodes\"\n        }\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "setup-sheets",
+      "name": "Setup Sheets & Headers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        680,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"\u2705 Alpha Girl Revenge spreadsheet created!\",\n  \"spreadsheet_id\": \"{{ $('Create Spreadsheet').item.json.id }}\",\n  \"spreadsheet_url\": \"https://docs.google.com/spreadsheets/d/{{ $('Create Spreadsheet').item.json.id }}/edit\",\n  \"sheets\": [\"StoryQueue\", \"UsedStories\", \"Episodes\"],\n  \"next_step\": \"Add to .env: ALPHA_GIRL_SHEETS_ID={{ $('Create Spreadsheet').item.json.id }}\"\n}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Setup Sheets & Headers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Sheets & Headers": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

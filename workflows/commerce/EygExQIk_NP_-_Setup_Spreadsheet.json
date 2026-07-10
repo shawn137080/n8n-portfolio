@@ -1,0 +1,62 @@
+{
+  "id": "EygExQIk1wsCeYLG",
+  "name": "NP \u2014 Setup Spreadsheet",
+  "nodes": [
+    {
+      "id": "e465d45a-6fa2-499e-9106-eb30ec7ac729",
+      "name": "Run once",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "6e74fbc1-404a-4905-a752-a135cecb8de3",
+      "name": "Create Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "resource": "spreadsheet",
+        "operation": "create",
+        "title": "Night Print Jobs",
+        "sheetsUi": {
+          "sheetValues": [
+            {
+              "title": "jobs"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "M554ZUWoyF12r7U7",
+          "name": "shawn137080"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Run once": {
+      "main": [
+        [
+          {
+            "node": "Create Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  }
+}

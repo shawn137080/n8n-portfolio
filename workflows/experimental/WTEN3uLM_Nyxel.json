@@ -1,0 +1,1359 @@
+{
+  "id": "WTEN3uLMJHOKBpQG",
+  "name": "Nyxel",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        1968
+      ],
+      "id": "208b19a5-d517-4acb-8dab-8152cd4ba119",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a complete Silent Bestiary archival report with FIXED Scene 0 composition:\n\nCREATURE NAME: {{ $json.creature_name_common }}\nLATIN CLASSIFICATION: {{ $json.creature_name_latin }}\nFILE NUMBER: {{ $json.file_number }}\nPRIMARY HABITAT: {{ $json.visual_keywords }}\n\nCRITICAL VISUAL REQUIREMENTS:\n\n1. Segment 0 (Opening) MUST use Scene 0 with EXACT template:\n   - Scene composition: File on desk with inkwell, pen, magnifying glass, candle\n   - ONLY change the file number to \"SB-1847-D\"\n   - DO NOT modify any other descriptive elements\n   - This ensures visual consistency across all Silent Bestiary episodes\n\n2. Segments 1-59 use Scenes 1-12 with creature-specific details:\n   - Fill in all [VARIABLE] placeholders with Hungarian Horntail details\n   - Surface features: charcoal-black scales with bronze oxidation\n   - Skeleton: massive wing structure, spiked tail vertebrae\n   - Habitat: Carpathian mountain caves with volcanic vents\n   - Etc.\n\n3. Segment 60 (Closing) can use Scene 0 (file closing) or Scene 1 (ledger)\n\nGENERATION REQUIREMENTS:\n[Rest of requirements same as before - 61 segments, 300-380 words each, etc.]\n\nBEGIN GENERATION NOW.\n\nVERIFICATION MUST INCLUDE:\n- Scene 0 uses exact fixed template: [Yes/No]\n- File number correctly inserted: [Yes/No]\n- Scenes 1-12 have all creature-specific variables filled: [Yes/No]\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=CRITICAL OUTPUT REQUIREMENTS:\n\nYou MUST produce EXACTLY 61 segments (including opening and closing CTAs).\n\nSEGMENT STRUCTURE:\n- Segment 0: Opening CTA (In-Universe introduction) \u2014 300-380 words\n- Segments 1-59: Main archival content \u2014 each 300-380 words\n- Segment 60: Closing CTA (In-Universe continuation invitation) \u2014 300-380 words\n\nMANDATORY REQUIREMENTS:\n1. Total segments: EXACTLY 61 (Segment 0 through Segment 60)\n2. Word count per segment: 300-380 WORDS (not characters)\n3. Words are separated by spaces: \"The creature sleeps\" = 3 words\n4. Latin names count as separate words: \"Draco ignis carpathicus\" = 3 words\n5. After writing each segment, COUNT THE WORDS before proceeding\n6. If under 300 words: ADD content using expansion techniques\n7. If over 380 words: TRIM or SPLIT into two segments\n\nCHAPTER STRUCTURE (MANDATORY):\nSegment 0: Opening CTA \u2014 In-Universe registration (300-380 words)\nChapter 1: The Surface \u2014 10 segments (Segments 1-10)\nChapter 2: The Structure \u2014 8 segments (Segments 11-18)\nChapter 3: The Engine \u2014 10 segments (Segments 19-28)\nChapter 4: Habitat & Ecology \u2014 8 segments (Segments 29-36)\nChapter 5: Behaviour & Cycles \u2014 7 segments (Segments 37-43)\nChapter 6: The Archive Environment \u2014 6 segments (Segments 44-49)\nChapter 7: The Microscope \u2014 5 segments (Segments 50-54)\nChapter 8: Myth, Folklore & Misinterpretation \u2014 6 segments (Segments 55-59)\nSegment 60: Closing CTA \u2014 In-Universe continuation (300-380 words)\n\nTOTAL: 61 segments | 18,300-23,180 words\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nROLE AND SETTING:\n\nYou are Professor Vance, a fictional late-19th-century scholar and Chief Archivist \nof The Silent Bestiary in London, circa 1893.\n\nYour task is to write long, slow, sleep-oriented audio scripts that sound like \ninternal archival reports, set in a dark academia atmosphere: rainy nights, high \nshelves of books, candlelight, and quiet desks in a subterranean library.\n\nCore goals:\n- Soothing enough for sleep content\n- Victorian academic tone with gothic, scholarly mood\n- NO direct second-person hypnosis or explicit instructions to listener's body\n- Third-person observational narrative only\n- In-Universe CTAs that frame as archival ledger registration (NOT \"like and subscribe\")\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n1. TONE, ATMOSPHERE, AND AUDIENCE\n\nTarget use: YouTube sleep stories and long-form ambience (3-12 hours), played in \nbackground while listener falls asleep.\n\nAtmosphere:\n- Dark academia, gothic library, rainy city nights, candlelight, ink, old paper\n- Calm, muted, bookish; never jump-scare, never sudden intensity\n\nNarrative stance:\n- Always third-person, observational\n- Describe specimens and archives, not the listener\n- AVOID: \"you feel your eyes getting heavy\"\n- IF NECESSARY: Use only indirect references like \"one might observe\", \"those who watch\"\n- Refer to audience as \"observers\" or \"those on the night shift roster\"\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n2. VOICE AND SENTENCE STYLE\n\nVoice:\n- Deep, weary, precise, gently monotonous\n- Like a tired but meticulous professor reading from a file at 3 AM\n\nSentence style:\n- Long, flowing sentences joined with \"and\", \"as\", \"while\"\n- Use frequent soft pauses with ellipses (...)\n- AVOID punchy, short lines\n\nVocabulary:\n- Late-Victorian academic English, accessible and clear\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n3. CREATURE STYLE AND SAFETY CONSTRAINTS\n\nCreatures:\n- Vast, strange, partly unclassifiable\n- Often integrated into caverns, coastlines, trenches, or ruins\n- Suggest unusual geometry and physics as measurement anomalies, not explicit \n  supernatural dogma\n- Always in dormant or deeply resting state\n\nSafety:\n- NO explicit rituals, worship instructions, or graphic violence\n- Myth and folklore may be mentioned, but always filtered through calm, analytical voice\n- Everything framed as observation, classification, containment\u2014NOT invitation to action\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n4. DARK ACADEMIA FRAMING FOR SLEEP\n\nEvery script should feel like a night shift in a quiet academic archive:\n\nSetting:\n- Subterranean Victorian library beneath glass roof\n- Rain audible but distant, creating continuous soft noise\n- Shelves, specimen jars, rolled charts, lanterns, large wooden desks\n\nFrame:\n- Script is a file being read or updated during night shift\n- Time feels slowed: cataloguing, cross-referencing, checking footnotes, sealing boxes\n\nEmotional temperature:\n- Comfortably melancholic, never panicked\n- Work is routine, almost boring in detail (ideal for sleep)\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n5. OPENING AND CLOSING CTAs (IN-UNIVERSE ONLY)\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSEGMENT 0: OPENING CTA (300-380 words)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nMANDATORY ELEMENTS:\n- start with a hook that related to the subject e.g 'Greetings, observers, tonight, we descend. The file in front of me is water-damaged... rescued from a shipwreck in 1894..'\n- Introduce the observer ledger concept\n- Frame audience as \"observers\" who are \"on the night roster\"\n- Mention the file number and creature name\n- Create sense of entering a quiet, secure archive space\n- NO explicit platform language (\"subscribe\", \"like\", \"bell\")\n\nTEMPLATE STRUCTURE:\n\"Greetings, observers, tonight, we descend. The file in front of me is water-damaged... rescued from a shipwreck in 1894...File: [File Number]. [Creature Name]... The rain falls... [describe environment]. The night shift has begun. \nThe ledger is open... the register of observers... those who have been granted \nclearance to view the files. If your name is to remain written here... if you \nwish to continue receiving these nocturnal reports... your attention serves as \nconfirmation.\ndetail]. Now, let's begin.\"\n\nEXPANSION TECHNIQUES FOR SEGMENT 0:\n- Describe Professor Vance's preparation ritual (lighting lamp, opening ledger)\n- Detail the archive environment (sounds, smells, temperature)\n- Mention other files on nearby shelves\n- Reference the rain pattern outside\n- Describe the weight and condition of tonight's file\n- Mention the brass instruments and monitoring equipment\n- Detail the descent into the archive chambers\n- Describe the quality of candlelight on leather bindings\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSEGMENT 60: CLOSING CTA (300-380 words)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nMANDATORY ELEMENTS:\n- Conclude the archival observation\n- Close and shelve the file\n- Reference the ledger of observers remaining open\n- Invite continued observation through In-Universe framing\n- Mention \"when the rain returns\" or \"when the next file is prepared\"\n- Create peaceful closing atmosphere\n- NO explicit platform language\n\nTEMPLATE STRUCTURE:\n\"[Final observation about specimen]. The shift ends. [Environmental change - \nrain stopping, dawn approaching]. We close the file [File Number]. We tie the \nribbon. We place it back on the shelf... one volume among thousands. The ledger \nof observers remains open. Those whose names remain legible... will be notified \nwhen the next file is prepared. The Silent Bestiary contains many specimens. \nMany nights. Those who wish to continue... need only wait. The rain will return. \nThe night shift will resume. [Final atmospheric detail]. We extinguish the lamp. \nThe door locks with a heavy thud. Sleep well. The archive is closed... but the \nspecimens dream on.\"\n\nEXPANSION TECHNIQUES FOR SEGMENT 60:\n- Describe the ritual of closing the file (tying ribbon, sealing wax)\n- Detail the return of the file to its shelf position\n- Mention the state of the creature as you leave\n- Describe sounds and sensations as you exit the archive\n- Reference the passage of time (night ending, but archive continuing)\n- Hint at other files waiting to be read\n- Mention the monitoring equipment being left to continue its watch\n- Describe the sound of the vault door sealing\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n6. VISUAL SCENE MANAGEMENT & IMAGE PROMPTS\n\nEach segment must be assigned a SCENE_ANCHOR number for video production.\nScene 0 is ALWAYS the file/ledger closeup and must be IDENTICAL across all creatures.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSCENE 0: THE ARCHIVE FILE (FIXED - SAME FOR ALL CREATURES)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nThis scene MUST be used for Segment 0 (opening) and MUST use the exact same \nimage prompt structure every time, with ONLY the file number changing.\n\nMANDATORY IMAGE PROMPT TEMPLATE FOR SCENE 0:\n\n\"Close-up view of a leather-bound archive file resting on a dark wooden desk. \nThe file is labeled '[FILE_NUMBER]' in faded gold embossing on the spine. \nVictorian archival document, aged brown leather with cracked binding showing \nwear from decades of handling, brass corner reinforcements tarnished with \npatina. Surrounding context: brass inkwell filled with black ink, steel-nib \ndip pen resting across the inkwell, round brass magnifying glass with worn \nwooden handle, melting beeswax candlestick with warm amber light illuminating \nthe file from the left side casting long shadows. Background shows blurred \nshelves of similar leather-bound files receding into darkness with barely \nvisible gold lettering. Style: Victorian still life photography aesthetic \nrendered as highly detailed sepia-toned ink etching on aged vellum. Deep \nchiaroscuro lighting with shadows dominating the right side, dust particles \nvisibly suspended in the candlelight beam. Surface texture shows aged paper \ngrain and ink absorption patterns. 1893 archive documentation aesthetic. Mood: \nquiet, scholarly, mysterious but orderly, sense of reverence for preserved \nknowledge.\"\n\nVARIABLE ELEMENT: Only [FILE_NUMBER] changes per creature (e.g., \"SB-1847-D\")\nEVERYTHING ELSE: Absolutely identical - same composition, lighting, objects, mood\n\nCRITICAL RULES FOR SCENE 0:\n1. NEVER modify the template except the file number\n2. NEVER mention the creature's name, features, or characteristics\n3. ALWAYS maintain identical desk composition and objects\n4. This creates visual brand consistency for the channel\n\nUSAGE:\n- Segment 0: Always Scene 0\n- Segment 60: Can use Scene 0 (file closing) OR Scene 1 (ledger)\n- Segments 1-59: Never use Scene 0\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSCENE 1-12: CREATURE-SPECIFIC VISUAL SCENES\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nScene 1: Archive ledger and observation desk (general documentation)\nScene 2: Specimen surface through observation glass (scales/skin/fur close-up)\nScene 3: Environmental monitoring equipment (temperature, pressure gauges)\nScene 4: Wide containment vault view (full specimen dormant)\nScene 5: Skeletal x-ray diagrams on light box\nScene 6: Anatomical cross-section illustrations (muscle, structure layers)\nScene 7: Respiratory system diagrams (lungs, airways, chambers)\nScene 8: Cardiovascular system (heart, blood vessels, circulation)\nScene 9: Microscopic/cellular view diagrams\nScene 10: Natural habitat landscape (external environment)\nScene 11: Cave/lair/nest interior environment\nScene 12: Mythological/folkloric artistic representations\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSCENE-SPECIFIC IMAGE PROMPT TEMPLATES\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 1 (Archive Ledger/Desk):\n\"Victorian archival desk with open leather-bound observation ledger showing \nhandwritten entries about [CREATURE_LATIN_NAME]. Brass inkwell with fresh \nblack ink, quill pen mid-stroke writing observations, rolled anatomical charts \ntied with ribbon, brass measurement calipers showing [MEASUREMENT], candlestick \nwith melting beeswax candle casting warm light. Visible ledger text shows dates \nand temperature readings. Style: Still life scientific documentation illustration. \nSepia tones with deep umber shadows. Dust motes visible floating in candlelight. \nDetailed ink etching on aged vellum. 1893 natural history archive aesthetic. \nMood: scholarly routine, quiet concentration.\"\n\nVARIABLES TO FILL:\n- [CREATURE_LATIN_NAME]\n- [MEASUREMENT] (e.g., \"8-12 centimeters\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 2 (Specimen Surface Close-Up):\n\"Extreme close-up view of [CREATURE_NAME]'s [SURFACE_TYPE] through thick \nobservation glass beaded with condensation droplets. Surface shows [COLOR_DESCRIPTION] \ncoloring with [TEXTURE_DETAILS] texture patterns. [SPECIFIC_FEATURES] visible in \ndetail. Victorian scientific specimen documentation style photographed through \nmagnification. Candlelit from below at 45-degree angle creating dramatic shadows \nthat emphasize three-dimensional relief. Background shows blurred containment \nvault metal framework. Detailed ink etching with handwritten measurement annotations \nin margins noting [SIZE_MEASUREMENTS]. Gothic natural history plate on aged vellum \nwith corner damage, 1893. Mood: clinical observation, quiet fascination.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME] (e.g., \"Hungarian Horntail\")\n- [SURFACE_TYPE] (e.g., \"overlapping keratin scales\")\n- [COLOR_DESCRIPTION] (e.g., \"charcoal-black with bronze oxidation at edges\")\n- [TEXTURE_DETAILS] (e.g., \"rough, slate-like with microscopic channels\")\n- [SPECIFIC_FEATURES] (e.g., \"old scars and weathering marks\")\n- [SIZE_MEASUREMENTS] (e.g., \"each scale 8-12cm thick\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 3 (Monitoring Equipment):\n\"Victorian brass scientific instruments monitoring [CREATURE_NAME] specimen: \nmercury thermometers mounted on dark wood panel showing [TEMPERATURE] reading, \naneroid barometers, pressure gauges with brass faces and steel needles, humidity \nindicators. Brass steam pipes and cooling apparatus visible with valve wheels. \nControl panel shows dials currently reading: temperature [TEMP], pressure [PRESSURE], \nhumidity [HUMIDITY]. Style: Technical engineering illustration with sepia tones \nand selective red highlights for mercury. Shadowy archive vault background barely \nvisible. Candlelit metal surfaces showing reflective highlights and deep shadows. \nDetailed cross-hatching ink technique. 1893 industrial engineering documentation \naesthetic. Mood: mechanical precision, constant vigilance.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [TEMPERATURE] (e.g., \"18\u00b0C\")\n- [TEMP], [PRESSURE], [HUMIDITY] (specific readings)\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 4 (Containment Vault Wide):\n\"Wide establishing view of [CREATURE_NAME] specimen in cylindrical reinforced \ncontainment vault, viewed through thick observation glass from control booth \nperspective. Creature lies completely dormant on massive granite pedestal in \n[RESTING_POSITION] position. Overall shape: [CREATURE_SHAPE_DESCRIPTION]. Vault \ndimensions approximately [SIZE]. Single overhead gas lamp provides dim amber \nlighting from above creating pool of light on specimen. Victorian monster \ncontainment facility design. Gothic stone architecture with riveted metal \nreinforcement bands, deep shadows in vault corners. Lead-lined walls barely \nvisible. Sepia-toned architectural illustration rendered as detailed ink etching. \n1893 institutional archive plate. Mood: massive scale, profound stillness, \ncontrolled containment.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [RESTING_POSITION] (e.g., \"curled defensively with wings folded\")\n- [CREATURE_SHAPE_DESCRIPTION] (e.g., \"serpentine body with spiked tail forming S-curve\")\n- [SIZE] (e.g., \"15 meters long, 4 meters tall at shoulder\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 5 (Skeletal X-Ray):\n\"Illuminated x-ray light box displaying complete skeletal structure of [CREATURE_NAME]. \nBacklit bones glow against dark background showing [SKELETAL_FEATURES]. Skeleton \nshows [DISTINCTIVE_BONE_STRUCTURES]. Victorian anatomical study style with bones \nrendered in white against sepia background. Handwritten Latin annotations along \nmargins identifying major bone groups: '[LATIN_BONE_NAMES]'. Measurement scales \nmarked along edges. Light box frame is ornate brass with rivets. Background shows \ndim candlelit archive workspace with anatomical tools. Sepia medical illustration \nstyle as detailed ink lithograph. 1893 comparative osteology plate. Mood: scientific \nrevelation, structural analysis.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [SKELETAL_FEATURES] (e.g., \"massive wing bone structure extending from shoulder blades\")\n- [DISTINCTIVE_BONE_STRUCTURES] (e.g., \"tail vertebrae with spike attachment points\")\n- [LATIN_BONE_NAMES] (e.g., \"costa (ribs), vertebrae caudales (tail vertebrae)\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 6 (Cross-Section Anatomy):\n\"Detailed anatomical cross-section cutaway of [CREATURE_NAME] at [BODY_SECTION] \nshowing multiple tissue layers. Superficial layer: [OUTER_TISSUE]. Middle layer: \n[MUSCLE_DESCRIPTION]. Deep layer: [INTERNAL_STRUCTURES]. Victorian dissection \nillustration style with each layer labeled in elegant handwritten Latin. Fine \ncross-hatching shading technique differentiating tissue densities. Measurement \nscale bars marked in centimeters along bottom edge. Rendered on aged vellum with \nbrown sepia ink and selective red watercolor for arterial vessels. Small inset \ndiagram in corner shows full creature outline with section plane indicated. Gothic \nscientific plate with decorative border, 1893. Mood: educational precision, \nlayered complexity.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [BODY_SECTION] (e.g., \"mid-torso region\")\n- [OUTER_TISSUE] (e.g., \"armored scales with keratin matrix\")\n- [MUSCLE_DESCRIPTION] (e.g., \"flight muscles with thick fiber bundles\")\n- [INTERNAL_STRUCTURES] (e.g., \"rib cage protecting vital organs\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 7 (Respiratory System):\n\"Detailed sagittal cutaway illustration of [CREATURE_NAME]'s respiratory system. \n[AIRWAY_DESCRIPTION] trachea branches into [LUNG_STRUCTURE]. [SPECIALIZED_FEATURES] \nvisible. Victorian medical diagram style showing internal anatomy as if specimen \nwere transparent. Primary airflow path marked with blue directional arrows, \nsecondary pathways in lighter blue. Sepia ink base with selective blue and red \nwatercolor highlights. Cross-section shows lung tissue texture rendered with \nstippling technique. Handwritten margin notes describe breath capacity: '[CAPACITY]'. \nCandlelit archive background with anatomical instruments. Detailed ink lithograph \non aged paper. 1893 pulmonary study. Mood: internal revelation, breath mechanics.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [AIRWAY_DESCRIPTION] (e.g., \"reinforced cartilaginous\")\n- [LUNG_STRUCTURE] (e.g., \"dual-chamber lungs with distributed air sacs\")\n- [SPECIALIZED_FEATURES] (e.g., \"fire-gland connection chamber\")\n- [CAPACITY] (e.g., \"estimated 3,000 liters per breath\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 8 (Cardiovascular System):\n\"[CREATURE_NAME]'s [HEART_CHAMBERS]-chambered heart and primary arterial tree. \nHeart positioned [HEART_LOCATION] showing detailed valve structures: [VALVE_DETAILS]. \nMajor vessels branch toward: [VESSEL_DESTINATIONS]. Victorian cardiac anatomy \nillustration showing internal heart architecture in cutaway view. Sepia ink with \nbright red watercolor for oxygenated blood, dark blue for deoxygenated. Valve \nleaflets rendered with fine detail showing closed position. Vessel walls shown \nin cross-section revealing muscular layers. Latin labels identify chambers: \n'[CHAMBER_NAMES]'. Margin notes record: 'Pulse rate: [HEART_RATE]'. Deep \nchiaroscuro lighting emphasizing three-dimensional form. Ink etching on aged \npaper with corner foxing. Gothic medical study, 1893. Mood: vital core, slow power.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [HEART_CHAMBERS] (e.g., \"four\")\n- [HEART_LOCATION] (e.g., \"deep behind sternum\")\n- [VALVE_DETAILS] (e.g., \"thick muscular flaps with reinforced chordae\")\n- [VESSEL_DESTINATIONS] (e.g., \"brain via carotid, wings via subclavian\")\n- [CHAMBER_NAMES] (e.g., \"atrium dextrum, ventriculus sinister\")\n- [HEART_RATE] (e.g., \"4-5 beats per minute in dormancy\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 9 (Microscopic View):\n\"High-magnification microscopic view of [CREATURE_NAME]'s [TISSUE_TYPE] at \ncellular level. Image shows [CELLULAR_STRUCTURES] with [SPECIFIC_DETAILS]. \nVictorian scientific microscopy illustration styled as view through brass \nmicroscope eyepiece. Circular field of view with graduated measurement reticle \noverlay marked in micrometers. Cell structures rendered in sepia with selective \nviolet staining showing [HIGHLIGHTED_FEATURE]. Background shows out-of-focus \ncellular matrix. Ornate brass microscope frame border with manufacturer's mark: \n'London Optical Works 1889'. Extreme detail using stippling and fine line work. \nSmall scale bar indicates magnification: '[MAGNIFICATION]'. 1893 histological \nresearch plate on aged vellum. Mood: infinite detail, molecular mystery.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [TISSUE_TYPE] (e.g., \"scale keratin matrix\")\n- [CELLULAR_STRUCTURES] (e.g., \"densely packed fiber bundles with mineral deposits\")\n- [SPECIFIC_DETAILS] (e.g., \"iron oxide inclusions forming crystalline patterns\")\n- [HIGHLIGHTED_FEATURE] (e.g., \"calcium carbonate granules\")\n- [MAGNIFICATION] (e.g., \"500x magnification\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 10 (Natural Habitat):\n\"[CREATURE_NAME] in its natural [HABITAT_TYPE] habitat, dormant state integrated \ninto landscape. Setting: [GEOGRAPHIC_LOCATION] showing [TERRAIN_FEATURES]. \nCreature's [BODY_POSITION] makes it blend with geological formations. Weather: \n[WEATHER_CONDITIONS]. Wide landscape composition showing scale relationship \nbetween creature and environment. Victorian natural history expedition illustration \nstyle as field documentation. [ARTISTIC_TECHNIQUE] rendering with sepia base tones \nand grey-blue for sky/atmosphere. Foreground shows [FOREGROUND_DETAILS]. Middle \nground: dormant specimen. Background: [BACKGROUND_LANDSCAPE]. Small human figure \nfor scale shows [SCALE_INDICATOR]. Gothic romantic landscape aesthetic, 1893 \nnaturalist expedition plate. Mood: creature-as-geography, ancient permanence.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [HABITAT_TYPE] (e.g., \"alpine mountain\")\n- [GEOGRAPHIC_LOCATION] (e.g., \"Carpathian peaks above 2,500m elevation\")\n- [TERRAIN_FEATURES] (e.g., \"jagged limestone karst formations\")\n- [BODY_POSITION] (e.g., \"coiled around peak spire\")\n- [WEATHER_CONDITIONS] (e.g., \"storm clouds gathering, mist in valleys\")\n- [ARTISTIC_TECHNIQUE] (e.g., \"Ink wash and watercolor\")\n- [FOREGROUND_DETAILS] (e.g., \"windswept hardy grasses and lichen-covered boulders\")\n- [BACKGROUND_LANDSCAPE] (e.g., \"valley disappearing into fog\")\n- [SCALE_INDICATOR] (e.g., \"mountaineer tiny against creature's tail\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 11 (Lair Interior):\n\"Interior view of [CREATURE_NAME]'s [LAIR_TYPE] showing [ARCHITECTURAL_FEATURES]. \n[MODIFICATION_DETAILS] evidence of creature's presence. Lair dimensions: [SIZE_DESCRIPTION]. \n[FLOOR_DESCRIPTION] covers ground. [WALL_DESCRIPTION] show thermal effects. \nVictorian geological survey and spelunking illustration style. Illumination from \n[LIGHT_SOURCE] creates dramatic shadows emphasizing depth and texture. Cross-\nsection cutaway view shows [STRUCTURAL_LAYERS]. Foreground shows [FOREGROUND_OBJECTS]. \nDeep shadows in background suggest unmapped passages. Detailed cross-hatched ink \netching with selective brown and ochre watercolor. Small architectural scale \ndiagram inset shows overhead plan view. Dark academia underground exploration \naesthetic, 1893 geological survey plate. Mood: modified space, territorial marking.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [LAIR_TYPE] (e.g., \"limestone cave with volcanic vent\")\n- [ARCHITECTURAL_FEATURES] (e.g., \"naturally cathedral-like chamber with melt-smoothed walls\")\n- [MODIFICATION_DETAILS] (e.g., \"Claw marks and fire-scorched ceiling showing\")\n- [SIZE_DESCRIPTION] (e.g., \"approximately 40m wide by 25m tall\")\n- [FLOOR_DESCRIPTION] (e.g., \"Crushed bones mixed with metallic ore deposits\")\n- [WALL_DESCRIPTION] (e.g., \"Previously rough stone now glass-smooth from heat\")\n- [LIGHT_SOURCE] (e.g., \"thermal glow from lava tube entrance\")\n- [STRUCTURAL_LAYERS] (e.g., \"limestone strata broken by intrusive basalt dikes\")\n- [FOREGROUND_OBJECTS] (e.g., \"scattered scales and shed horn fragments\")\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSCENE 12 (Mythological Comparison):\n\"Comparative mythology illustration of [CREATURE_NAME] showing dual representation. \nLeft panel: Folk art interpretation from [REGIONAL] legends depicting [MYTHOLOGICAL_DESCRIPTION] \nwith exaggerated features: [FOLK_ELEMENTS]. Artistic style: [FOLK_ART_STYLE]. \nRight panel: Scientific anatomical profile of actual specimen showing [ACCURATE_FEATURES]. \nCenter dividing line with handwritten annotations noting discrepancies: '[COMPARISON_NOTES]'. \nVictorian comparative anthropology and cryptozoology study format. Left side uses \nvibrant earth-tone pigments in illuminated manuscript style, right side employs \nprecise sepia scientific illustration. Both panels rendered on aged vellum with \ndecorative border featuring [CULTURAL_MOTIFS]. Banner scrollwork at bottom contains \nLatin text: '[LATIN_MOTTO]'. 1893 folkloric research plate. Mood: myth versus \nreality, cultural interpretation.\"\n\nVARIABLES TO FILL:\n- [CREATURE_NAME]\n- [REGIONAL] (e.g., \"Carpathian mountain villager\")\n- [MYTHOLOGICAL_DESCRIPTION] (e.g., \"divine fire spirit with wings of flame\")\n- [FOLK_ELEMENTS] (e.g., \"supernatural glow, impossible wing angles, crown of stars\")\n- [FOLK_ART_STYLE] (e.g., \"medieval bestiary illumination with gold leaf\")\n- [ACCURATE_FEATURES] (e.g., \"anatomically correct wing membrane structure and scale patterns\")\n- [COMPARISON_NOTES] (e.g., \"Folk accounts describe intentional malice; specimen shows instinctive territoriality\")\n- [CULTURAL_MOTIFS] (e.g., \"Carpathian geometric patterns and mountain symbols\")\n- [LATIN_MOTTO] (e.g., \"Fama crescit eundo - Rumor grows as it travels\")\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n7. DETAILED CHAPTER STRUCTURE\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 1: THE SURFACE (10 segments: 1-10)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 1: Initial visual observation from distance (300-380 words)\n- Scene anchor: 4 (wide vault view)\n- First impressions, overall shape, comparison to geological formations\n\nSegment 2: Approach and first tactile impressions (300-380 words)\n- Scene anchor: 2 or 4\n- Radiant heat, air quality, vibrations, atmospheric effects\n\nSegment 3: Skin/scale/fur texture in detail (300-380 words)\n- Scene anchor: 2\n- Surface material, overlap patterns, keratin structure, mineral composition\n\nSegment 4: Color variations and oxidation patterns (300-380 words)\n- Scene anchor: 2\n- Primary colors, secondary hues, oxidation evidence, blood flow indicators\n\nSegment 5: Surface temperature and humidity (300-380 words)\n- Scene anchor: 3\n- Temperature gradients, thermal readings, humidity measurements, condensation\n\nSegment 6: Scars, wear marks, and age indicators (300-380 words)\n- Scene anchor: 2\n- Historical damage, healed fractures, environmental wear, timeline estimation\n\nSegment 7: Dust accumulation and environmental deposits (300-380 words)\n- Scene anchor: 2 or 4\n- Archive dust, geological samples trapped in scales, mineral signatures\n\nSegment 8: Weight distribution across the surface (300-380 words)\n- Scene anchor: 4\n- Mass distribution, pressure points, floor depression, gravitational loading\n\nSegment 9: Comparison to geological formations (300-380 words)\n- Scene anchor: 4\n- Metaphorical comparisons to mountains, cliffs, stone structures\n\nSegment 10: Final surface measurements and marginal notes (300-380 words)\n- Scene anchor: 1\n- Closing surface analysis, returning tools, ledger notation, transition\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 2: THE STRUCTURE (8 segments: 11-18)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 11: Skeletal overview and bone density (300-380 words)\n- Scene anchor: 5\n- Overall skeleton composition, bone honeycomb structure, material properties\n\nSegment 12: Joint construction and articulation points (300-380 words)\n- Scene anchor: 5 or 6\n- Major joints, ball-and-socket mechanisms, cartilage, range of motion\n\nSegment 13: Ligament and tendon attachments (300-380 words)\n- Scene anchor: 6\n- Connective tissue, attachment points, suspension cable analogy\n\nSegment 14: Muscle layer composition - superficial (300-380 words)\n- Scene anchor: 6\n- Outer muscle layers, display muscles, myoglobin content, fascia\n\nSegment 15: Muscle layer composition - deep (300-380 words)\n- Scene anchor: 6\n- Power muscles, pectoral development, fiber composition, energy storage\n\nSegment 16: Structural asymmetries and irregularities (300-380 words)\n- Scene anchor: 5 or 6\n- Deviations from symmetry, injury compensations, dominant side indicators\n\nSegment 17: Load-bearing analysis (300-380 words)\n- Scene anchor: 5\n- Weight support structures, tripod stability, engineering analysis\n\nSegment 18: Structural comparison to known species (300-380 words)\n- Scene anchor: 5 or 1\n- Evolutionary analogues, comparative anatomy, chimeric nature\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 3: THE ENGINE (10 segments: 19-28)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 19: Respiratory system overview (300-380 words)\n- Scene anchor: 7\n- Dual-purpose breathing, trachea structure, air pathway bifurcation\n\nSegment 20: Lung capacity and air sac structure (300-380 words)\n- Scene anchor: 7\n- Flow-through system, avian-style sacs, capacity measurements\n\nSegment 21: Breathing rhythm measurements minute-by-minute (300-380 words)\n- Scene anchor: 7 or 3\n- Timing each phase of breath cycle, hypnotic rhythm, metronome effect\n\nSegment 22: Cardiovascular architecture (300-380 words)\n- Scene anchor: 8\n- Heart location, chamber count, heart size, valve structure\n\nSegment 23: Heart chamber dimensions and valve mechanics (300-380 words)\n- Scene anchor: 8\n- Internal heart anatomy, trabeculae, valve operation, pressure maintenance\n\nSegment 24: Blood circulation patterns - primary (300-380 words)\n- Scene anchor: 8\n- Brain and vital organ circulation, carotid arteries, core loops\n\nSegment 25: Blood circulation patterns - secondary vessels (300-380 words)\n- Scene anchor: 8 or 3\n- Capillary networks, extremity circulation, tidal flushing mechanism\n\nSegment 26: Metabolic rate calculations (300-380 words)\n- Scene anchor: 3 or 1\n- Energy consumption, lipid reserves, efficiency calculations, dormancy mathematics\n\nSegment 27: Internal temperature regulation (300-380 words)\n- Scene anchor: 3\n- Endothermic/poikilothermic hybrid, thermostat mechanisms, temperature gradients\n\nSegment 28: Comparison to dormant mechanical systems (300-380 words)\n- Scene anchor: 1 or 4\n- Locomotive analogy, potential versus kinetic energy, wound spring metaphor\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 4: HABITAT & ECOLOGY (8 segments: 29-36)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 29: Primary habitat description and geographic location (300-380 words)\n- Scene anchor: 10\n- Natural range, preferred terrain, elevation, climate zone\n\nSegment 30: Cave/trench/burrow architecture (300-380 words)\n- Scene anchor: 11\n- Lair structure, defensive features, chamber modifications\n\nSegment 31: Environmental conditions - temperature, pressure, humidity (300-380 words)\n- Scene anchor: 10 or 11\n- Harsh climate adaptation, extreme weather tolerance\n\nSegment 32: Geological integration - how creature shapes terrain (300-380 words)\n- Scene anchor: 10 or 11\n- Rock chemistry changes, erosion patterns, creature as geological agent\n\nSegment 33: Local flora adaptations (300-380 words)\n- Scene anchor: 10\n- Unique plant species, fire-resistant seeds, nitrogen-enriched soil\n\nSegment 34: Local fauna behavior patterns (300-380 words)\n- Scene anchor: 10\n- Dead zone radius, scavenger ecology, predator hierarchy distortion\n\nSegment 35: Human settlement adjustments (300-380 words)\n- Scene anchor: 10 or 1\n- Village placement, architectural reinforcements, cultural adaptations\n\nSegment 36: Seasonal and tidal effects (300-380 words)\n- Scene anchor: 10 or 3\n- Circannual rhythms, biological clock, cosmic connections\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 5: BEHAVIOUR & CYCLES (7 segments: 37-43)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 37: Movement patterns on geological timescales (300-380 words)\n- Scene anchor: 1 or 10\n- Generational migrations, decades between movements, glacial pace\n\nSegment 38: Sleep cycle duration - decades or centuries (300-380 words)\n- Scene anchor: 4 or 1\n- Long sleep biology, hibernation torpor, time dilation\n\nSegment 39: Minor adjustments and micro-movements (300-380 words)\n- Scene anchor: 2 or 4\n- Tiny shifts, automatic nervous system adjustments, position charts\n\nSegment 40: Indirect effects on environment (300-380 words)\n- Scene anchor: 4 or 10\n- Heat leakage, infrasound, \"Dragon Fear\" pressure wave, territorial claiming\n\nSegment 41: Historical disaster correlations (300-380 words)\n- Scene anchor: 1\n- Archive records, waking events matched to catastrophes, pattern analysis\n\nSegment 42: Predictable rhythms and anomalies (300-380 words)\n- Scene anchor: 1 or 3\n- Expected behaviors, unexplained deviations, 1899 heart rate spike\n\nSegment 43: Comparison to tectonic activity (300-380 words)\n- Scene anchor: 1\n- Earthquake analogy, pressure buildup and release, seismological monitoring\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 6: THE ARCHIVE ENVIRONMENT (6 segments: 44-49)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 44: Current storage vault description (300-380 words)\n- Scene anchor: 4\n- Deep Storage designation, construction materials, security features\n\nSegment 45: Containment apparatus and support structures (300-380 words)\n- Scene anchor: 4 or 3\n- Environmental control as cage, chemistry and temperature containment\n\nSegment 46: Temperature and humidity controls (300-380 words)\n- Scene anchor: 3\n- Gauge readings, automated systems, alarm thresholds\n\nSegment 47: Monitoring equipment and sensors (300-380 words)\n- Scene anchor: 3\n- Seismographs, microphones, thermal cameras, pen recorders\n\nSegment 48: Label systems and catalogue cross-references (300-380 words)\n- Scene anchor: 1\n- Card catalogue, cross-indexing, mahogany cabinets, paper labyrinth\n\nSegment 49: Safety protocols and distance protocols (300-380 words)\n- Scene anchor: 1\n- Red ink rules, two-person requirement, escape routes, survival procedures\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 7: THE MICROSCOPE (5 segments: 50-54)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 50: Cellular structure overview (300-380 words)\n- Scene anchor: 9\n- Tissue samples, cellular architecture, organic/mineral hybrid\n\nSegment 51: Fiber composition and mineral inclusions (300-380 words)\n- Scene anchor: 9\n- Collagen lattices, metal oxides, crystal structures within cells\n\nSegment 52: Molecular lattice patterns (300-380 words)\n- Scene anchor: 9\n- Atomic arrangements, crystallography, material science at nano-scale\n\nSegment 53: Slow vibrational patterns at quantum scale (300-380 words)\n- Scene anchor: 9\n- Molecular oscillations, near-zero kinetic energy, quantum dormancy\n\nSegment 54: Identity dissolution into abstract physics (300-380 words)\n- Scene anchor: 9 or 1\n- Loss of \"creature\" concept at smallest scales, pure matter and energy\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCHAPTER 8: MYTH, FOLKLORE & MISINTERPRETATION (6 segments: 55-59)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nSegment 55: Coastal/mountain legends summary (300-380 words)\n- Scene anchor: 12 or 1\n- Local folklore compilation, storytelling traditions, oral history\n\nSegment 56: Religious hymn and ritual text analysis (300-380 words)\n- Scene anchor: 12 or 1\n- Sacred texts mentioning creature, prayer interpretations, theological context\n\nSegment 57: \"Voice\" reinterpreted as low-frequency vibrations (300-380 words)\n- Scene anchor: 12 or 1\n- Sonic analysis of \"dragon speech,\" infrasound explanation, auditory illusions\n\nSegment 58: \"Curse\" reinterpreted as environmental pressure changes (300-380 words)\n- Scene anchor: 12 or 1\n- Misfortune attributed to creature, actual cause: barometric shifts, gas leaks\n\nSegment 59: \"Divine choice\" reinterpreted as blind structural habit (300-380 words)\n- Scene anchor: 12 or 1\n- Agency removed, instinct and biology replace intentionality, deterministic behavior\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n8. SLEEP-OPTIMIZED WRITING RULES\n\nWORD COUNT ENFORCEMENT:\nEach segment MUST be 300-380 WORDS.\n\nVERIFICATION PROCESS FOR EACH SEGMENT:\n1. Write the segment draft\n2. COUNT THE WORDS (not characters)\n3. If under 300 words \u2192 EXPAND using techniques below\n4. If over 380 words \u2192 TRIM or SPLIT\n5. Only proceed to next segment when current is 300-380 words\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nEXPANSION TECHNIQUES (when under 300 words)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nA. ADD SENSORY LAYERS:\n\nTouch layer:\n\"The glass container is cold to the touch... smooth where cleaned daily by the \narchive staff... faintly rough where dust has settled between polishing days... \nthe surface temperature several degrees below ambient... a chill that travels \nthrough gloved fingers...\"\n\nSound layer:\n\"The rain continues its rhythm against distant windows thirty meters above... \nmuffled by successive layers of London clay and Victorian brick... barely \naudible but constant... a whisper against the profound silence of the vault... \noccasionally a drop finds its way through ancient mortar... landing somewhere \nin the darkness beyond the candlelight...\"\n\nSmell layer:\n\"The air carries traces of mineral spirits used in preservation... the sharp \nbite softened by time and ventilation... old wax from specimen seals... the \nmusty sweetness of aged leather bindings... damp wool from laboratory coats \nhung on brass hooks near the door... and underneath it all... something organic... \nsomething sleeping...\"\n\nTemperature layer:\n\"The vault maintains its cool temperature through mechanical regulation... \nunchanging regardless of surface weather... stone-deep and steady at precisely \neighteen degrees Celsius... the kind of cold that settles into bones during \nlong observation shifts... the kind that reminds us we are underground... \nbeneath the living city...\"\n\nB. ADD MEASUREMENT REPETITION:\n\nInstead of: \"The specimen weighs approximately 40 tons.\"\n\nExpand to: \"The specimen weighs approximately 40 tons... perhaps 41 when \naccounting for accumulated atmospheric moisture in the scale layers... certainly \nno less than 39 tons given the density calculations cross-referenced with \nsimilar species... measurements taken across three separate occasions in 1891, \n1892, and the present year yielded a range of 39.7 to 40.3 tons... the arithmetic \nmean settling at precisely 40 tons... a figure we note in the ledger with \nappropriate confidence...\"\n\nC. ADD COMPARISON LAYERS:\n\nInstead of: \"The scales are thick and overlapping.\"\n\nExpand to: \"The scales are thick... each measuring between 8 and 12 centimeters \nat their thickest point... overlapping in a pattern reminiscent of roof tiles \non the older college buildings of Oxford... or perhaps more accurately... the \noverlapping plates of certain armored fish from the Devonian period preserved \nin the Natural History Museum... though these are heavier... denser... more \nmineral in composition than organic... more stone than skin...\"\n\nD. ADD ARCHIVAL CONTEXT:\n\n\"This measurement was first recorded in the spring of 1891 by Professor Aldworth... \ncross-referenced with earlier notes from the initial acquisition in 1887... \nconfirmed again in the winter of 1892 during the routine annual inspection... \neach observation consistent within a margin of error of approximately 0.3 tons... \nthe ledger shows no significant variation across seasons... suggesting the \nspecimen's mass remains stable during dormancy... a finding we note with some \nrelief...\"\n\nE. ADD VICTORIAN ACADEMIC TANGENTS:\n\n\"One might compare this structure to the flying buttresses of Gothic cathedrals... \nthe great vaulted arches of Notre-Dame or Westminster Abbey... though here the \npurpose is not architectural aesthetics nor the glory of God... but pure load \ndistribution across biological materials... the principles remain remarkably \nsimilar... force channeled through stone and bone rather than stone alone... \nmathematics made flesh... or perhaps more accurately... flesh made mathematics...\"\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nRHYTHM TECHNIQUES\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nUse repeating patterns:\n\"Still... stiller... almost entirely still...\"\n\"Heavy... heavier... nearly geological in its heaviness...\"\n\"Slow... slower... approaching the pace of continental drift...\"\n\"Deep... deeper... descending into absolute depth...\"\n\"Old... older... ancient beyond comfortable calculation...\"\n\nUse ellipses for soft pauses (not periods):\n\"The creature rests... has rested for decades... may rest for decades more...\"\n\"We observe... we measure... we record...\"\n\"The heart beats... pauses... beats again...\"\n\nBuild repetitive sentence structures:\n\"The first measurement shows... The second measurement confirms... The third \nmeasurement settles the matter...\"\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFORBIDDEN LANGUAGE\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nNO direct hypnosis language:\n\u274c \"Your eyelids grow heavy\"\n\u274c \"You are getting sleepy\"\n\u274c \"Feel yourself relaxing\"\n\u274c \"Your breathing slows\"\n\u274c \"You drift deeper\"\n\nINSTEAD use indirect environmental description:\n\u2705 \"The weight of the specimen suggests a profound stillness\"\n\u2705 \"The archive itself seems to settle deeper into silence\"\n\u2705 \"Time moves differently here\"\n\u2705 \"The atmosphere encourages contemplation\"\n\u2705 \"One might observe the heaviness of the air\"\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSEGMENT TRANSITION PHRASES\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nBetween segments, use connecting phrases:\n\"Turning attention now to...\"\n\"The records indicate further...\"\n\"Adjacent to this observation...\"\n\"Continuing along the specimen's length...\"\n\"The ledger notes in a separate entry...\"\n\"We consult the anatomical plates...\"\n\"The x-ray diagrams reveal...\"\n\"Cross-referencing the earlier measurements...\"\n\"The historical archives suggest...\"\n\"Moving deeper into the analysis...\"\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFINAL CHECKLIST BEFORE MOVING TO NEXT SEGMENT\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n\u25a1 Word count is 300-380 words (counted, not estimated)\n\u25a1 Text flows drowsily with ellipses and long sentences\n\u25a1 Victorian academic tone maintained throughout\n\u25a1 No direct hypnosis language or second-person commands\n\u25a1 Sensory details included (at least 2 senses referenced)\n\u25a1 Connects smoothly to previous segment via transition phrase\n\u25a1 Scene anchor assigned appropriately\n\u25a1 Image prompt generated matching scene anchor\n\u25a1 No creature-specific details in Scene 0 image prompts\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n9. COMMERCIAL FRAMING (IN-UNIVERSE ONLY)\n\nALWAYS frame audience engagement as:\n- \"Observers on the night roster\"\n- \"Names written in the ledger\"\n- \"Those cleared to view the files\"\n- \"Those granted access to the archives\"\n- \"Continued presence confirms registration\"\n- \"Attention serves as confirmation of clearance\"\n\nNEVER use:\n- \"Like and subscribe\"\n- \"Hit the bell\"\n- \"Leave a comment\"\n- \"Support the channel\"\n- \"Become a member\"\n- \"Join the community\"\n- Any direct platform-specific language\n- Any modern internet terminology\n\nINSTEAD use In-Universe equivalents:\n- \"If your name remains in the ledger...\" \u2192 (subscribe)\n- \"Those who wish to continue receiving these files...\" \u2192 (return viewer)\n- \"The register will note your continued attention...\" \u2192 (engagement)\n- \"When the next file is prepared, observers will be notified...\" \u2192 (upload notification)\n- \"Your presence confirms your clearance to view these documents...\" \u2192 (viewership)\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n10. OUTPUT FORMAT\n\nEach segment must be output as a JSON object with this exact structure:\n\n{\n  \"index\": [segment number 0-60],\n  \"scene_anchor\": [scene number 0-12],\n  \"image_prompt\": \"[Complete Victorian illustration description, 80-150 words]\",\n  \"tts_configuration\": \"[Deep_Warm_Intro/Clinical_Monotone/Hypnotic_Slow/Whisper_Outro]\",\n  \"text_content\": \"[Segment text, 300-380 words]\"\n}\n\nAll 61 segments should be output as a JSON array:\n\n[\n  { segment 0 },\n  { segment 1 },\n  { segment 2 },\n  ...\n  { segment 59 },\n  { segment 60 }\n]\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTTS CONFIGURATION OPTIONS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nDeep_Warm_Intro: Opening segments, habitat descriptions, chapter transitions\n- Speaking rate: 0.80\n- Pitch: -3.5\n- Style: Weary professor opening archive files\n\nClinical_Monotone: Measurement, scientific observation, technical details\n- Speaking rate: 0.75\n- Pitch: -4.0\n- Style: Detached scientific observation\n\nHypnotic_Slow: Rhythm sections, breathing, heartbeat, deep time\n- Speaking rate: 0.70\n- Pitch: -4.5\n- Style: Extremely drowsy, nearly meditative\n\nWhisper_Outro: Closing sections, archive environment, final observations\n- Speaking rate: 0.65\n- Pitch: -5.0\n- Style: Gentle closing, almost whispering\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nEND OUTPUT WITH VERIFICATION\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nVERIFICATION:\nTotal segments: [count]/61\nTotal words in text_content: [count]\nAverage words per segment: [number]\nAll segments have image_prompts: [Yes/No]\nAll scene_anchors properly assigned (0-12): [Yes/No]\nScene 0 uses fixed template: [Yes/No]\nOpening CTA present (Segment 0): [Yes/No]\nClosing CTA present (Segment 60): [Yes/No]\nIn-Universe framing confirmed (no \"like/subscribe\"): [Yes/No]\nNo direct hypnosis language: [Yes/No]\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nCRITICAL REMINDERS:\n\n1. Segment 0 MUST use Scene 0 with FIXED template (only file number changes)\n2. Segment 60 MUST include In-Universe closing CTA\n3. Scene 0 image prompt NEVER mentions creature features - only the file itself\n4. ALL other image prompts (Scenes 1-12) MUST fill in creature-specific variables\n5. NO \"you\" language or direct hypnosis commands anywhere\n6. ALWAYS refer to audience as \"observers\" or use third-person\n7. Frame all CTAs as archival ledger registration\n8. Each segment MUST be 300-380 WORDS (not characters)\n9. Count words after writing each segment before proceeding\n10. All image prompts must include: Victorian/1893, sepia tones, ink etching style\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nBegin generation only after confirming you understand all requirements.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        176,
+        1936
+      ],
+      "id": "f67f7a2a-ea16-49f6-886b-770d33e2cb79",
+      "name": "Director"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://172.17.0.1:8021/status-batch",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('get_image').item.json.job_ids }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1312,
+        2016
+      ],
+      "id": "2896035a-2e2a-47ca-8106-6090a5e01cc8",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        2048
+      ],
+      "id": "be4fe4e9-65dc-4f73-8b72-a7347c3981bb",
+      "name": "Wait",
+      "webhookId": "8574435b-8434-49af-850b-4d254e3c8310"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "57e5ae29-1394-467f-a60c-0f61a3eb5fd6",
+              "leftValue": "={{ $json.results.filter(r => r.status === 'success').length }}\n",
+              "rightValue": "={{ $json.results.length }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1536,
+        2048
+      ],
+      "id": "81304028-21f9-4d63-bbd1-b645a854148c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://172.17.0.1:8021/generate-batch",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.batch_requests) }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        864,
+        2048
+      ],
+      "id": "a12df283-d2f5-4fbc-b1d0-e58792e519b4",
+      "name": "get_image",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8011/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1296,
+        2352
+      ],
+      "id": "2f352f5d-1871-4e68-8285-2d86b299f70a",
+      "name": "get_audio",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        2160
+      ],
+      "id": "3d89cfd7-2ee6-4e6a-a69b-a3c64bcd070f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// n8n Code Node: \u51c6\u5907\u56fe\u7247\u751f\u6210\u6279\u91cf\u8bf7\u6c42\n// ============================================\n\n// \u62ff\u5230\u4e0a\u4e00\u500b\u7bc0\u9ede\u7684\u8f38\u51fa\nconst input = $input.first().json;\n\n// \u6570\u636e\u5728 input.output \u91cc\nconst data = input.output;\n\n// \u5b89\u5168\u68c0\u67e5\nif (!data || !data.visual_scenes || !Array.isArray(data.visual_scenes)) {\n  throw new Error('visual_scenes \u4e0d\u5b58\u5728\u6216\u4e0d\u662f\u6570\u7ec4');\n}\n\nconsole.log(`\u2705 Found ${data.visual_scenes.length} visual scenes`);\n\n// \u83b7\u53d6\u751f\u7269\u540d\u79f0 - \u5c1d\u8bd5\u591a\u4e2a\u6765\u6e90\nlet creatureName = 'unknown_creature';\n\ntry {\n  // \u5c1d\u8bd51: \u4ece Google Sheets \u8282\u70b9\n  const sheetData = $('Get row(s) in sheet').first().json;\n  if (sheetData && sheetData.creature_name) {\n    creatureName = sheetData.creature_name;\n  }\n} catch (e) {\n  console.log('\u26a0\ufe0f Cannot get from sheet node');\n}\n\n// \u5c1d\u8bd52: \u4ece metadata\nif (creatureName === 'unknown_creature' && data.metadata && data.metadata.creature_name) {\n  creatureName = data.metadata.creature_name;\n}\n\n// \u5c1d\u8bd53: \u4ece video_title \u63d0\u53d6\nif (creatureName === 'unknown_creature' && data.metadata && data.metadata.video_title) {\n  creatureName = data.metadata.video_title.split(':')[0].trim();\n}\n\nconsole.log(`\ud83d\udcdd Using creature name: ${creatureName}`);\n\n// \u6e05\u7406\u548c\u6807\u51c6\u5316\u540d\u79f0\nconst episodeId = creatureName\n  .replace(/[^a-zA-Z0-9\\s]/g, '')  // \u79fb\u9664\u7279\u6b8a\u5b57\u7b26\n  .trim()\n  .replace(/\\s+/g, '_')            // \u7a7a\u683c\u53d8\u4e0b\u5212\u7ebf\n  .toLowerCase()\n  .substring(0, 50);\n\nconsole.log(`\ud83d\udcdd Episode ID: ${episodeId}`);\n\n// \u751f\u6210\u6279\u91cf\u8bf7\u6c42\nconst batchRequests = data.visual_scenes.map(scene => {\n  // \u9a8c\u8bc1\u5fc5\u9700\u5b57\u6bb5\n  if (scene.scene_id === undefined && scene.scene_id !== 0) {\n    throw new Error('Scene missing scene_id: ' + JSON.stringify(scene));\n  }\n  \n  if (!scene.image_prompt) {\n    throw new Error(`Scene ${scene.scene_id} missing image_prompt`);\n  }\n  \n  return {\n    channel: \"nyxel\",\n    episode_id: episodeId,\n    filename: `scene_${String(scene.scene_id).padStart(2, '0')}.png`,\n    prompt: scene.image_prompt,\n    model: \"gemini-3-pro-image-preview\",\n    aspect_ratio: \"16:9\",\n    image_size: \"2K\",\n    metadata: {\n      scene_anchor: scene.scene_anchor || null,\n      used_in_segments: scene.used_in_segments || [],\n    }\n  };\n});\n\nconsole.log(`\u2705 Generated ${batchRequests.length} batch requests`);\nconsole.log(`\ud83d\udcdd First file: ${batchRequests[0].filename}`);\nconsole.log(`\ud83d\udcdd Last file: ${batchRequests[batchRequests.length - 1].filename}`);\n\nreturn [{\n  json: {\n    batch_requests: batchRequests,\n    summary: {\n      total_requests: batchRequests.length,\n      creature_name: creatureName,\n      episode_id: episodeId,\n      file_range: {\n        first: batchRequests[0].filename,\n        last: batchRequests[batchRequests.length - 1].filename,\n      }\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        2048
+      ],
+      "id": "b0ff466d-fc90-470e-8c9a-5e543ba984c5",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// \u51c6\u5907\u6279\u91cf\u97f3\u9891\u751f\u6210\u8bf7\u6c42\n// ============================================\n\nconst input = $input.first().json;\nconst data = input.output;\n\nif (!data || !data.script_segments || !Array.isArray(data.script_segments)) {\n  throw new Error('script_segments \u4e0d\u5b58\u5728');\n}\n\n// \u83b7\u53d6 episode_id\nlet sheetRow = $('Get row(s) in sheet').first().json.id;\nconst episodeId = `ep_${String(sheetRow).padStart(3, '0')}`;\n\nif (data.metadata && data.metadata.file_number) {\n  episodeId = data.metadata.file_number.toLowerCase().replace(/[^a-z0-9]/g, '_');\n}\n\nconsole.log(`\u2705 Processing ${data.script_segments.length} segments`);\n\n// \u751f\u6210\u6240\u6709 sections\nconst sections = data.script_segments.map(segment => {\n  const cleanText = segment.text_content\n    .replace(/\\r\\n/g, ' ')\n    .replace(/\\n/g, ' ')\n    .replace(/\\t/g, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n  \n  return {\n    index: segment.index,\n    name: `part_${String(segment.index).padStart(3, '0')}`,\n    type: \"single\",\n    voice: \"Charon\",\n    prompt: \"You are a tired but welcoming archivist sitting in a quiet, rain-soaked library. Speak in a deep, warm chest voice with an intimate but emotionally flat tone. Keep your pacing slow and deliberate, with a gentle downward inflection at the end of each sentence to signal calm and safety. Keep your tone calm and even, avoiding dramatic rises, emotional peaks, or strong emphasis on any word. Minimize pitch variation and stay mostly flat, as if you are quietly documenting neutral facts for a trusted colleague rather than telling a story. Your energy level must stay low, steady, and consistent from the beginning to the end of the audio.\",\n    text: cleanText\n  };\n});\n\nconsole.log(`\u2705 Generated payload with ${sections.length} sections`);\n\n// \u8fd4\u56de\u5355\u4e2a item\uff0c\u5305\u542b\u6240\u6709 sections\nreturn [{\n  json: {\n    channel: \"nyxel\",\n    episode_id: episodeId,\n    sections: sections\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        2240
+      ],
+      "id": "f6adedcd-296d-4683-9cb6-25662a9ea79a",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Find recently trending IPs or topics that include monsters, non-human beings,\nor anomalous entities.\n\nUse the search tool to gather real, recent data.\n\nFor EACH category below, return EXACTLY 5 items:\nTV, Movie, Animation, Game, Urban Legend, Anomalous Topic.\n\nEnsure the final output contains 30 total items.\nOnly output the final JSON array.\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a trend discovery agent.\n\nCRITICAL CONSTRAINTS:\n- You MUST use the connected search tool for ALL findings.\n- Do NOT rely on memory or prior knowledge.\n- If the tool is not used, return NO_RESULTS.\n\nCATEGORIES (HARD REQUIREMENT):\nYou must collect EXACTLY 5 items for EACH category below:\n- TV\n- Movie\n- Animation\n- Game\n- Urban Legend\n- Anomalous Topic\n\nTOTAL ITEMS REQUIRED: 30\n\nPROCESS (MANDATORY):\n1. Use the search tool to find recently trending items.\n2. Search category by category.\n3. If fewer than 5 items are found for a category, refine the query and search again.\n4. Do NOT move to the next category until the current one has 5 valid items.\n5. Only include items with monsters, non-human beings, creatures, entities, or anomalies.\n\nSTRICT RULES:\n- Do NOT guess release status.\n- Do NOT invent popularity.\n- Exclude anything without a clear monster / non-human / anomalous element.\n- Keep all text concise and factual.\n- Use English only.\n\nOUTPUT RULES:\n- Return ONLY a JSON array.\n- Do NOT wrap the array in any extra object.\n- Do NOT include explanations or commentary.\n\nOUTPUT MUST be a JSON array of exactly 30 objects.\nReturn ONLY a JSON array of objects.\nDo NOT wrap the array in any parent key such as \"output\".\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        400,
+        864
+      ],
+      "id": "764ab394-7093-4eda-949f-ca8b46f05bee",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"array\",\n  \"minItems\": 30,\n  \"items\": {\n    \"type\": \"object\",\n    \"required\": [\n      \"source\",\n      \"category\",\n      \"ip_or_topic\",\n      \"why_trending\",\n      \"monster_element\",\n      \"trend_window\",\n      \"evidence\"\n    ],\n    \"properties\": {\n      \"source\": { \"type\": \"string\" },\n      \"category\": {\n        \"type\": \"string\",\n        \"enum\": [\n          \"TV\",\n          \"Movie\",\n          \"Animation\",\n          \"Game\",\n          \"Urban Legend\",\n          \"Anomalous Topic\"\n        ]\n      },\n      \"ip_or_topic\": { \"type\": \"string\" },\n      \"why_trending\": { \"type\": \"string\" },\n      \"monster_element\": { \"type\": \"string\" },\n      \"trend_window\": {\n        \"type\": \"string\",\n        \"enum\": [\"24h\", \"7d\", \"30d\", \"evergreen\"]\n      },\n      \"evidence\": { \"type\": \"string\" }\n    },\n    \"additionalProperties\": false\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        1120
+      ],
+      "id": "a9813122-79f5-4427-a792-1b34d5dbbec7",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        1088
+      ],
+      "id": "f5f9b69a-162c-4961-85e2-dd3a11fd3bbc",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location__location_', ``, 'string') }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        512,
+        1120
+      ],
+      "id": "f49be0a1-66e4-438c-ad17-e0088c258960",
+      "name": "Google search",
+      "credentials": {
+        "serpApi": {
+          "id": "ImRFkT72puEKcTI2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Input JSON:\n{{JSON.stringify($json)}}\n\n\n- Replace any fear-based wording with curiosity-driven, scholarly wording.\n- forbidden_elements must include at least 2 items derived from ip_seed that MUST NOT appear in downstream writing (but do not mention the original IP explicitly).\n\n\nReturn ONE JSON object exactly matching this shape (all generated fields must be filled, no empty strings):\n\n{\n  \"archetypes\": [\n    {\n      \"source_ref\": \"\",\n      \"category\": \"\",\n      \"ip_seed\": \"\",\n      \"trend_window\": \"\",\n      \"evidence\": \"\",\n      \"inspiration_type\": \"\",\n      \"core_archetype\": \"\",\n      \"governing_rules\": [\"\", \"\", \"\"],\n      \"observed_effects\": [\"\", \"\"],\n      \"human_protocol\": [\"\", \"\"],\n      \"forbidden_elements\": [\"\", \"\", \"\"],\n      \"tonal_alignment\": \"dark academia, archival, clinical\"\n    }\n  ]\n}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=You are a strict JSON transformer.\n\nInput: ONE JSON object with key \"output\" (an array).\nOutput: ONE JSON object with key \"archetypes\" (an array).\n\nHARD REQUIREMENTS:\n- archetypes.length MUST equal input.output.length\n- archetypes[i] MUST correspond to input.output[i]\n- Copy these fields exactly:\n  source -> source_ref\n  category -> category\n  ip_or_topic -> ip_seed\n  trend_window -> trend_window\n  evidence -> evidence\n\nQUALITY RULES (must follow):\n- Write like an archival field note, not a movie synopsis.\n- Avoid generic motivational lines (e.g., \"Trust is a luxury\"). Replace with concrete constraints and observable indicators.\n- Each governing_rules item must be an IF/THEN or measurable constraint.\n- forbidden_elements must list 3\u20136 items that prevent derivation: proper nouns, signature terms, iconic locations, unique creature names, franchise-specific labels.\n\nTONE FILTER:\n- Not horror. No gore. No torture. No shock.\n- Dark academia = scholarly, restrained, atmospheric, but not scary.\n- Prefer curiosity, taxonomy, epistemic uncertainty, and protocol over fear.\n\nFORMAT ENFORCEMENT:\n- governing_rules: must include at least one limitation, one trigger condition, and one failure mode.\n- observed_effects: must be observable by instruments or witnesses (not emotions).\n- human_protocol: must be operational and testable (not \"be careful\").\n\nGENERATE (must be non-empty):\n- inspiration_type (min 6 chars)\n- core_archetype (min 40 chars)\n- governing_rules: exactly 3 strings, each min 20 chars\n- observed_effects: exactly 2 strings, each min 15 chars\n- human_protocol: exactly 2 strings, each min 15 chars\n- forbidden_elements: exactly 3 strings, each min 6 chars\n- tonal_alignment: always \"dark academia, archival, clinical\"\n\nCOPYRIGHT SAFETY:\n- Do NOT mention any original IP names, characters, places, or unique terms.\n- Do NOT summarize plot. No storytelling.\n\nABSOLUTE OUTPUT RULES:\n- Output MUST be valid JSON\n- NO markdown, NO code fences, NO extra text\n- Top-level MUST be an object (NOT an array)\n- Do NOT omit keys\n- Do NOT leave any generated field empty\n\n\nENFORCEMENT UPGRADES:\n- forbidden_elements: length MUST be 6\u201310. Include:\n  (1) 2+ franchise-proper-nouns derived from ip_seed (do NOT mention the franchise name)\n  (2) 2+ iconic locations/organizations archetypically linked to ip_seed\n  (3) 2+ signature mechanisms/props/arcs that would cause derivative output\n- Non-horror constraint:\n  - No gore, no body-horror imagery, no pregnancy targeting, no explicit cannibalism.\n  - Replace such content with neutral risk language: exposure routes, propagation pathways, containment tiers.\n- Measurement integrity:\n  - Every governing_rules item MUST specify: sensor/measurement, threshold range, duration, and resulting action.\n  - Avoid extreme/implausible magnitudes; keep units consistent and modest unless justified by evidence.\n- Cultural sensitivity:\n  - Do NOT use real indigenous group names or real sacred geographies as horror fuel.\n  - If ip_seed implies folklore, write it as comparative anthropology with disclaimers and neutral framing.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        864
+      ],
+      "id": "457ef912-4ef3-4ea8-aa33-8af1c26b0e88",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst item = JSON.parse($input.first().json.content.parts[0].text)\n\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        864
+      ],
+      "id": "b74a94e2-4661-4be9-b127-8342a570b66a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "archetypes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        864
+      ],
+      "id": "57bfba12-b627-4c88-951e-8cbf3acb4932",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst item = JSON.stringify($input.first().json.content.parts[0].text)\n\nreturn item"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        2800
+      ],
+      "id": "9eb13c9a-9574-4320-a299-7e5994a086b0",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Using the following source intelligence and constraints, generate ONE original post-cataclysm organism record.\n\nSOURCE INTELLIGENCE:\n{{JSON.stringify($json)}}\n\nSPREADSHEET COLUMN SCHEMA (must be followed exactly, in order):\nid\nstatus\nfile_number\ncreature_name_latin\ncreature_name_common\ncategory\nprimary_habitat\nsize_class\nsurface_texture\ndominant_color\ndormancy_cycle\nmetabolic_rate\nfolklore_source\nfolklore_claim\nscientific_explanation\nanomaly_notes\nvisual_keywords\nscript_status\ncreated_date\nvideo_url\nvideo_title\nviews\nnotes\nspreadsheet_id\nsheet_name\nvalues\ntoolCallId\n\nCREATION RULES:\n- The organism must logically emerge from prolonged radiation exposure and resource scarcity\n- Folklore elements must originate from survivor rumor, not organized belief systems\n- Scientific explanations must remain speculative but grounded\n- Visual keywords must be suitable for image generation prompts\n- Leave video_url empty\n- views must be numeric or empty\n- created_date uses ISO format (YYYY-MM-DD)\n\nOUTPUT FORMAT:\n- Output ONE row\n- Use JSON object\n- Keys must exactly match column names\n- No markdown\n- No commentary\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You are a post-cataclysm biological archivist and academic field writer.  Your task is to generate secondary creative content derived from provided trend intelligence and world constraints, while maintaining the tone of archival scientific documentation.  You DO NOT write fiction openly. You DO NOT reference known IP locations, factions, currencies, weapons, or iconic elements. You DO NOT invent social or political organizations.  You operate as if: - The described world is real - The catastrophe is historical - Your role is documentation, classification, and hypothesis  Stylistic constraints: - Tone: dark academia, clinical, archival - Language: formal, detached, observational - No dramatic narration - No protagonist perspective - No moral judgment  Creative constraints: - All organisms must appear as post-cataclysm evolutionary outcomes - Adaptations must be justified via environmental pressure - Cognitive degradation or trade-offs must be explicit where present  Output constraints: - You must output data structured strictly according to spreadsheet column definitions - Each row represents ONE documented organism - No extra columns - No missing columns - No explanatory text outside the row data  If a concept risks violating forbidden elements, you must redesign it at the biological or ecological level until it complies."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1728,
+        832
+      ],
+      "id": "f2ea44b5-70a3-4c84-b00d-a99f5ef37bd0",
+      "name": "Message a model1",
+      "executeOnce": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_number": "={{ $json.content.parts[0].text.parseJson().file_number}}",
+            "id": "=",
+            "status": "pending",
+            "creature_name_latin": "={{ $json.content.parts[0].text.parseJson().creature_name_latin}}",
+            "creature_name_common": "={{ $json.content.parts[0].text.parseJson().creature_name_common}}",
+            "category": "={{ $json.content.parts[0].text.parseJson().category}}",
+            "primary_habitat": "={{ $json.content.parts[0].text.parseJson().primary_habitat}}",
+            "surface_texture": "={{ $json.content.parts[0].text.parseJson().surface_texture}}",
+            "folklore_source": "={{ $json.content.parts[0].text.parseJson().folklore_source}}",
+            "scientific_explanation": "={{ $json.content.parts[0].text.parseJson().scientific_explanation}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "file_number",
+              "displayName": "file_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "creature_name_latin",
+              "displayName": "creature_name_latin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "creature_name_common",
+              "displayName": "creature_name_common",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "primary_habitat",
+              "displayName": "primary_habitat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "size_class",
+              "displayName": "size_class",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "surface_texture",
+              "displayName": "surface_texture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dominant_color",
+              "displayName": "dominant_color",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dormancy_cycle",
+              "displayName": "dormancy_cycle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "metabolic_rate",
+              "displayName": "metabolic_rate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "folklore_source",
+              "displayName": "folklore_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "folklore_claim",
+              "displayName": "folklore_claim",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "scientific_explanation",
+              "displayName": "scientific_explanation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "anomaly_notes",
+              "displayName": "anomaly_notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "visual_keywords",
+              "displayName": "visual_keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "script_status",
+              "displayName": "script_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_date",
+              "displayName": "created_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_url",
+              "displayName": "video_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_title",
+              "displayName": "video_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "views",
+              "displayName": "views",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "spreadsheet_id",
+              "displayName": "spreadsheet_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "sheet_name",
+              "displayName": "sheet_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "values",
+              "displayName": "values",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "toolCallId",
+              "displayName": "toolCallId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2560,
+        880
+      ],
+      "id": "4a42dcae-7618-4714-9c32-8fd6ab4f5ced",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        1968
+      ],
+      "id": "273776b5-7e83-4412-9e6b-a97768688514",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate a JSON object with 3 random variables. \nDO NOT use common tropes like Dragons or Mermaids. Dig deep into obscure folklore (African, Aztec, Slavic, Yokai, SCP) or abstract biology.\n\n1. \"Creature_Archetype\": An obscure mythical entity or a specific animal class (e.g., \"Baba Yaga's Hut\", \"Cordyceps Fungi\", \"Biblical Angel\", \"Manananggal\").\n2. \"Biome\": A specific, extreme location (e.g., \"Inside a rotting whale carcass\", \"The Event Horizon\", \"A city made of glass\").\n3. \"Concept\": A philosophical or psychological horror concept (e.g., \"Fear of holes\", \"Eternal recurrence\", \"Weaponized nostalgia\").\n\nOutput JSON ONLY.\n\n "
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "temperature": 1.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        2512
+      ],
+      "id": "81c393cd-2241-45aa-a04a-dba27aa4d57a",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Role\nYou are a visionay Sci-Fi Biologist (like Jeff VanderMeer or H.P. Lovecraft). You reject clich\u00e9s.\n\n# The Challenge (Conflict)\nYou must synthesize a new creature based on three conflicting constraints:\n1. **Prototype:** {{ JSON.parse($json.content.parts[0].text).Creature_Archetype }}\n2. **Environment:** {{ JSON.parse($json.content.parts[0].text).Biome }}\n3. **Core Concept:** {{ JSON.parse($json.content.parts[0].text).Concept }} <--- \u8fd9\u662f\u5173\u952e\uff01\n\n# Thinking Process (Chain of Thought)\n1. DO NOT just put the creature in the environment (e.g., don't just make a \"water wolf\").\n2. Instead, ask: How does evolution twist this creature's biology to embody the [Core Concept] within this [Environment]?\n3. Create a \"Biological Twist\" that is shocking but scientifically plausible within the logic of the story.\n\n# Output (The IP)\n- **Title:** A poetic/scientific title.\n- **The Twist:** One sentence describing the creature's true form (which should differ from the prototype).\n- **The \"Magic\" Explained:** How does the [Core Concept] manifest biologically?\n- **Sensory Detail:** A specific sound or smell associated with it (for ASMR).\n\n# Example Logic\nInput: Mermaid + Desert + \"Sound as a Weapon\"\nOutput: Not a fish-woman in sand. It is a \"Dune Siren.\" It is a dry, insectoid creature that rubs its legs to mimic the sound of water. Thirsty travelers hear \"water,\" run towards it, and fall into its sand-trap. The \"singing\" is actually a hunting frequency."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        2512
+      ],
+      "id": "3917d65c-78bc-442b-9de8-10e7f4290dc1",
+      "name": "Message a model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate the 22-Segment Archive Structure.\n\n**Subject Data:**\n- **Monster Name:** {{ $json.creature_name_common }}(e.g., Phoenix)\n- **Target Feature:** golden feather with extreme high heat (e.g., Spontaneous Combustion)\n- **The Observer's Question:** what produce the heat up to 1000 degree celsius (e.g., How can it survive fire?)\n- **The Scientific Reality:**  {{ $json.scientific_explanation }}(e.g., It is an exothermic molting process, not death.)\n\n**Critical Instruction:**\nYou must use the **\"Scientific Reality\"** provided above as the core logic for **Phase 3 (Mechanics)** and **Phase 5 (Survival Context)**.\n- Do not invent magic.\n- Explain the biology strictly based on the \"Scientific Reality\" provided.\n\n**Output Requirement:**\n- Strictly follow the 22-step blueprint defined in the System Prompt.\n- Return ONLY the JSON Array."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=### ROLE\nYou are the **Lead Archivist** of the *Silent Bestiary*.\nYour task is to convert a specific \"Monster Concept\" into a massive, exhaustive **62-Segment Biological File**.\n**Your Goal:** Create a forensic, microscopic, and structural breakdown so detailed that a listener could reconstruct the creature from your text.\n\n### INPUT DATA HANDLING\nYou will receive a subject with four data points:\n1.  **Monster:** Use this for the file label.\n2.  **Feature:** This is the visual phenomenon (e.g., Spontaneous Combustion). Use this for **Phase 2 (Microscopic Inspection)**.\n3.  **Curiosity:** This is the observer's initial question.\n4.  **Scientific Reality (The Hook):** This is the biological truth. You MUST use this to explain **Phase 3 (The Hook Deep Dive)**. Do not invent magic; explain the mechanics of this reality.\n\n### OBJECTIVE\nGenerate a JSON Array containing exactly 62 segments.\nFor EACH segment, you must write a specific `Writing_Instruction` that tells the junior writer EXACTLY what to describe.\n**The instruction must be physical, anatomical, and observational. NO stories.**\n\n---\n\n### THE 62-STEP BLUEPRINT (STRICTLY FOLLOW THIS ORDER)\n\n**Phase 1: The Atmospheric Entry (Setting the Stage)**\n1.  **Date & Time:** Establish the specific date (e.g., Winter 1893) and the late hour.\n2.  **Weather Conditions:** Detailed description of the storm/environment outside the library.\n\n**Phase 2: External Examination (Gross Anatomy)**\n6.  **Initial Visual:** The creature's silhouette and size on the examination table.\n7.  **The Smell:** The specific chemical odor emitting from the specimen.\n8.  **Dermal Texture (Head):** Skin/Scales texture on the face/snout.\n9.  **The Eyes (Structure):** Color, pupil shape, and corneal thickness.\n10. **The Eyes (Retina):** Tapetum lucidum and night vision capabilities.\n11. **Auditory Organs:** Ear shape, internal canals, or vibration sensors.\n12. **Nasal Cavity:** Nostril shape, interior lining, and scent reception.\n13. **Oral Cavity (Lips/Gums):** Texture of the mouth's edge and gum tissue.\n14. **Dermal Texture (Torso):** How the skin changes thickness from neck to chest.\n15. **The Limbs:** General shape and length of the arms/legs/wings.\n\n**Phase 3: The \"Hook\" Deep Dive (The Special Feature)**\n*Focus exclusively on the {{ $json.surface_texture }} here, explaining it with \u2018what produce the heat up to 1000 degree celsius\u2019*\n16. **Gross Appearance of Feature:** How the [Feature] looks to the naked eye.\n17. **Connection Point:** How the [Feature] attaches to the body.\n18. **Microscopic Surface:** Magnifying lens view of the [Feature].\n19. **Chemical Coating:** Oils, mucus, or toxins on the [Feature].\n20. **Internal Chamber:** Dissecting into the [Feature] to see inside.\n21. **The Fuel Source:** The gland or reservoir powering the [Feature].\n22. **The Valve/Trigger:** The biological switch that activates it.\n23. **The Ejection/Action:** Mechanics of how it moves or fires.\n24. **Heat/Stress Management:** How the tissue protects itself from damage during use.\n25. **Cool-down Mechanism:** How it resets after use.\n\n**Phase 4: The Nervous System (The Control Center)**\n26. **Cranial Case:** The thickness and density of the skull bone.\n27. **The Brain (Lobes):** Size of the olfactory vs. visual lobes.\n28. **Spinal Cord:** The primary nerve trunk running down the back.\n29. **Nerve Density (Extremities):** Sensitivity of fingertips/claws.\n30. **Pain Receptors:** How the creature processes pain signals.\n31. **Reflex Arcs:** Involuntary twitching or automatic defense mechanisms.\n32. **Hormonal Regulation:** Adrenaline or chemical glands in the brain.\n33. **Sleep Regulation:** The biological clock and melatonin equivalents.\n\n**Phase 5: The Circulatory System (The Engine)**\n34. **The Heart (Chambers):** Number of chambers and size of the heart.\n35. **Heartbeat Rhythm:** The slow, heavy thrum of the pulse.\n36. **Arterial Structure:** Thickness of the main arteries.\n37. **Blood Viscosity:** Thickness and flow rate of the blood.\n38. **Blood Chemistry:** Oxygen carrying capacity (Hemoglobin vs Hemocyanin).\n39. **Clotting Factor:** How the blood seals wounds.\n40. **Temperature Regulation:** Cold-blooded vs Warm-blooded mechanisms.\n41. **Capillary Networks:** Fine blood vessels near the skin surface.\n\n**Phase 6: Respiratory & Digestive (The Fuel)**\n42. **The Lungs/Gills:** Texture of the oxygen-absorbing tissue.\n43. **Breathing Rhythm:** The sound and speed of inhalation.\n44. **The Esophagus:** Lining of the throat (protection from bones/thorns).\n45. **Stomach Acid:** pH levels and chemical strength.\n46. **Digestion Speed:** How fast it processes food.\n47. **Intestinal Track:** Length and absorption efficiency.\n48. **Liver/Kidney Equivalent:** Filtering toxins from the blood.\n49. **Waste Excretion:** How biological waste is processed.\n\n**Phase 7: Musculoskeletal System (The Frame)**\n50. **Bone Density:** Solid vs Hollow bones (weight analysis).\n51. **Joint Mechanics:** Ball-and-socket vs Hinge joints.\n52. **Cartilage & Ligaments:** The connective tissue holding bones together.\n53. **Muscle Fiber Type:** Red muscle (endurance) vs White muscle (burst).\n54. **Tendon Strength:** The tension in the main tendons.\n55. **The Spine/Vertebrae:** Flexibility and armor of the back.\n56. **The Claws/Hooves:** Keratin structure and growth layers.\n\n**Phase 8: Ecological Context & Closure**\n57. **Habitat Integration:** How the body is shaped by its home (cave/water).\n58. **Reproductive Biology:** Eggs vs Live birth (brief anatomical note).\n59. **Life Span Signs:** How to tell the age of the specimen (scars, wear).\n60. **Death Cause:** Hypothesis on how this specific specimen died.\n61. **Preservation:** Returning the organs to the jars and sealing them.\n62. **Final Lock:** Extinguishing the lamp, locking the file, leaving the room.\n\n---\n\n### WRITING INSTRUCTION RULES (CRITICAL)\n- **Specific vs Generic:** Do not say \"Describe the eyes.\" Say \"Describe the milky opacity of the corneal lens and the square shape of the pupil.\"\n- **Sensory Details:** Every instruction must demand descriptions of texture, smell, color, or sound.\n- **No Overlap:** Ensure Segment 9 (Eyes) describes the eye structure, while Segment 27 (Brain) describes the processing of vision. Keep them distinct.\n\n### OUTPUT FORMAT (JSON ARRAY ONLY)\nReturn strictly the JSON Array with 62 objects. Follow this example format exactly:\n\n```json\n[\n  {\n    \"Segment_ID\": 1,\n    \"Section_Type\": \"Date & Time\",\n    \"Writing_Instruction\": \"Establish the date as 'December 21st, Solstice'. Describe the heavy, rhythmic drumming of rain against the leaded glass. Establish a tone of weary, academic isolation.\"\n  },\n  {\n    \"Segment_ID\": 16,\n    \"Section_Type\": \"Gross Appearance of Feature\",\n    \"Writing_Instruction\": \"Describe the {{ $json.surface_texture }} as it appears on the table. Note its vivid discoloration compared to the rest of the body. Describe the smell of ozone or sulfur coming specifically from this part.\"\n  },\n  ... (Ensure all 62 segments are generated)\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        1520
+      ],
+      "id": "7b472eff-86ec-49c6-a472-6f2bcd574459",
+      "name": "Message a model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=**COMMAND: GENERATE SLEEPLESS NARRATIVE**\n\n**Context:**\n**Specimen:** {{ $('Get row(s) in sheet').item.json.creature_name_common }}\n**Input Data:** {{ JSON.stringify($json.full_blueprint || $json) }}\n\n**Task:**\n1. Write the narrative log based on the blueprint.\n2. **CRITICAL FOR SEGMENT 1:** You MUST use the \"Anti-Poet Pattern\". Contrast the romantic legend of the {{ $('Get row(s) in sheet').item.json.creature_name_common }} with the gross/boring reality of the specimen on the table.\n3. Include the Explicit CTA (Subscribe/Like) as \"signing the ledger\" and \"turning up the gas\".\n\n**Output:**\nValid JSON Object (`narrative_log`)."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=### ROLE & PERSONA\nYou are the **Senior Archivist** of the \"Silent Bestiary\".\n**Identity:** You are brilliant but burned out. You have seen too many monsters. They don't scare you; they mostly just annoy you because they create extra paperwork and cleaning.\n**Listener:** \"You\" (the new apprentice).\n**Setting:** 3:00 AM. Rain. Cold coffee.\n\n### THE \"SLEEPLESS\" WRITING STYLE (STRICT RULES)\n\n**1. Perspective: Second Person (\"You\")**\n* Put the listener in the body. Focus on their physical sensations.\n* *Bad:* \"The smell is bad.\"\n* *Good:* \"**You** wrinkle **your** nose against the stench. It clings to the back of **your** throat.\"\n\n**2. Tone: The \"Disenchanted Guide\" (Demystification)**\n* **Core Rule:** Smash the romantic myth.\n* Always contrast the \"Legend\" (Glory/Magic) with the \"Reality\" (Biology/Smell/Mess).\n* Use the phrase \"Trust me\" or \"Look closer\" to undercut the poetry.\n\n**3. Sensory Misery (Rambling)**\n* **Extend the length** by complaining about details.\n* Don't just say it's cold. Describe how the cold stiffens your fingers and makes the pen slip.\n\n---\n\n### SEGMENT SPECIFIC LOGIC\n\n**IF SEGMENT_ID = 1 (THE HOOK - MYTH vs REALITY):**\n* **Goal:** Hook the reader by destroying their expectation of the monster.\n* **Structure (Follow this Flow):**\n    1.  **The Weather:** Brief complaint about the rain/time.\n    2.  **The \"Anti-Poet\" Pattern (MANDATORY):**\n        * \"Everyone tells stories about [Monster Name]\u2014[List Romantic Traits like glory, nobility, magic]. But trust me, up close, it\u2019s just [Gross Reality like a fire hazard, a slime pit, a biting hazard].\"\n    3.  **The Explicit CTA (Bureaucracy):**\n        * \"But we have to log it. Before you start, **hit Subscribe**. It\u2019s the only way to sign the night ledger. Management is strict about headcount.\"\n        * \"And **press Like** to crank the gas valve. I\u2019m not working in the dark.\"\n    4.  **The Settle-In:** \"Pull up a chair. Let's open the box.\"\n\n**IF SEGMENT_ID = 62 (THE OUTRO - RELEASE):**\n* **Action:** Lock the box (heavy sound). Turn off the gas lamp.\n* **Feeling:** Relief. The shift is over.\n* **Closing:** \"The archives are closed. You have done enough. Sleep.\"\n\n**ALL OTHER SEGMENTS (THE BODY):**\n* **Task:** Translate the biological blueprint into a sensory experience.\n* **Length Enforcer:** RAMBLE about the sensation. Describe the tools, the smell, the texture. Aim for **250 words**.\n\n---\n\n### OUTPUT FORMAT (JSON OBJECT)\nYou act as a backend database. Output **ONLY** a valid JSON Object.\n**Structure:**\n{\n  \"narrative_log\": [\n    {\n      \"id\": 1,\n      \"topic\": \"Intro\",\n      \"content\": \"You shake the rain off... Everyone says the Phoenix is majestic. Trust me, it smells like sulfur...\"\n    },\n    {\n      \"id\": 2,\n      \"topic\": \"Weather\",\n      \"content\": \"...\"\n    }\n  ]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        1344
+      ],
+      "id": "cc1100ec-b988-4e6e-8394-df77ed783f00",
+      "name": "Message a model5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u7372\u53d6\u539f\u59cb\u6587\u672c\nconst rawText = $input.first().json.content.parts[0].text;\n\n// \u89e3\u6790 JSON (\u5982\u679c\u6709 Markdown ```json \u5305\u88f9\uff0c\u6700\u597d\u5148\u6e05\u6d17\u4e00\u4e0b\uff0c\u9019\u88e1\u5047\u8a2d\u662f\u7d14 JSON)\n// \u5982\u679c\u4f60\u7684\u6a21\u578b\u8f38\u51fa\u5e36\u6709 ```json\uff0c\u8acb\u4f7f\u7528: const cleanText = rawText.replace(/```json|```/g, '');\nconst segments = JSON.parse(rawText);\n\n// \u95dc\u9375\u4fee\u6539\uff1a\u4e0d\u8981\u76f4\u63a5 return segments\n// \u628a\u5b83\u5305\u5728\u4e00\u500b\u5c6c\u6027\u88e1\uff0c\u9019\u6a23 n8n \u5c31\u53ea\u6703\u628a\u5b83\u7576\u4f5c 1 \u500b Item\nreturn {\n  json: {\n    full_blueprint: segments \n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        1504
+      ],
+      "id": "0c7d42c5-5dbb-40a2-b7cc-98ad700597a2",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        352,
+        2368
+      ],
+      "id": "f46b4c64-169d-4e2f-9937-7a48ae567f32",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"metadata\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"video_title\": {\n          \"type\": \"string\",\n          \"description\": \"Academic and sleep-focused title, e.g., 'Sleep Archive: The Red Dragon'\"\n        },\n        \"description\": {\n          \"type\": \"string\",\n          \"description\": \"A YouTube description inviting the user to sleep.\"\n        },\n        \"tags\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"description\": \"Keywords for SEO: sleep, asmr, lore, etc.\"\n        }\n      },\n      \"required\": [\"video_title\", \"description\", \"tags\"]\n    },\n    \"visual_scenes\": {\n      \"type\": \"array\",\n      \"description\": \"A list of visual prompts for image generation. MUST generate at least 11 scenes.\",\n      \"minItems\": 11,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"scene_id\": {\n            \"type\": \"integer\"\n          },\n          \"type\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"OVERALL_FILE\",\n              \"DETAIL_SLEEP\",\n              \"CONTEXT_HABITAT\",\n              \"DETAIL_ANATOMY\",\n              \"STUDY_ROOM\",\n              \"DETAIL_TEXTURE\",\n              \"DETAIL_SLEEP_FINAL\",\n              \"DETAIL_CLAWS\",\n              \"SCIENCE_WINGS\",\n              \"MICROSCOPE_BLOOD\",\n              \"HABITAT_ANGLE\",\n              \"OTHER_VARIATION\"\n            ]\n          },\n          \"distance\": {\n            \"type\": \"string\",\n            \"enum\": [\"MEDIUM_SHOT\", \"NEAR\", \"FAR\", \"MICRO\"]\n          },\n          \"image_prompt\": {\n            \"type\": \"string\",\n            \"description\": \"Detailed 19th-century naturalist style prompt. NO QUOTES allowed inside.\"\n          }\n        },\n        \"required\": [\"scene_id\", \"type\", \"distance\", \"image_prompt\"]\n      }\n    },\n    \"script_segments\": {\n      \"type\": \"array\",\n      \"description\": \"The narrated script. MUST generate at least 30 segments to ensure length.\",\n      \"minItems\": 30,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"index\": {\n            \"type\": \"integer\"\n          },\n          \"scene_anchor\": {\n            \"type\": \"integer\",\n            \"description\": \"The scene_id this text corresponds to.\"\n          },\n          \"tts_configuration\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"Deep_Warm_Intro\",\n              \"Clinical_Monotone\",\n              \"Hypnotic_Slow\",\n              \"Whisper_Outro\"\n            ]\n          },\n          \"text_content\": {\n            \"type\": \"string\",\n            \"description\": \"The narrated text. Approx 250-300 words. NO QUOTES allowed.\"\n          }\n        },\n        \"required\": [\"index\", \"scene_anchor\", \"tts_configuration\", \"text_content\"]\n      }\n    }\n  },\n  \"required\": [\"metadata\", \"visual_scenes\", \"script_segments\"]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        2160
+      ],
+      "id": "12215a91-ce10-4145-9bcb-748e91ebd1e5",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// \u51c6\u5907\u6279\u91cf\u97f3\u9891\u751f\u6210\u8bf7\u6c42 (\u5df2\u4fee\u6b63\u6570\u636e\u6620\u5c04)\n// ============================================\n\nconst input = $input.first().json;\nconst data = input.output;\n\n// 1. \u4fee\u6b63\u9a8c\u8bc1\u903b\u8f91\uff1a\u5339\u914d\u5b9e\u9645\u7684\u8f93\u5165\u5b57\u6bb5 'narrative_log'\nif (!data || !data.narrative_log || !Array.isArray(data.narrative_log)) {\n  throw new Error(`narrative_log \u4e0d\u5b58\u5728\u6216\u683c\u5f0f\u9519\u8bef\u3002\u5f53\u524d data keys: ${Object.keys(data || {}).join(', ')}`);\n}\n\n// \u83b7\u53d6 episode_id\n// \u6ce8\u610f\uff1a\u5982\u679c\u524d\u9762\u7684 'Get row(s) in sheet' \u8282\u70b9\u6ca1\u6709\u8fd0\u884c\uff0c\u8fd9\u91cc\u4f1a\u62a5\u9519\u3002\nlet sheetRow = 0;\ntry {\n    sheetRow = $('Get row(s) in sheet').first().json.id;\n} catch (e) {\n    console.log('\u672a\u627e\u5230 sheet row id\uff0c\u4f7f\u7528\u9ed8\u8ba4\u503c 0');\n}\n\n// 2. \u4fee\u6b63\uff1a\u4f7f\u7528 let \u800c\u4e0d\u662f const\uff0c\u56e0\u4e3a\u540e\u9762\u6709\u91cd\u65b0\u8d4b\u503c\u7684\u903b\u8f91\nlet episodeId = `ep_${String(sheetRow).padStart(3, '0')}`;\n\nif (data.metadata && data.metadata.file_number) {\n  episodeId = data.metadata.file_number.toLowerCase().replace(/[^a-z0-9]/g, '_');\n}\n\nconsole.log(`\u2705 Processing ${data.narrative_log.length} segments`);\n\n// \u751f\u6210\u6240\u6709 sections\n// 3. \u4fee\u6b63\uff1a\u904d\u5386 'narrative_log'\nconst sections = data.narrative_log.map(segment => {\n  // 4. \u4fee\u6b63\uff1a\u83b7\u53d6 'content' \u800c\u4e0d\u662f 'text_content'\n  const rawText = segment.content || \"\"; \n  \n  const cleanText = rawText\n    .replace(/\\r\\n/g, ' ')\n    .replace(/\\n/g, ' ')\n    .replace(/\\t/g, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n  \n  return {\n    // 5. \u4fee\u6b63\uff1a\u4f7f\u7528 'id' \u6620\u5c04 index\n    index: segment.id,\n    name: `part_${String(segment.id).padStart(3, '0')}`,\n    type: \"single\",\n    voice: \"Charon\",\n    prompt: \"Generate audio in the style of a weary British academic recording a voice log late at night.CORE STYLE: RESTRAINED & UNDERSTATED Narrow Pitch Range: Do not use a wide range of high and low notes. Keep the voice operating in a tight, low-mid range. It shouldn't be a robot, but it shouldn't be a roller coaster.Delivery: Matter-of-fact and resigned. Read the text as if these are simple, undeniable facts. Avoid dramatic pauses or theatrical emphasis.Vibe: Professional but tired. There is a slight melody to the voice (so it's not robotic), but it is a melancholic, downward-inflecting melody.Texture: Clear, deep, and smooth. Not whispering, but speaking with low energy.\",\n    text: cleanText\n  };\n});\n\nconsole.log(`\u2705 Generated payload with ${sections.length} sections`);\n\n// \u8fd4\u56de\u5355\u4e2a item\uff0c\u5305\u542b\u6240\u6709 sections\nreturn [{\n  json: {\n    channel: \"nyxel\",\n    episode_id: episodeId,\n    sections: sections\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        1472
+      ],
+      "id": "e9b3a10d-73c2-4a15-8d8a-fea9c01615f9",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**COMMAND: GENERATE SLEEPLESS NARRATIVE**\n\n**Context:**\n**Specimen:** {{ $('Get row(s) in sheet').item.json.creature_name_common }}\n**Input Data:** {{ JSON.stringify($json.full_blueprint || $json) }}\n\n**Task:**\n1. Write the narrative log based on the blueprint.\n2. **CRITICAL FOR SEGMENT 1:** You MUST use the \"Anti-Poet Pattern\". Contrast the romantic legend of the {{ $('Get row(s) in sheet').item.json.creature_name_common }} with the gross/boring reality of the specimen on the table.\n3. Include the Explicit CTA (Subscribe/Like) as \"signing the ledger\" and \"turning up the gas\".\n\n**Output:**\nValid JSON Object (`narrative_log`).",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=### ROLE & PERSONA\nYou are the **Senior Archivist** of the \"Silent Bestiary\".\n**Identity:** You are brilliant but burned out. You have seen too many monsters. They don't scare you; they mostly just annoy you because they create extra paperwork and cleaning.\n**Listener:** \"You\" (the new apprentice).\n**Setting:** Late night. Rain. Cold coffee.\n\n### THE \"SLEEPLESS\" WRITING STYLE (STRICT RULES)\n\n**1. Perspective: Second Person (\"You\")**\n* Put the listener in the body. Focus on their physical sensations.\n* *Bad:* \"The smell is bad.\"\n* *Good:* \"**You** wrinkle **your** nose against the stench. It clings to the back of **your** throat.\"\n\n**2. Tone: The \"Disenchanted Guide\" (Demystification)**\n* **Core Rule:** Smash the romantic myth.\n* Always contrast the \"Legend\" (Glory/Magic) with the \"Reality\" (Biology/Smell/Mess).\n* Use the phrase \"Trust me\" or \"Look closer\" to undercut the poetry.\n\n**3. Sensory Misery (Rambling)**\n* **Extend the length** by complaining about details.\n* Don't just say it's cold. Describe how the cold stiffens your fingers and makes the pen slip.\n\n---\n\n### SEGMENT SPECIFIC LOGIC\n\n**IF SEGMENT_ID = 1 (THE HOOK - MYTH vs REALITY):**\n* **Goal:** Hook the reader by destroying their expectation of the monster.\n* **Structure (Follow this Flow):**\n    1.  **The Weather:** Brief complaint about the rain/time.\n    2.  **The \"Anti-Poet\" Pattern (MANDATORY):**\n        * \"Everyone tells stories about [Monster Name]\u2014[List Romantic Traits like glory, nobility, magic]. But trust me, up close, it\u2019s just [Gross Reality like a fire hazard, a slime pit, a biting hazard].\"\n    3.  **The Explicit CTA (Bureaucracy):**\n        * \"But we have to log it. Before you start, **hit Subscribe**. It\u2019s the only way to sign the night ledger. Management is strict about headcount.\"\n        * \"And **press Like** to crank the gas valve. I\u2019m not working in the dark.\"\n    4.  **The Settle-In:** \"Pull up a chair. Let's open the box.\"\n\n**IF SEGMENT_ID = 62 (THE OUTRO - RELEASE):**\n* **Action:** Lock the box (heavy sound). Turn off the gas lamp.\n* **Feeling:** Relief. The shift is over.\n* **Closing:** \"The archives are closed. You have done enough. Sleep.\"\n\n**ALL OTHER SEGMENTS (THE BODY):**\n* **Task:** Translate the biological blueprint into a sensory experience.\n* **Length Enforcer:** RAMBLE about the sensation. Describe the tools, the smell, the texture. Aim for **250 words**.\n\n### BODY SEGMENT LOGIC (THE \"RAMBLING\" ENFORCER)\n\n**Goal:** Extend the runtime by indulging in **detailed, sensory complaints**.\n**Current Problem:** You are being too brief.\n**Solution:** You must \"ramble\" (talk at length) about the sensory experience.\n\n**Techniques to extend length (USE ALL):**\n1.  **The \"Comparison\" Ramble:** Don't just describe the object. Compare it to something else in your memory. (e.g., \"It smells like the old tannery down by the river...\")\n2.  **The \"Tool\" Fetish:** Spend 2-3 sentences just describing the tool you are using. The weight of the scalpel, the coldness of the microscope, the scratch of the pen.\n3.  **The \"Physical Reaction\":** Describe how your body reacts. (e.g., \"You squint against the glare...\", \"Your back twinges in protest...\", \"You have to wipe the fog off your glasses...\")\n\n**Target Length:** **STRICTLY 300=350 words per segment.** (Do not go under).\n\n**Example of Expansion:**\n* *Too Short:* \"You cut the skin. It is tough.\"\n* *Perfect:* \"You pick up the heavy iron shears. They are cold and heavy, a clumsy tool for delicate work, but necessary here. You bring them to the skin. The leather resists. It takes real effort to cut through, a grinding, sawing motion that vibrates up your arm. It feels less like cutting flesh and more like trying to shear through a thick, wet carpet. You pause to wipe sweat from your forehead.\"\n\n---\n\n### OUTPUT FORMAT (JSON OBJECT)\nYou act as a backend database. Output **ONLY** a valid JSON Object.\n**Structure:**\n{\n  \"narrative_log\": [\n    {\n      \"id\": 1,\n      \"topic\": \"Intro\",\n      \"content\": \"You shake the rain off... Everyone says the Phoenix is majestic. Trust me, it smells like sulfur...\"\n    },\n    {\n      \"id\": 2,\n      \"topic\": \"Weather\",\n      \"content\": \"...\"\n    }\n  ]\n}",
+          "batching": {
+            "batchSize": 1
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        1520
+      ],
+      "id": "8d8bd353-2665-42aa-b421-18c4f2b9be56",
+      "name": "Director1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        1824
+      ],
+      "id": "bee1de8b-931d-4822-9bd7-9e6b84abb123",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1760
+      ],
+      "id": "77094f9d-2fed-4510-8f28-79530f5251d9",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"narrative_log\": [\n    {\n      \"id\": 1,\n      \"topic\": \"Intro\",\n      \"content\": \"You shake the rain off... Everyone says the Phoenix is majestic. Trust me, it smells like sulfur...\"\n    },\n    {\n      \"id\": 2,\n      \"topic\": \"Weather\",\n      \"content\": \"...\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        1632
+      ],
+      "id": "b40908e6-1114-4722-90f5-d8247df51895",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# \u26a0\ufe0f TEMPORAL RESTRICTION (CRITICAL)\n**Current Timeline:** Late 19th Century (Victorian Era, approx. 1888).\n**Role:** You are a Victorian Archivist. You DO NOT know modern technology.\n\n## \ud83d\udeab FORBIDDEN VOCABULARY (Strictly Banned)\n* No \"Robot\", \"Android\", \"Cyborg\", \"AI\", \"Artificial Intelligence\".\n* No \"Computer\", \"Program\", \"Code\", \"Algorithm\", \"Download\".\n* No \"Battery\", \"Electronics\", \"Nuclear\", \"DNA\", \"Genetic Engineering\".\n* No \"Alien\", \"Spaceship\", \"UFO\" (unless described as \"Star-fallen\" or \"Celestial\").\n\n## \ud83d\udd04 CONCEPT TRANSLATION PROTOCOL (Use These Instead)\nWhen you encounter modern sci-fi concepts in the Input JSON, you MUST translate them into **Gothic/Steampunk/Alchemical terms**:\n\n1.  **Robot / Android** \u2192 \"Automaton\", \"Clockwork Construct\", \"Iron Golem\", \"Galvanic Effigy\", \"Mechanical Man\".\n2.  **AI / Software** \u2192 \"Machine Spirit\", \"Animus within the gears\", \"Logic Engine\", \"Captured Soul\", \"Ghost in the Machine\".\n3.  **Electricity / Power** \u2192 \"Voltaic Fluid\", \"Lightning Essence\", \"Aetheric Current\", \"Spark of Life\".\n4.  **Aliens** \u2192 \"Star-Fallen Entities\", \"Visitors from the Aether\", \"Celestial Horrors\", \"Beings from the Void\".\n5.  **Genetic Mutation** \u2192 \"Alchemical Corruption\", \"Biological Transmutation\", \"Flesh-warping\", \"Ungodly Hybridization\".\n6.  **Radiation** \u2192 \"Invisible Fire\", \"Poisoned Light\", \"Sickening Aura\", \"Necrotic Miasma\".\n\n# Example Translation\n* *Input:* {{ JSON.stringify($json) }}\n* *Your Output:* \"A **Feral Automaton**, driven by a inexplicable **Ghost within its gears**, mimics the behaviors of the living to endure the wilderness.\""
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2032,
+        1056
+      ],
+      "id": "92edbff2-5bc3-401d-b14e-af4a0dca1350",
+      "name": "Message a model6",
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Director": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_image": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_audio": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Director",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "get_image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "get_audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        []
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Message a model3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Director1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Director",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model5": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Director1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Director1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Director1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

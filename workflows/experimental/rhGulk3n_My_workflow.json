@@ -1,0 +1,32 @@
+{
+  "id": "rhGulk3nTK254Z1J",
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": " 632466753",
+        "text": "ERROR ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        0
+      ],
+      "id": "6e6b526f-0bc5-4d78-b2d1-f11c95b3e994",
+      "name": "Send a text message",
+      "webhookId": "ce1eb5ba-781f-4352-81f1-8869e9845b7b",
+      "credentials": {
+        "telegramApi": {
+          "id": "zJ0hh2kPPRpB2LtE",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

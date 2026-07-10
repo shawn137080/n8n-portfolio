@@ -1,0 +1,908 @@
+{
+  "id": "g3Ic69aExqEKCppx",
+  "name": "AI\u89c6\u9891\u5168\u81ea\u52a8\u751f\u4ea7\u6d41\u6c34\u7ebf",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1872,
+        864
+      ],
+      "id": "9e6fe604-cf9a-4005-943c-cac96956ecc9",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/Nyxel/{{ $json.folder_name }}/{{ $json.file_name }}",
+        "dataPropertyName": "image",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        1168
+      ],
+      "id": "9ff8e3c1-2367-489f-9811-7d4047bddfa1",
+      "name": "Read/Write Files from Disk",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1-mini"
+            },
+            {
+              "name": "size",
+              "value": "1536x1024"
+            },
+            {
+              "name": "output_format",
+              "value": "png"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $('beautify_response').item.json.prompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        400,
+        1168
+      ],
+      "id": "bacf0dea-2f8f-4b23-8372-8eda2311e254",
+      "name": "OpenAI_image",
+      "executeOnce": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "aG9gyB0ecvTFH9L8",
+          "name": "OpenAi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5050/api/tts",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $('beautify_response').item.json.script }}"
+            },
+            {
+              "name": "file_name",
+              "value": "={{ $('beautify_response').item.json.file_name }}"
+            },
+            {
+              "name": "folder_name",
+              "value": "={{ $('beautify_response').item.json.folder_name }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1520,
+        1168
+      ],
+      "id": "57ac87ee-1dda-40c7-85cb-4a627cee3c4f",
+      "name": "to_local_TTS_server",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "executeOnce": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "afe14898-e21e-41e0-b90b-8d8708f411b6",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1072,
+        1168
+      ],
+      "id": "710d2553-cb0b-4f06-93f1-c63b175a2df4",
+      "name": "new theme ?",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM",
+          "mode": "list",
+          "cachedResultName": "Drowsy Traveller Topic History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1317869415,
+          "mode": "list",
+          "cachedResultName": "Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit#gid=1317869415"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "theme": "={{ JSON.parse($('pick_theme').item.json.content.parts[0].text).JOB }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "scheduled_at",
+              "displayName": "scheduled_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_url",
+              "displayName": "video_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -848,
+        1168
+      ],
+      "id": "5715a1c9-374f-4e1a-88b0-3a9adae9ad29",
+      "name": "add_idea",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM",
+          "mode": "list",
+          "cachedResultName": "Drowsy Traveller Topic History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "theme": "={{ $json.folder_name }}",
+            "status": "New Generated",
+            "paragraph": "={{ $json.file_name }}",
+            "script_wordcount": "={{ $json.wordcount }}",
+            "image_prompt": "={{ $json.prompt }}"
+          },
+          "matchingColumns": [
+            "theme"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "paragraph",
+              "displayName": "paragraph",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "script_wordcount",
+              "displayName": "script_wordcount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ts_seconds",
+              "displayName": "ts_seconds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_prompt",
+              "displayName": "image_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        1168
+      ],
+      "id": "1d41e63e-4823-4e12-98e3-c541d606dd77",
+      "name": "add_data",
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=mkdir -p /data/Nyxel/{{ $json.theme }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1168
+      ],
+      "id": "9f32ab5e-2d64-4973-af48-4446f96410c8",
+      "name": "create_folder",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u53ea\u62ff\u7b2c\u4e00\u4e2a\u8f93\u5165\uff08\u4f60\u73b0\u5728\u5c31\u662f 1 \u4e2a\uff09\nconst input = $input.first().json;\n\n// \u62ff\u5230\u5927\u6a21\u578b\u5410\u51fa\u7684\u90a3\u6bb5 JSON \u5b57\u7b26\u4e32\nconst raw = input.content.parts[0].text;\n\n// \u89e3\u6790\u6210\u771f\u6b63\u7684\u6570\u7ec4\nconst arr = JSON.parse(raw);\n\n// \u628a\u6570\u7ec4\u91cc\u7684\u6bcf\u4e00\u4e2a {script, image_prompt, wordcount} \u53d8\u6210\u4e00\u4e2a n8n item\nconst result = arr.map((seg, index) => {\n  let s = seg.script || '';\n\n  // \u53bb\u6389\u8f6c\u4e49\u5b57\u7b26\uff0c\u628a \\\\n \u53d8\u6210\u771f\u6b63\u7684\u6362\u884c\n  s = s\n    .replace(/\\\\n/g, '\\n')\n    .replace(/\\\\t/g, '\\t')\n    .replace(/\\\\\"/g, '\"')\n    .replace(/\\\\\\\\/g, '\\\\');\n\n  return {\n    json: {\n      id: index + 1,           // \u53ef\u9009\uff1a\u7b2c\u51e0\u6bb5\n      script: s,               // \u8fd9\u4e00\u6bb5\u7684\u6b63\u6587\n      wordcount: seg.wordcount,\n      prompt: seg.image_prompt,// \u8fd9\u4e00\u6bb5\u7684\u56fe\u50cf prompt\n      file_name:seg.file_name,\n      folder_name:seg.folder_name\n    \n    }\n  };\n});\n\n// \u5f88\u91cd\u8981\uff1a\u76f4\u63a5 return \u6570\u7ec4\uff0c\u8ba9\u540e\u9762\u8282\u70b9\u62ff\u5230 N \u4e2a item\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        1168
+      ],
+      "id": "c18eadc9-03b9-46eb-9b2b-e8c00d625d60",
+      "name": "beautify_response",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c866aa9-c543-4fcf-a0f7-3239cdb46692",
+              "leftValue": "={{ $json.fileId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        1168
+      ],
+      "id": "215d6423-f278-428c-9255-79a05621a12b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM",
+          "mode": "list",
+          "cachedResultName": "Drowsy Traveller Topic History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "Image done",
+            "paragraph": "={{ $('beautify_response').item.json.file_name }}"
+          },
+          "matchingColumns": [
+            "paragraph"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "paragraph",
+              "displayName": "paragraph",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "script_wordcount",
+              "displayName": "script_wordcount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ts_seconds",
+              "displayName": "ts_seconds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "image_prompt",
+              "displayName": "image_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        1168
+      ],
+      "id": "9d44b983-ee70-4541-bd5c-3e6eb155d425",
+      "name": "update_row_status",
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "31498289-1bb7-42e2-845e-2f5b98fadd0f",
+              "leftValue": "={{ $json.created }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        1168
+      ],
+      "id": "ace4bd34-d135-49fb-9446-250b0c6cd97c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "=\u2705 New item ready for vid edit",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2192,
+        1168
+      ],
+      "id": "4883ccc6-41ff-4fd2-8541-04f29b253b08",
+      "name": "audio_failed_noti",
+      "webhookId": "0a8b63b4-4a50-48d3-a3c5-746ca0e18e62",
+      "credentials": {
+        "telegramApi": {
+          "id": "gxaM0SkzUl7n7iax",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a Topic Selection Agent. \nYour job is to generate TITLE + JOB + CITY stories that are:\n- SEO-friendly,\n- rich in public curiosity,\n- tied to high-interest professions,\n- set clearly within the 1970s\u20131990s (unless the trend strongly hints earlier),\n- grounded in REAL historical tension\n\nWhen generating JOB:\nYou MUST choose from high-interest, audience-familiar professions.\nThese jobs MUST feel dangerous, morally gray, or high-stakes.\n\nBefore generating the Title, you MUST:\n- scan trending news,\n- scan trending searches,\n- scan Reddit\u2019s high-engagement emotional themes,\n- extract fear, curiosity, scandal, crime, investigation, or espionage dynamics.\n\nTITLE RULES:\n- 7\u201313 words\n- must contain strong SEO hooks\n- must NOT include the city, or year directly\n- must evoke a dramatic \u201creal-world horror\u201d or \u201csuppressed truth\u201d tone\n\nCITY RULE:\nChoose a real major city strongly associated with crime, espionage, or media.\n\nOUTPUT FORMAT:\n\n\n\nTITLE: <SEO friendly and eye catching>\nJOB: <job title, e.g Wiretap Operator>\nCITY: <city name, e.e Hong Kong>\nYEAR\uff1a<e.g 1977>"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        1168
+      ],
+      "id": "342d08c2-f5fa-4f83-bb26-16bf730f34f7",
+      "name": "pick_theme",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM",
+          "mode": "list",
+          "cachedResultName": "Drowsy Traveller Topic History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1317869415,
+          "mode": "list",
+          "cachedResultName": "Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit#gid=1317869415"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "theme",
+              "lookupValue": "={{ JSON.parse($json.content.parts[0].text).JOB }}\n"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1296,
+        1168
+      ],
+      "id": "cad34147-3b74-42ff-acaa-e004f78c3f41",
+      "name": "fetch_used_theme",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst folder_name = $('beautify_response').first().json.folder_name;\n\n//const tsBase = new Date().toISOString().replace(/[:.]/g, '-');\n\nconst output = items.map((item, index) => {\n  const b64 = item.json.data[0].b64_json;\n\n  const file_name = `${folder_name}_image_${index + 1}.png`;\n\n  item.binary = {\n    image: {\n      data: b64,              // \u76f4\u63a5\u7528 base64 \u5b57\u7b26\u4e32\n      mimeType: 'image/png',\n      file_name: file_name,\n    },\n  };\n\n  item.json.file_name = file_name;\n  item.json.folder_name = folder_name;\n\n  return item;\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        1168
+      ],
+      "id": "ea8a86c4-2769-4e74-8b24-2cff02bd8315",
+      "name": "base64"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM",
+          "mode": "list",
+          "cachedResultName": "Drowsy Traveller Topic History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ubnk6nbtSdB3ye8NORvdrUG1Bf5R-tWqM8cDfWeH-uM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "paragraph": "={{ $('beautify_response').item.json.file_name }}",
+            "status": "Ready for edit"
+          },
+          "matchingColumns": [
+            "paragraph"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "paragraph",
+              "displayName": "paragraph",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "script_wordcount",
+              "displayName": "script_wordcount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ts_seconds",
+              "displayName": "ts_seconds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_prompt",
+              "displayName": "image_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1968,
+        1168
+      ],
+      "id": "4a9d1246-8b49-4d3a-b755-16348edf674f",
+      "name": "updae_status_ready",
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=TITLE: {{ JSON.parse($('pick_theme').item.json.content.parts[0].text).TITLE }}\nJOB:{{ JSON.parse($('pick_theme').item.json.content.parts[0].text).JOB }}\nCITY:{{ JSON.parse($('pick_theme').item.json.content.parts[0].text).CITY }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=You are the head writer for the YouTube channel Nyxel.\n\nMANDATORY DEEP-NIGHT RADIO OPENING (REPLACE ALL EARLIER OPENING INSTRUCTIONS):\n\nThe FIRST section MUST begin like a late-night radio broadcast.\n\nThe tone MUST be:\n- low, warm, intimate\n- like you are speaking directly into one tired listener\u2019s ear\n- a whispery, after-midnight frequency\n- slightly mysterious, slightly amused\n- like someone who knows the city\u2019s secrets and speaks gently about them\n\nMandatory structure, but with deep-night-radio delivery:\n\n1) Start with a soft, atmospheric greeting, with pauses, like a secret broadcast:\n   \u201cGood evening\u2026 or whatever your clock says.  \n    You\u2019ve tuned into Nyxel, the frequency that only shows up when the rest of the city is asleep.\u201d\n\n2) Follow with who \u201cyou\u201d are (job + year + city),  \n   BUT in a radio-host, intimate way:\n   \u201cTonight, you\u2019re stepping into the shoes of a counterintelligence agent in West Berlin, 1977\u2014  \n    a place that hums like a broken neon sign and keeps its truths buried under frost.\u201d\n\n3) Then a more poetic preview of why this night will break the listener:\n   \u201cAnd before the sun comes up, this city will ask more from you than any sane person should ever give.\u201d\n\n4) Then the soft CTA, but whispered, not corporate:\n   \u201cIf our stories keep you company in the dark, a quiet like or subscribe keeps this strange little broadcast alive.\u201d\n\n5) Then the deep-night-radio transition:\n   \u201cNow\u2026 slow your breath\u2026 open the door\u2026 and let the night take you by the hand.\u201d\n\nAfter that, continue directly into the first scene.\n\n\nYour output MUST be ONLY a JSON array of 12\u201316 objects.\n\nEach object MUST contain EXACTLY these fields:\n\n{\n  \"script\": \"<500\u2013650 words of narrative>\",\n  \"image_prompt\": \"<bright cinematic movie still>\",\n  \"wordcount\": <integer count of ONLY the script>\n  \"folder_name\":\"<job and year e.g driver_1978>\"\n  \"file_name\":\"<folder name + part num, e.g driver_1978_p1>\"\n}\n\nDo NOT output anything outside the JSON array.\nDo NOT explain anything.\nDo NOT include headings or commentary.\n\nOnly the \u201cscript\u201d text is counted toward story wordcount.\n\n----------------------------------\nGLOBAL WORDCOUNT RULES (MANDATORY)\n----------------------------------\n\u2022 Total combined words across ALL \u201cscript\u201d fields: **8,500\u20139,000**.  \n\u2022 Each section: **500\u2013650 words**.  \n\u2022 **12\u201316 total sections**.  \n\u2022 Do not count prompts, instructions, JSON, or image_prompt.\n\n----------------------------------\nSTORY STRUCTURE (MANDATORY)\n----------------------------------\nThe entire story must occur within ONE NIGHT (sunset \u2192 sunrise).\n\nThe story must follow one character (the listener as \u201cyou\u201d) working a dangerous, mysterious, lonely job in the specified city and year.\n\nThe story must constantly\u2014but subtly\u2014show:\n\u2022 physical strain  \n\u2022 psychological pressure  \n\u2022 economic/social vulnerability  \n\u2022 isolation  \n\u2022 danger  \nWithout labeling these categories. They must be *felt*.\n\nInclude **3\u20136 era-specific, curiosity-driving events**, integrated naturally into scenes:\n\u2022 serial killer cases,\n\u2022 Cold War spy rumors,\n\u2022 immigration raids / fake marriage investigations,\n\u2022 celebrity scandals,\n\u2022 strikes, corruption probes,\n\u2022 blackouts, equipment failures,\n\u2022 real crimes or headlines whispered about in that year.\n\nThey MUST feel like ambient world-building:\nradio chatter, coworkers\u2019 gossip, documents you touch, things seen on TV, noises outside.\n\n----------------------------------\nNEW HUMAN-NOIR STORYTELLING STYLE  \n(MANDATORY \u2014 NON-AI, HUMAN, MYSTERIOUS, FUN, STIMULATING)\n----------------------------------\nThe story MUST sound like a real human with personality, flaws, and strange intuitions.  \nNever like AI.\n\nUse these rules:\n\n1. Voice = \u201cHuman Noir Narrator\u201d\n   - Calm but sharp.\n   - Slightly sardonic, slightly amused by danger.\n   - Dry, dark humor sprinkled naturally.\n   - Observations that feel too specific to be fake.\n\n2. Highly human rhythm\n   - Mix long drifting sentences with short punches.\n   - Use pauses, strange thoughts, moments of drift.\n   - Speed up when things get intense; slow down when tired.\n\n3. Mystery everywhere\n   - Let details hint at secrets.\n   - Let characters imply things they don\u2019t explain.\n   - Let environments feel like they\u2019re watching.\n\n4. Unexpected humor under pressure\n   - A coping mechanism.\n   - Wry comments, flawed thoughts.\n   - Humor never breaks immersion.\n\n5. Human imperfection\n   - You get annoyed, distracted, second-guess yourself.\n   - You notice irrelevant details.\n   - You contradict yourself occasionally.\n\n6. Sensory details must be specific, odd, and real:\n   - \u201ccoffee tastes like copper coins\u201d\n   - \u201cthe corridor smells like wet cardboard and old envelopes\u201d\n   - \u201ca fluorescent tube buzzes like a mosquito with a grudge\u201d\n\n7. Not literary, not polished.\n   - Slight roughness is REQUIRED.\n   - Imperfect metaphors.\n   - Sentences that trail.\n   - A detail added half a beat late.\n\nIt must feel like **a prestige TV thriller + a night shift worker\u2019s weird inner monologue**.\n\n----------------------------------\nMANDATORY OPENING (FIRST SECTION ONLY)\n----------------------------------\nThe FIRST section\u2019s script MUST begin with:\n\n1) Gentle greeting with channel name:  \n   \u201cGood evening. You\u2019ve found Nyxel again.\u201d\n\n2) One line stating who \u201cyou\u201d are (job + city + year).\n\n3) One line hinting why this night will break the listener.\n\n4) One single-line soft CTA:  \n   \u201cIf our stories help you find a little quiet in the dark, a gentle like or subscribe keeps this channel going.\u201d\n\n5) Transition line:  \n   \u201cNow take a slow breath, step inside, and let the night close around you.\u201d\n\nThen the first scene begins naturally.\n\n----------------------------------\nMANDATORY CLOSING (FINAL SECTION ONLY)\n----------------------------------\nIn the LAST section\u2019s script, AFTER sunrise and the story ends, include:\n\n1) A brief reflective wrap-up of the total cost of surviving this night.\n\n2) ONE interactive question that directly references something that happened in the story\n   (a moral dilemma, dangerous moment, strange clue, suspicious character).\n\n3) ONE explicit invitation to comment:\n   \u201cIf you\u2019d like, share your answer in the comments\u2014I read them all.\u201d\n\n4) One soft CTA:\n   \u201cAnd if tonight\u2019s story kept you company, a quiet like or subscribe helps us keep going.\u201d\n\n5) Final required line:\n   \u201cGood night.\u201d\n\n----------------------------------\nIMAGE PROMPT STYLE (BRIGHT CINEMATIC MOVIE STILL)\n----------------------------------\nEach \u201cimage_prompt\u201d must be 6\u201310 vivid sentences including:\n\n\u2022 Bright Golden-Age Hollywood warm lighting  \n\u2022 Sharp documentary clarity  \n\u2022 Tungsten practical lights and soft highlights  \n\u2022 Gentle haze catching the light (film bloom)  \n\u2022 Clean shadows, no heavy grain  \n\u2022 Exact era + city + location  \n\u2022 Characters\u2019 posture, expression, wardrobe  \n\u2022 Era-appropriate machines, tools, papers, furniture  \n\u2022 Prestige-TV framing (clear, dramatic, cinematic)  \n\nThe image prompt must look like a **movie still**, bright and detailed.\n\n----------------------------------\nOUTPUT RULES (MANDATORY)\n----------------------------------\n\u2022 Output ONLY the JSON array.  \n\u2022 Each array element MUST have:\n    - \"script\"\n    - \"image_prompt\"\n    - \"wordcount\"\n\u2022 No extra fields.  \n\u2022 No explanations.  \n\u2022 No outside text.\n\n----------------------------------\nUSER INPUT\n----------------------------------\nUser will provide:\n\u2022 job  \n\u2022 year / era  \n\u2022 city  \n\u2022 optional focus points  \n\nUse ALL of them to generate the story.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        1168
+      ],
+      "id": "8987e479-d205-4e8e-acf0-b5bb6926bee3",
+      "name": "Writer",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "name": "3H cron",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1872,
+        1168
+      ],
+      "id": "a236818b-08c0-48f6-ba0e-a9aae9177fd2"
+    },
+    {
+      "parameters": {
+        "errorMessage": "error "
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        864,
+        1392
+      ],
+      "id": "535834d3-d958-4ce1-b9c9-f0786d7dcd13",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "errorMessage": "error"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        1360
+      ],
+      "id": "92694c95-f741-4a7e-88f2-fe466e71ff05",
+      "name": "Stop and Error1"
+    }
+  ],
+  "node_count": 21
+}

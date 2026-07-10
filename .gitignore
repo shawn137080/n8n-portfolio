@@ -1,0 +1,22 @@
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Secrets (never commit)
+.env
+.env.local
+credentials.json
+token.json
+
+# Large data files
+*.csv
+*.xlsx
+output/
+data/

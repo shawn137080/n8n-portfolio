@@ -1,0 +1,544 @@
+{
+  "id": "j0WnFv0YLtnIuVHD",
+  "name": "NP \u2014 Combined Order + Payment Match",
+  "nodes": [
+    {
+      "id": "8bee6c15-cadb-439d-9ab4-934f24a59cb8",
+      "name": "Gmail Trigger \u2014 Order",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "event": "messageReceived",
+        "simple": false,
+        "maxResults": 20,
+        "filters": {
+          "q": "(subject:(print OR printing OR order) OR from:(customers.gmail.com OR mailbox.org)) newer_than:1d",
+          "readStatus": "unread"
+        },
+        "credentials": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "id": "7e596b7b-de0c-4a04-b0df-ae337c886aa4",
+      "name": "Parse Order",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const item = $input.item.json;\nconst text = (item.text || item.snippet || '').replace(/\\r?\\n/g, ' ').replace(/\\s+/g, ' ');\nconst subject = item.subject || '';\nconst combined = subject + ' ' + text;\nconst codeMatch = combined.match(/(?:validation code|\u9a57\u8b49\u78bc|\u9a57\u8b49|code)[\\s:\uff1a]*([A-Za-z0-9][A-Za-z0-9\\-]{2,20})/i);\nconst amountMatch = combined.match(/(?:estimated total|total|\u91d1\u984d|\u5e94\u4ed8)[\\s:\uff1a]*\\$?\\s?([0-9]+(?:\\.[0-9]{1,2})?)/i);\nconst nameMatch = combined.match(/(?:pickup name|name|\u59d3\u540d|\u540d\u7a31|\u53d6\u8ca8\u4eba)[\\s:\uff1a]+([A-Za-z\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff .\\-]{0,40}?)(?:[\\s,\uff0c.\u3002]|preferred|total|pickup|validation|estimated|$)/i);\nconst pickupMatch = combined.match(/(?:preferred pickup time|pickup time|pickup|\u53d6\u8ca8|\u53d6\u4ef6)[\\s:\uff1a]+([0-9]{1,2}:[0-9]{2}\\s*(?:AM|PM|am|pm)?\\s*[0-9]{0,2}\\/[0-9]{1,2}\\/[0-9]{2,4}|[0-9]{1,2}:[0-9]{2}\\s*(?:AM|PM|am|pm)|[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{2,4}|[0-9]{4}\\-[0-9]{1,2}\\-[0-9]{1,2})/i);\nconst code = codeMatch ? codeMatch[1].trim() : null;\nif (!code) { return null; }\nreturn { json: { code: code, name: nameMatch ? nameMatch[1].trim() : null, payment: amountMatch ? amountMatch[1].trim() : null, pickup_time: pickupMatch ? pickupMatch[1].trim() : null, from: item.from, subject: subject, emailId: item.id, kind: 'order' } };"
+      }
+    },
+    {
+      "id": "729a9f1b-3518-470e-bce9-5feba731eb8d",
+      "name": "DataTable \u2014 Read All",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        96
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hBb37qV23pucechK"
+        },
+        "returnAll": true
+      }
+    },
+    {
+      "id": "5dbcc40f-18d9-42ed-b401-a6ddfae8425b",
+      "name": "Check Match",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const item = $input.item.json;\nconst code = item.code;\nif (!code) { return null; }\nconst all = await $('DataTable \u2014 Read All').all();\nlet match = null;\nlet isDuplicate = false;\nfor (const row of all) {\n  if (item.emailId && ((item.kind === 'order' && row.json.order_emailId === item.emailId) || (item.kind === 'payment' && row.json.payment_emailId === item.emailId))) { isDuplicate = true; break; }\n  if (row.json.code === code && row.json.status !== 'complete') { match = row.json; }\n}\nif (isDuplicate) { return null; }\nreturn { json: { ...item, partner: match, status: match ? 'complete' : 'waiting' } };"
+      }
+    },
+    {
+      "id": "e93431d0-7c71-4f65-bab8-2b841738e4f9",
+      "name": "Fill or Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const item = $input.item.json;\nif (item.status !== 'complete') {\n  if (item.kind === 'order') {\n    return { json: { code: item.code, name: item.name, payment: item.payment, pickup_time: item.pickup_time, status: 'waiting_payment', order_emailId: item.emailId, order_at: new Date().toISOString() } };\n  } else {\n    return { json: { code: item.code, payment: item.payment, payment_ref: item.payment_ref, status: 'waiting_order', payment_emailId: item.emailId, payment_at: new Date().toISOString() } };\n  }\n}\nconst partner = item.partner || {};\nlet merged = {};\nif (item.kind === 'order') {\n  merged = { code: item.code, name: item.name, payment: partner.payment || item.payment, pickup_time: item.pickup_time, payment_ref: partner.payment_ref, status: 'complete' };\n  merged.order_emailId = item.emailId;\n  merged.order_at = new Date().toISOString();\n} else {\n  merged = { code: item.code, name: partner.name, payment: item.payment, pickup_time: partner.pickup_time, payment_ref: item.payment_ref, status: 'complete' };\n  if (partner.order_at) merged.order_at = partner.order_at;\n  if (partner.order_emailId) merged.order_emailId = partner.order_emailId;\n  merged.payment_at = new Date().toISOString();\n  merged.payment_emailId = item.emailId;\n}\nreturn { json: merged };",
+        "parameters": {
+          "jsCode": "const item = $input.item.json;\\nif (item.status !== 'complete') {\\n  if (item.kind === 'order') {\\n    return { json: { code: item.code, name: item.name, payment: item.payment, pickup_time: item.pickup_time, status: 'waiting_payment', order_emailId: item.emailId, order_at: new Date().toISOString() } };\\n  } else {\\n    return { json: { code: item.code, payment: item.payment, payment_ref: item.payment_ref, status: 'waiting_order', payment_emailId: item.emailId, payment_at: new Date().toISOString() } };\\n  }\\n}\\nconst partner = item.partner || {};\\nlet merged = {};\\nif (item.kind === 'order') {\\n  merged = { code: item.code, name: item.name, payment: partner.payment || item.payment, pickup_time: item.pickup_time, payment_ref: partner.payment_ref, status: 'complete' };\\n  merged.order_emailId = item.emailId;\\n  merged.order_at = new Date().toISOString();\\n} else {\\n  merged = { code: item.code, name: partner.name, payment: item.payment, pickup_time: partner.pickup_time, payment_ref: item.payment_ref, status: 'complete' };\\n  if (partner.order_at) merged.order_at = partner.order_at;\\n  if (partner.order_emailId) merged.order_emailId = partner.order_emailId;\\n  merged.payment_at = new Date().toISOString();\\n  merged.payment_emailId = item.emailId;\\n}\\nmerged.completed_at = new Date().toISOString();\\nreturn { json: merged };"
+        }
+      }
+    },
+    {
+      "id": "73db0a8a-83fd-4345-888d-630ffaa2555f",
+      "name": "Filter \u2014 Complete Only",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "complete"
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "b20b0281-b750-43e8-8a45-d8fd12a641da",
+      "name": "Send Telegram \u2014 Combined",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "PLACEHOLDER_REPLACE_WITH_CHAT_ID",
+        "text": "=\u2705 <b>Print job paid</b>\n\n\ud83d\udcb0 Payment: ${{ $json.payment }}\n\ud83d\udc64 Name: {{ $json.name }}\n\ud83d\udd16 Code: <code>{{ $json.code }}</code>\n\u23f0 Pickup: {{ $json.pickup_time }}\n\ud83d\udcc4 Ref: <code>{{ $json.payment_ref }}</code>",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "zJ0hh2kPPRpB2LtE",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "dc0ae0c4-31d6-4c4e-bac9-32a62ca28119"
+    },
+    {
+      "id": "d8ee036c-d395-427e-aa51-463320bb1337",
+      "name": "DataTable \u2014 Delete Buffer",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hBb37qV23pucechK"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "code",
+              "condition": "eq",
+              "keyValue": "={{ $json.code }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ead224d6-8667-41a5-a832-682af64f5634",
+      "name": "DataTable \u2014 Upsert Buffer",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hBb37qV23pucechK"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "code",
+              "condition": "eq",
+              "keyValue": "={{ $json.code }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "code"
+          ],
+          "value": {
+            "code": "={{ $json.code }}",
+            "name": "={{ $json.name ?? null }}",
+            "pickup_time": "={{ $json.pickup_time ?? null }}",
+            "payment": "={{ $json.payment ?? null }}",
+            "payment_ref": "={{ $json.payment_ref ?? null }}",
+            "status": "={{ $json.status }}",
+            "order_emailId": "={{ $json.order_emailId ?? null }}",
+            "order_at": "={{ $json.order_at ?? null }}",
+            "payment_emailId": "={{ $json.payment_emailId ?? null }}",
+            "payment_at": "={{ $json.payment_at ?? null }}"
+          },
+          "schema": [
+            {
+              "id": "code",
+              "displayName": "code",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "pickup_time",
+              "displayName": "pickup_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment",
+              "displayName": "payment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment_ref",
+              "displayName": "payment_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "order_emailId",
+              "displayName": "order_emailId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "order_at",
+              "displayName": "order_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment_emailId",
+              "displayName": "payment_emailId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment_at",
+              "displayName": "payment_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3a428806-216a-480c-85f3-e4242b49360c",
+      "name": "Gmail Trigger \u2014 Interac Payment",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "event": "messageReceived",
+        "simple": false,
+        "maxResults": 20,
+        "filters": {
+          "q": "from:(notify@payments.interac.ca OR interac.ca) newer_than:1d",
+          "readStatus": "unread"
+        },
+        "credentials": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "id": "0c43e253-50d6-4182-b67f-6cf5949ca482",
+      "name": "Parse Interac",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const item = $input.item.json;\nconst text = (item.text || item.snippet || '').replace(/\\r?\\n/g, ' ').replace(/\\s+/g, ' ');\nconst subject = item.subject || '';\nconst combined = subject + ' ' + text;\nconst amountMatch = combined.match(/\\$\\s?([0-9]+(?:\\.[0-9]{1,2})?)|(?:CAD|USD|HKD)\\s?([0-9]+(?:\\.[0-9]{1,2})?)|([0-9]+(?:\\.[0-9]{1,2})?)\\s?(?:CAD|USD|HKD)/i);\nconst refMatch = combined.match(/(?:reference number|reference|\u53c3\u8003\u7de8\u865f|\u53c3\u8003\u865f)[\\s:\uff1a#]*([A-Za-z0-9][A-Za-z0-9\\-]{4,30})/i);\nconst messageMatch = combined.match(/(?:message|\u5099\u8a3b|\u7559\u8a00|note)[\\s:\uff1a]+([A-Za-z0-9][A-Za-z0-9\\-]{2,20})/i);\nconst code = (messageMatch ? messageMatch[1].trim() : null) || (refMatch ? refMatch[1].trim() : null);\nif (!code) { return null; }\nlet amount = null;\nif (amountMatch) { amount = amountMatch[1] || amountMatch[2] || amountMatch[3]; }\nreturn { json: { code: code, payment: amount, payment_ref: refMatch ? refMatch[1].trim() : null, from: item.from, subject: subject, emailId: item.id, kind: 'payment' } };"
+      }
+    },
+    {
+      "id": "5fc30b9f-dca0-4ef5-9f9f-c494e04124b6",
+      "name": "Google Sheets \u2014 Log Job",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "authentication": "oAuth2",
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": "true",
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1wteu_wJBm0l17DwQjToBuxVnrtlhvCC9BQPr0jAHkw8/edit?usp=sharing"
+        },
+        "operation": "append",
+        "options": {
+          "handlingExtraData": "insertInNewColumn"
+        },
+        "resource": "sheet",
+        "sheetName": {
+          "__rl": "true",
+          "mode": "name",
+          "value": "jobs"
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger \u2014 Order": {
+      "main": [
+        [
+          {
+            "node": "Parse Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Order": {
+      "main": [
+        [
+          {
+            "node": "DataTable \u2014 Read All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DataTable \u2014 Read All": {
+      "main": [
+        [
+          {
+            "node": "Check Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Match": {
+      "main": [
+        [
+          {
+            "node": "Fill or Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fill or Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter \u2014 Complete Only",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DataTable \u2014 Upsert Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter \u2014 Complete Only": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram \u2014 Combined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger \u2014 Interac Payment": {
+      "main": [
+        [
+          {
+            "node": "Parse Interac",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Interac": {
+      "main": [
+        [
+          {
+            "node": "DataTable \u2014 Read All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telegram \u2014 Combined": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets \u2014 Log Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets \u2014 Log Job": {
+      "main": [
+        [
+          {
+            "node": "DataTable \u2014 Delete Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "id": "6TNXg1WX2awwdgqE",
+  "name": "Podcast-to-Content Pipeline (POC) - Engine Architecture",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "audio-url",
+              "name": "audio_url",
+              "value": "https://bicameral-unmanurable-kira.ngrok-free.dev/episode1.mp3",
+              "type": "string"
+            },
+            {
+              "id": "ep-title",
+              "name": "episode_title",
+              "value": "Vault English: Buying Groceries",
+              "type": "string"
+            },
+            {
+              "id": "ep-desc",
+              "name": "episode_description",
+              "value": "Learn how to ask for help and pay at the supermarket with everyday English.",
+              "type": "string"
+            },
+            {
+              "id": "ep-dur",
+              "name": "audio_duration_minutes",
+              "value": "11",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "audio-input",
+      "name": "Audio Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepgram.com/v1/listen?diarize=true&punctuate=true&paragraphs=true&utterances=true&timestamps=true&model=nova-2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token <STT_KEY>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.audio_url }}\"\n}",
+        "options": {}
+      },
+      "id": "deepgram-stt",
+      "name": "Deepgram: Transcribe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "transcript",
+              "name": "transcript",
+              "value": "={{\n(() => {\n  const utterances = $json.results?.utterances || [];\n  let text = '';\n  for (const u of utterances) {\n    text += 'S' + (u.speaker + 1) + ': ' + u.transcript + '\\n';\n  }\n  return text || $json.results?.channels?.[0]?.alternatives?.[0]?.transcript || 'No transcript';\n})()\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-transcript",
+      "name": "Extract Transcript",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "on-body",
+              "name": "on_source_body",
+              "value": "={{ (() => { const t = $json.transcript || ''; const title = $('Audio Input').item.json.episode_title + ' - Transcript'; return JSON.stringify({type: 'text', title: title, content: t, notebooks: ['notebook:ou40cp6i56qrgh1x2oms']}); })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "build-on-body",
+      "name": "Build ON Body",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://open_notebook:5055/api/sources/json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer <ON_PASSWORD>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.on_source_body }}",
+        "options": {}
+      },
+      "id": "on-store",
+      "name": "Open Notebook: Store Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "=\ud83c\udf99\ufe0f *Episode ingested: {{ $('Audio Input').item.json.episode_title }}*\n\n\ud83d\udcca *Pipeline complete:*\n\u2022 STT: Deepgram ({{ $('Deepgram: Transcribe').item.json.metadata.duration }}s)\n\u2022 Storage: Open Notebook\n\u2022 Duration: {{ $('Audio Input').item.json.audio_duration_minutes }} min\n\u2022 Source ID: `{{ $json.id }}`\n\u2022 Transcript: {{ $json.full_text.length }} chars\n\n\u2705 *Content engine ready.* Use the source ID with any transformation:\n\n`POST http://open_notebook:5055/api/transformations/execute`\n\nAvailable formats:\n\u2022 `podcast_show_notes` - Structured bullet list\n\u2022 `podcast_twitter_thread` - 3-7 tweets\n\u2022 `podcast_linkedin_post` - Professional post\n\u2022 `podcast_blog_draft` - 500-800 word article\n\u2022 `podcast_pull_quotes` - 5-8 quotes with speakers\n\u2022 `podcast_newsletter` - Newsletter section\n\u2022 `podcast_summary_short` - 2-3 sentence summary\n\nQuery content via search:\n`POST http://open_notebook:5055/api/search`",
+        "options": {}
+      },
+      "id": "telegram-notify",
+      "name": "Telegram: Notify",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "hWCMppyI4fwu5Ysp",
+          "name": "Telegram Bot"
+        }
+      },
+      "webhookId": "6d24d55c-14c4-482f-b009-6cf03ffdbaba"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "process-episode",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "webhookId": "436e003c-0007-4148-8989-546077d13c73",
+      "position": [
+        -100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"completed\", \"episode\": $('Audio Input').item.json.episode_title, \"source_id\": $('Open Notebook: Store Source').item.json.id, \"duration_min\": $('Audio Input').item.json.audio_duration_minutes } }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        300
+      ]
+    }
+  ],
+  "node_count": 8
+}

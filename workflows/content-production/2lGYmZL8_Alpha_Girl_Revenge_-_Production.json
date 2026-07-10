@@ -1,0 +1,318 @@
+{
+  "id": "2lGYmZL8eR6UN9BJ",
+  "name": "Alpha Girl Revenge - Production",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "story-prompt",
+              "name": "storyPrompt",
+              "value": "Generate a dramatic 'alpha girl revenge' story for YouTube. Structure:\n\n1. HOOK (30 sec): Start with the most dramatic moment - the revenge in action\n2. SETUP (2 min): Introduce the protagonist (successful, confident woman), her life, and the antagonist\n3. BETRAYAL (3 min): The shocking betrayal that triggers everything (cheating, backstabbing, theft)\n4. REVENGE (5 min): The calculated, satisfying revenge plan executed perfectly\n5. OUTCOME (2 min): Resolution showing protagonist thriving, antagonist facing consequences\n\nTarget: 10-12 minutes total. Make it dramatic, satisfying, and viral-worthy. Include specific dialogue and vivid scenes. Write in a narrative style suitable for voiceover narration.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "set-prompt",
+      "name": "Set Story Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "options": {
+          "temperature": 0.9,
+          "maxOutputTokens": 4000
+        },
+        "promptType": "define",
+        "text": "={{ $json.storyPrompt }}"
+      },
+      "id": "generate-story",
+      "name": "Generate Story (Gemini 3 Flash)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "story-text",
+              "name": "storyText",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "parse-story",
+      "name": "Parse Story Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://72.61.74.110:8011/generate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ $json.storyText }},\n  \"voice\": \"confident-female\",\n  \"prompt\": \"You are a confident woman narrating a revenge story. Speak with controlled anger, satisfaction, and dramatic flair. Vary your tone to match the story beats.\"\n}",
+        "options": {}
+      },
+      "id": "generate-voiceover",
+      "name": "Generate Voiceover (TTS)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://172.17.0.1:8021/generate-batch",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompts\": [\n    \"Modern office setting, professional woman at desk, confident pose, cinematic lighting, 16:9\",\n    \"Luxury apartment interior, evening lighting, elegant decor, warm tones, 16:9\",\n    \"Dramatic confrontation scene, two people facing each other, tense atmosphere, cinematic, 16:9\",\n    \"Revenge moment, powerful woman in control, dramatic lighting, satisfying composition, 16:9\",\n    \"Happy ending, confident woman smiling, success and freedom, bright lighting, 16:9\"\n  ],\n  \"model\": \"gemini-3-pro-image-preview\",\n  \"aspect_ratio\": \"16:9\",\n  \"image_size\": \"2K\"\n}",
+        "options": {}
+      },
+      "id": "generate-images",
+      "name": "Generate Images (Nano Banana)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "audio-path",
+              "name": "audioPath",
+              "value": "={{ $('Generate Voiceover (TTS)').item.json.audio_path }}",
+              "type": "string"
+            },
+            {
+              "id": "image-paths",
+              "name": "imagePaths",
+              "value": "={{ $('Generate Images (Nano Banana)').item.json.images }}",
+              "type": "array"
+            },
+            {
+              "id": "story-text",
+              "name": "storyText",
+              "value": "={{ $('Parse Story Output').item.json.storyText }}",
+              "type": "string"
+            },
+            {
+              "id": "video-id",
+              "name": "videoId",
+              "value": "={{ $('Parse Story Output').item.json.timestamp.replace(/[^0-9]/g, '') }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "merge-assets",
+      "name": "Merge Assets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1340,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\nset -e\n\n# Get data from n8n\nAUDIO_PATH=\"{{ $json.audioPath }}\"\nIMAGE_PATHS='{{ $json.imagePaths }}'\nVIDEO_ID=\"{{ $json.videoId }}\"\nOUTPUT_DIR=\"/tmp/alpha_girl_videos\"\nOUTPUT_FILE=\"$OUTPUT_DIR/video_${VIDEO_ID}.mp4\"\n\nmkdir -p \"$OUTPUT_DIR\"\n\n# Parse image paths (assuming JSON array)\nIMAGE_1=$(echo \"$IMAGE_PATHS\" | jq -r '.[0]')\nIMAGE_2=$(echo \"$IMAGE_PATHS\" | jq -r '.[1]')\nIMAGE_3=$(echo \"$IMAGE_PATHS\" | jq -r '.[2]')\nIMAGE_4=$(echo \"$IMAGE_PATHS\" | jq -r '.[3]')\nIMAGE_5=$(echo \"$IMAGE_PATHS\" | jq -r '.[4]')\n\n# Get audio duration\nAUDIO_DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$AUDIO_PATH\")\n\n# Calculate duration per image (divide total by 5 images)\nIMAGE_DURATION=$(echo \"$AUDIO_DURATION / 5\" | bc -l)\n\n# Create video from images with Ken Burns effect (slow zoom)\nffmpeg -y \\\n  -loop 1 -t \"$IMAGE_DURATION\" -i \"$IMAGE_1\" \\\n  -loop 1 -t \"$IMAGE_DURATION\" -i \"$IMAGE_2\" \\\n  -loop 1 -t \"$IMAGE_DURATION\" -i \"$IMAGE_3\" \\\n  -loop 1 -t \"$IMAGE_DURATION\" -i \"$IMAGE_4\" \\\n  -loop 1 -t \"$IMAGE_DURATION\" -i \"$IMAGE_5\" \\\n  -i \"$AUDIO_PATH\" \\\n  -filter_complex \"\n    [0:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0015,1.1)':d=125:s=1920x1080,fade=t=in:st=0:d=0.5,fade=t=out:st=$(echo \\\"$IMAGE_DURATION - 0.5\\\" | bc):d=0.5[v0];\n    [1:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0015,1.1)':d=125:s=1920x1080,fade=t=in:st=0:d=0.5,fade=t=out:st=$(echo \\\"$IMAGE_DURATION - 0.5\\\" | bc):d=0.5[v1];\n    [2:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0015,1.1)':d=125:s=1920x1080,fade=t=in:st=0:d=0.5,fade=t=out:st=$(echo \\\"$IMAGE_DURATION - 0.5\\\" | bc):d=0.5[v2];\n    [3:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0015,1.1)':d=125:s=1920x1080,fade=t=in:st=0:d=0.5,fade=t=out:st=$(echo \\\"$IMAGE_DURATION - 0.5\\\" | bc):d=0.5[v3];\n    [4:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0015,1.1)':d=125:s=1920x1080,fade=t=in:st=0:d=0.5,fade=t=out:st=$(echo \\\"$IMAGE_DURATION - 0.5\\\" | bc):d=0.5[v4];\n    [v0][v1][v2][v3][v4]concat=n=5:v=1:a=0[vout]\n  \" \\\n  -map \"[vout]\" -map 5:a \\\n  -c:v libx264 -preset medium -crf 22 \\\n  -c:a aac -b:a 192k \\\n  -movflags +faststart \\\n  -pix_fmt yuv420p \\\n  \"$OUTPUT_FILE\"\n\necho \"{\\\"videoPath\\\": \\\"$OUTPUT_FILE\\\", \\\"duration\\\": $AUDIO_DURATION}\""
+      },
+      "id": "assemble-video",
+      "name": "Assemble Video (FFmpeg)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "video-path",
+              "name": "videoPath",
+              "value": "={{ $json.videoPath }}",
+              "type": "string"
+            },
+            {
+              "id": "duration",
+              "name": "duration",
+              "value": "={{ $json.duration }}",
+              "type": "number"
+            },
+            {
+              "id": "status",
+              "name": "status",
+              "value": "Video assembly complete",
+              "type": "string"
+            },
+            {
+              "id": "next-steps",
+              "name": "nextSteps",
+              "value": "1. Review video quality\n2. Generate thumbnail\n3. Upload to YouTube\n4. Add to content calendar",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "final-output",
+      "name": "Final Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1780,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Story Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Story Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Story (Gemini 3 Flash)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Story (Gemini 3 Flash)": {
+      "main": [
+        [
+          {
+            "node": "Parse Story Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Story Output": {
+      "main": [
+        [
+          {
+            "node": "Generate Voiceover (TTS)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Images (Nano Banana)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Voiceover (TTS)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Images (Nano Banana)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Assets": {
+      "main": [
+        [
+          {
+            "node": "Assemble Video (FFmpeg)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Video (FFmpeg)": {
+      "main": [
+        [
+          {
+            "node": "Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionTimeout": 3600,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

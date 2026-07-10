@@ -1,0 +1,412 @@
+{
+  "id": "wjD5urVG1H9nzB3t",
+  "name": "Customer Support Agent \u2014 Gadget & More Electronics",
+  "nodes": [
+    {
+      "id": "bea227dc-af52-476f-b6cc-9a11c2b7fd81",
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        128
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d2f2175d-63a2-4e7f-80ea-08ce99cbc7de",
+      "name": "Read KB",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        32
+      ],
+      "parameters": {
+        "operation": "read",
+        "fileSelector": "workflows/demo_1/rag/kb.jsonl"
+      }
+    },
+    {
+      "id": "c011c1e1-2ff5-42f6-8690-df578a4147a9",
+      "name": "Parse KB to context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        32
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const items = $input.all();\nlet kbText = '';\nfor (const item of items) {\n  const data = item.binary?.data;\n  if (!data) continue;\n  const text = Buffer.from(data.data, 'base64').toString('utf-8');\n  for (const line of text.split('\\n')) {\n    if (!line.trim()) continue;\n    try { const obj = JSON.parse(line); kbText += '[' + obj.category.toUpperCase() + '] ' + obj.text + '\\n\\n'; } catch (e) {}\n  }\n}\nreturn [{ json: { kbText, chunkCount: (kbText.match(/\\[/g) || []).length } }];"
+      }
+    },
+    {
+      "id": "221adca1-b968-4bde-ad68-4e91d0cbcc6c",
+      "name": "Fetch unread inbox mail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        224
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 20,
+        "filters": {
+          "readStatus": "unread",
+          "q": "in:inbox"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      },
+      "webhookId": "1cb790b7-8fff-4bb6-8055-080155ba315d"
+    },
+    {
+      "id": "423be45f-77dc-46dd-b2a9-1a9571cf5446",
+      "name": "Build LLM prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        112
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const kbText = ($('Parse KB to context').first().json.kbText) || '';\nconst email = $json;\nconst fromAddr = email.from?.value?.[0]?.address || email.from?.text || '';\nconst subject = email.subject || '';\nconst body = email.textPlain || email.body || email.snippet || '';\n\nconst systemPrompt = [\n  'You are a triage agent for Gadget & More Electronics customer support.',\n  'Decide if the email is about one of the topics in the knowledge base below.',\n  'Reply ONLY with a JSON object of this exact shape (no prose, no markdown fences):',\n  '{\"in_scope\": <bool>, \"category\": \"<shipping|returns|warranty|billing|subscriptions|privacy|gift-cards|pricing|general>\", \"draft_reply\": \"<string>\", \"reasoning\": \"<one short sentence>\"}',\n  '',\n  'Rules:',\n  '- in_scope = true only if the question matches a topic in the knowledge base.',\n  '- draft_reply must be a polite, concise reply (3-6 sentences) that uses the relevant KB chunk.',\n  '- If in_scope is false, set draft_reply to \"\" and reasoning should briefly say why.',\n  '- Always start the draft reply with a greeting and end with a sign-off (\"Thanks, Gadget & More Support\").',\n  '',\n  'Knowledge base:',\n  kbText\n].join('\\n');\n\nconst userPrompt = 'From: ' + fromAddr + '\\nSubject: ' + subject + '\\n\\n' + body;\n\nreturn [{ json: { systemPrompt, userPrompt, threadId: email.threadId, messageId: email.id, from: fromAddr, subject } }];"
+      }
+    },
+    {
+      "id": "2c4a9484-3469-4b3a-960f-eaaa8e9f038b",
+      "name": "Classify and draft reply",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1500,
+        320
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "messageType": "text",
+              "message": "={{ $json.systemPrompt }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9f1f7ea6-3936-4dbc-a72f-88cb86901f1a",
+      "name": "MiniMax Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMinimax",
+      "typeVersion": 1,
+      "position": [
+        976,
+        336
+      ],
+      "parameters": {
+        "model": "MiniMax-M2.7",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 800
+        }
+      },
+      "credentials": {
+        "minimaxApi": {
+          "id": "RhXfjMbUGWFvWAzo",
+          "name": "MMX"
+        }
+      }
+    },
+    {
+      "id": "e072740c-24cc-4634-a0eb-eec14e15fde8",
+      "name": "Parse LLM JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        112
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const raw = $json.text || $json.output || '';\nlet parsed = { in_scope: false, category: 'general', draft_reply: '', reasoning: 'no parse' };\ntry { const match = raw.match(/\\{[\\s\\S]*\\}/); if (match) parsed = JSON.parse(match[0]); } catch (e) { parsed.reasoning = 'parse error: ' + e.message; }\nreturn [{ json: { in_scope: parsed.in_scope === true, category: parsed.category || 'general', draft_reply: parsed.draft_reply || '', reasoning: parsed.reasoning || '', threadId: $('Build LLM prompt').item.json.threadId, from: $('Build LLM prompt').item.json.from, subject: $('Build LLM prompt').item.json.subject } }];"
+      }
+    },
+    {
+      "id": "013c8653-aaac-45b9-b412-6fa6912f2322",
+      "name": "In scope?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1472,
+        224
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.in_scope }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "b927d7da-9fa2-42d6-862b-3fb4ab2bd801",
+      "name": "Create draft reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1960,
+        200
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "=Re: {{ $json.subject }}",
+        "message": "={{ $json.draft_reply }}",
+        "options": {
+          "threadId": "={{ $json.threadId }}",
+          "sendTo": "={{ $json.from }}"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      },
+      "webhookId": "3af1e3f9-efe2-4393-aa3a-be3b0739391c"
+    },
+    {
+      "id": "7a697c77-7f7d-4cfc-b09c-7fff0c0e8ab6",
+      "name": "Add Support/Auto-Replied label",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2180,
+        200
+      ],
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "REPLACE_WITH_LABEL_ID_FOR_Support-Auto-Replied"
+        ]
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      },
+      "webhookId": "e18cefc6-99a1-42ca-a017-a9721cc77c0b"
+    },
+    {
+      "id": "2e3144eb-4378-4396-b8a5-d441770560b5",
+      "name": "Add Support/Needs-Human label",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2180,
+        440
+      ],
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "REPLACE_WITH_LABEL_ID_FOR_Support-Needs-Human"
+        ]
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      },
+      "webhookId": "a9f2f799-bdd8-46ea-9e69-dc692a6221c3"
+    },
+    {
+      "id": "d7fb720e-2e8d-4d53-ba3c-f1527e8f74e2",
+      "name": "Process each email",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        320
+      ],
+      "parameters": {
+        "batchSize": 1
+      }
+    }
+  ],
+  "connections": {
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Read KB",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch unread inbox mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read KB": {
+      "main": [
+        [
+          {
+            "node": "Parse KB to context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch unread inbox mail": {
+      "main": [
+        [
+          {
+            "node": "Process each email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build LLM prompt": {
+      "main": [
+        [
+          {
+            "node": "Classify and draft reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify and draft reply": {
+      "main": [
+        [
+          {
+            "node": "Parse LLM JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MiniMax Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify and draft reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse LLM JSON": {
+      "main": [
+        [
+          {
+            "node": "In scope?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In scope?": {
+      "main": [
+        [
+          {
+            "node": "Create draft reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Process each email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add Support/Needs-Human label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create draft reply": {
+      "main": [
+        [
+          {
+            "node": "Add Support/Auto-Replied label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process each email": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Build LLM prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  }
+}

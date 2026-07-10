@@ -1,0 +1,329 @@
+{
+  "id": "mb7D0w8nCiDO3hPy",
+  "name": "Alpha Girl Revenge Pipeline",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "story-prompt",
+              "name": "storyPrompt",
+              "value": "Generate a dramatic 'alpha girl revenge' story for YouTube. Structure:\n\n1. HOOK (30 sec): Start with the most dramatic moment\n2. SETUP (2 min): Introduce the protagonist, her success, and the antagonist\n3. BETRAYAL (3 min): The shocking betrayal that triggers everything\n4. REVENGE (5 min): The calculated, satisfying revenge plan\n5. OUTCOME (2 min): Resolution and life lesson\n\nTarget: 8-12 minutes total. Make it dramatic, satisfying, and viral-worthy. Include specific dialogue and vivid scenes.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "set-prompt",
+      "name": "Set Story Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gemini-3-flash-preview",
+        "prompt": "={{ $json.storyPrompt }}",
+        "options": {
+          "temperature": 0.9,
+          "maxTokens": 4000
+        }
+      },
+      "id": "generate-story",
+      "name": "Generate Story (Gemini 3 Flash)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "parse-story",
+              "name": "storyText",
+              "value": "={{ $json.response }}",
+              "type": "string"
+            },
+            {
+              "id": "scene-count",
+              "name": "sceneCount",
+              "value": "=5",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "parse-story",
+      "name": "Parse Story",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://72.61.74.110:8011/generate",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.storyText }}"
+            },
+            {
+              "name": "voice",
+              "value": "confident-female"
+            },
+            {
+              "name": "prompt",
+              "value": "You are a confident woman narrating a revenge story. Speak with controlled anger and satisfaction."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "generate-voiceover",
+      "name": "Generate Voiceover (TTS)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://172.17.0.1:8021/generate-batch",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompts",
+              "value": "=[\"Modern office setting, professional woman at desk\", \"Luxury apartment interior, evening lighting\", \"Confrontation scene, dramatic lighting\", \"Revenge moment, powerful composition\", \"Happy ending, confident woman smiling\"]"
+            },
+            {
+              "name": "model",
+              "value": "gemini-3-pro-image-preview"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "16:9"
+            },
+            {
+              "name": "image_size",
+              "value": "2K"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "generate-images",
+      "name": "Generate Images (Nano Banana)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "audio-path",
+              "name": "audioPath",
+              "value": "={{ $('Generate Voiceover (TTS)').item.json.audio_path }}",
+              "type": "string"
+            },
+            {
+              "id": "image-paths",
+              "name": "imagePaths",
+              "value": "={{ $('Generate Images (Nano Banana)').item.json.images }}",
+              "type": "array"
+            },
+            {
+              "id": "story-text",
+              "name": "storyText",
+              "value": "={{ $('Parse Story').item.json.storyText }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "merge-assets",
+      "name": "Merge Assets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "command": "# Video assembly with FFmpeg\n# This is a placeholder - you'll need to implement the actual FFmpeg logic\n\necho \"Assets ready for video assembly:\"\necho \"Audio: {{ $json.audioPath }}\"\necho \"Images: {{ $json.imagePaths }}\"\necho \"Story: {{ $json.storyText }}\"\n\n# TODO: Implement FFmpeg video assembly\n# ffmpeg -loop 1 -i image1.jpg -i audio.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest output.mp4"
+      },
+      "id": "assemble-video",
+      "name": "Assemble Video (FFmpeg)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "video-ready",
+              "name": "status",
+              "value": "Video pipeline complete - ready for manual assembly",
+              "type": "string"
+            },
+            {
+              "id": "next-steps",
+              "name": "nextSteps",
+              "value": "1. Review generated story\n2. Check voiceover quality\n3. Verify images match scenes\n4. Assemble with FFmpeg or Remotion\n5. Upload to YouTube",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "final-output",
+      "name": "Final Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1780,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Story Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Story Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Story (Gemini 3 Flash)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Story (Gemini 3 Flash)": {
+      "main": [
+        [
+          {
+            "node": "Parse Story",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Story": {
+      "main": [
+        [
+          {
+            "node": "Generate Voiceover (TTS)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Images (Nano Banana)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Voiceover (TTS)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Images (Nano Banana)": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Assets": {
+      "main": [
+        [
+          {
+            "node": "Assemble Video (FFmpeg)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Video (FFmpeg)": {
+      "main": [
+        [
+          {
+            "node": "Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

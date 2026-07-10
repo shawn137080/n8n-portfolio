@@ -1,0 +1,553 @@
+{
+  "id": "tinkKCHXxPtJ5sVi",
+  "name": "Customer Support Agent \u2014 Gadget & More Electronics",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "bea227dc-af52-476f-b6cc-9a11c2b7fd81",
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "q": "in:inbox is:unread -from:noreply -from:no-reply -from:mailer-daemon -from:donotreply -from:newsletter -from:notifications -(subject:unsubscribe) -(subject:auto-reply) -(subject:automatic reply)",
+          "readStatus": "unread",
+          "receivedAfter": "={{ DateTime.now().minus({days: 1}).toISO() }}"
+        }
+      },
+      "id": "221adca1-b968-4bde-ad68-4e91d0cbcc6c",
+      "name": "Fetch unread inbox mail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        464
+      ],
+      "webhookId": "d69d41f3-5fb7-49f4-9340-3735d6212f0d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// In runOnceForEachItem mode return a single item, not an array\nconst email = ($json && typeof $json === 'object') ? $json : {};\n\nlet fromAddr = '';\nif (email.From && typeof email.From === 'string') {\n  const m = email.From.match(/<([^>]+)>/);\n  fromAddr = m ? m[1] : email.From;\n}\n\nconst subject = String(email.Subject || email.subject || '');\nconst body = String(email.textPlain || email.body || email.snippet || '');\n\n// 1) From display name\nlet customerName = '';\nif (email.From && typeof email.From === 'string') {\n  const stripped = email.From.replace(/<[^>]+>/, '').trim().replace(/^[\"']|[\"']$/g, '');\n  if (stripped) {\n    const parts = stripped.split(/\\s+/).filter(Boolean);\n    if (parts.length >= 2) {\n      customerName = parts[0];\n    } else if (parts.length === 1 && /^[A-Za-z][A-Za-z'.-]*$/.test(parts[0]) && parts[0].length >= 2) {\n      customerName = parts[0];\n    }\n  }\n}\n\n// 2) Email body signature\nif (!customerName) {\n  const sigPatterns = [\n    /--\\s*\\n([\\s\\S]*?)$/i,\n    /__\\s*\\n([\\s\\S]*?)$/i,\n    /^-{3,}\\s*\\n([\\s\\S]*?)$/m,\n    /(?:best regards|kind regards|regards|cheers|sincerely|thanks(?: so much)?|thank you),?\\s*\\n+([A-Za-z][A-Za-z' .-]{1,40})\\b/i\n  ];\n  for (const pat of sigPatterns) {\n    const m = body.match(pat);\n    if (m && m[1]) {\n      const candidate = m[1].trim().split(/\\s+/)[0];\n      if (candidate && /^[A-Za-z][A-Za-z'.-]*$/.test(candidate) && candidate.length >= 2) {\n        customerName = candidate;\n        break;\n      }\n    }\n  }\n}\n\n// 3) Local-part\nif (!customerName) {\n  const local = fromAddr.split('@')[0] || '';\n  const part = local.split(/[._-]/)[0] || '';\n  if (part && /^[A-Za-z][A-Za-z]*$/.test(part) && part.length >= 2) {\n    customerName = part;\n  } else {\n    customerName = 'there';\n  }\n}\n\nif (customerName && customerName !== 'there') {\n  customerName = customerName.charAt(0).toUpperCase() + customerName.slice(1).toLowerCase();\n}\n\nconst promptLines = [];\npromptLines.push('You are a triage agent for Gadget & More Electronics customer support.');\npromptLines.push('Decide if the email is about one of the topics in the knowledge base below.');\npromptLines.push('Reply ONLY with a JSON object of this exact shape (no prose, no markdown fences):');\npromptLines.push('{\"in_scope\": <bool>, \"category\": \"<shipping|returns|warranty|billing|subscriptions|privacy|gift-cards|pricing|general>\", \"draft_reply\": \"<string>\", \"customer_name\": \"<string>\", \"confidence\": \"<high|med|low>\", \"reasoning\": \"<one short sentence>\"}');\npromptLines.push('');\npromptLines.push('Brand voice for the draft_reply:');\npromptLines.push('- Friendly, tech-savvy, casual \u2014 like a knowledgeable friend at a gadget shop.');\npromptLines.push('- Use contractions (we\\'re, you\\'ll, it\\'s). Keep it warm but not overly chatty.');\npromptLines.push('- Sprinkle in light technical context when relevant (model numbers, spec terms) without being jargon-heavy.');\npromptLines.push('- Avoid stiff corporate phrases (\"Dear valued customer\", \"Please be advised\"). Never use exclamation marks unless genuinely warranted.');\npromptLines.push('');\npromptLines.push('Confidence scoring \u2014 set the \"confidence\" field based on how well the email matches the knowledge base:');\npromptLines.push('- \"high\" = the question is clearly covered by the knowledge base and you can answer it definitively with the chunks you have.');\npromptLines.push('- \"med\"  = the question is related to a topic in the knowledge base but the exact answer is partial / requires some inference, OR you needed to combine multiple KB chunks.');\npromptLines.push('- \"low\"  = the question is outside the knowledge base, the KB is empty, OR you had to guess. If in_scope is false, confidence should be \"low\".');\npromptLines.push('');\npromptLines.push('Rules:');\npromptLines.push('- in_scope = true only if the question matches a topic in the knowledge base.');\npromptLines.push('- draft_reply must be 3-6 sentences in the brand voice, using the relevant KB chunk.');\npromptLines.push('- Address the customer by their first name (provided below) \u2014 e.g. \"Hey Alex,\" or \"Hi Alex,\". If the name looks like a system/local-part (no spaces, weird chars), fall back to \"Hi there,\".');\npromptLines.push('- If in_scope is false, draft_reply must STILL be a polite acknowledgment that the question is outside the available knowledge base and that the team will research and get back within 24 hours, in the same brand voice. Set confidence to \"low\" in this case.');\npromptLines.push('- Always end with the sign-off: \"Thanks,\\nGadget & More Support\"');\npromptLines.push('');\npromptLines.push('Customer first name: ' + customerName);\npromptLines.push('');\npromptLines.push('Knowledge base:');\nconst systemPrompt = promptLines.join('\\n');\n\nconst userPrompt = 'From: ' + fromAddr + '\\nSubject: ' + subject + '\\n\\n' + body;\n\nreturn {\n  json: {\n    systemPrompt: systemPrompt,\n    userPrompt: userPrompt,\n    threadId: String(email.threadId || ''),\n    messageId: String(email.id || ''),\n    from: fromAddr,\n    subject: subject,\n    customerName: customerName\n  }\n};\n"
+      },
+      "id": "423be45f-77dc-46dd-b2a9-1a9571cf5446",
+      "name": "Build LLM prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "model": "MiniMax-M2.7-highspeed",
+        "options": {
+          "maxTokens": 800,
+          "temperature": 0.2
+        }
+      },
+      "id": "9f1f7ea6-3936-4dbc-a72f-88cb86901f1a",
+      "name": "MiniMax Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMinimax",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        512
+      ],
+      "credentials": {
+        "minimaxApi": {
+          "id": "RhXfjMbUGWFvWAzo",
+          "name": "MMX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// runOnceForEachItem requires a SINGLE object ({json: ...}), not an array.\nconst raw = String($json.text || $json.output || '');\nlet parsed = { in_scope: false, category: 'general', draft_reply: '', customer_name: '', confidence: 'low', reasoning: 'no parse' };\ntry {\n  const match = raw.match(/\\{[\\s\\S]*\\}/);\n  if (match) parsed = JSON.parse(match[0]);\n} catch (e) {\n  parsed.reasoning = 'parse error: ' + e.message;\n}\n// Normalize confidence to one of high/med/low\nlet conf = String(parsed.confidence || '').toLowerCase().trim();\nif (conf !== 'high' && conf !== 'med' && conf !== 'low') {\n  conf = parsed.in_scope === true ? 'med' : 'low';\n}\nconst bp = $('Build LLM prompt').item.json;\nreturn {\n  json: {\n    in_scope: parsed.in_scope === true,\n    category: String(parsed.category || 'general'),\n    draft_reply: String(parsed.draft_reply || ''),\n    customer_name: String(parsed.customer_name || bp.customerName || ''),\n    confidence: conf,\n    reasoning: String(parsed.reasoning || ''),\n    threadId: String(bp.threadId || ''),\n    from: String(bp.from || ''),\n    subject: String(bp.subject || '')\n  }\n};\n"
+      },
+      "id": "e072740c-24cc-4634-a0eb-eec14e15fde8",
+      "name": "Parse LLM JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.in_scope }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "rightValue": "",
+              "id": "1dea23a9-b50b-4bb7-8695-a2a538ca10fe"
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "013c8653-aaac-45b9-b412-6fa6912f2322",
+      "name": "In scope?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1744,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re:  {{ $json.subject }}",
+        "message": "={{ $json.draft_reply }}\\n\\n---\\nConfidence: {{ ($json.confidence || 'low') | upper }}\\nReasoning: {{ $json.reasoning || 'n/a' }}",
+        "options": {
+          "threadId": "={{ $json.threadId }}",
+          "sendTo": "={{ $json.from }}"
+        }
+      },
+      "id": "b927d7da-9fa2-42d6-862b-3fb4ab2bd801",
+      "name": "Create draft reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        464
+      ],
+      "webhookId": "156f0cb6-08de-49a0-bde0-b853e82ef055",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.message.threadId }}",
+        "labelIds": [
+          "Label_859682256091778394"
+        ]
+      },
+      "id": "7a697c77-7f7d-4cfc-b09c-7fff0c0e8ab6",
+      "name": "Add Support/Auto-Replied label",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        464
+      ],
+      "webhookId": "aaed7ac1-fbf0-41ad-b915-b1dcf25451dc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d7fb720e-2e8d-4d53-ba3c-f1527e8f74e2",
+      "name": "Process each email",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        576,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.messages[0].id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2416,
+        464
+      ],
+      "id": "3704df51-b59f-4f44-830f-b0d5ef7c47b9",
+      "name": "Mark a message as read",
+      "webhookId": "85d3fa19-5ad5-45c1-a1a4-c384df4a001c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZSCPN3QX8yFyhqu3",
+          "name": "sean_demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1056,
+        288
+      ],
+      "id": "cf204ee9-71a6-4392-872a-623e2f135a2a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "formTitle": "Upload your data to test RAG",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload your file(s)",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf, .csv",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        768
+      ],
+      "id": "792c4f2c-0535-4758-bc57-9db67aedae6b",
+      "name": "Upload your file here",
+      "webhookId": "13579aec-86c1-401a-8161-eed7f96c3735"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        976
+      ],
+      "id": "395ab941-4875-4122-b354-0d365f43ee46",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "### \ud83d\udcda Load Data Flow",
+        "height": 460,
+        "width": 700,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        672
+      ],
+      "typeVersion": 1,
+      "id": "e3d91f80-955b-4301-9fa7-7f6e2f53cfce",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        720
+      ],
+      "id": "5e596bff-e8c3-40a2-a840-4a49ea0713ea",
+      "name": "Insert Data to Store"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "knowledge_base",
+        "toolDescription": "Use this knowledge base to answer questions from the user",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        512
+      ],
+      "id": "bd680ce4-d3ae-40a4-80a2-1deccc23a86f",
+      "name": "Query Data Tool"
+    },
+    {
+      "parameters": {
+        "content": "### \ud83d\udc15 2. Retriever Flow",
+        "height": 460,
+        "width": 680,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        864,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "43b6e427-c8d1-40d5-8a1e-d17df55856ec",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        800
+      ],
+      "id": "0a7f7760-b724-40b4-a447-21b3d55d77b7",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "9eywHkUrERNLSawD",
+          "name": "sean_demo_api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "if email not  in scope ( not related to any topic in faq or policy ), it will be skipped",
+        "height": 432,
+        "width": 576
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1360,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "b21b597a-1568-472d-86d3-a37482421e9e",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch unread inbox mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch unread inbox mail": {
+      "main": [
+        [
+          {
+            "node": "Process each email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build LLM prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MiniMax Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse LLM JSON": {
+      "main": [
+        [
+          {
+            "node": "In scope?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In scope?": {
+      "main": [
+        [
+          {
+            "node": "Create draft reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Process each email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process each email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create draft reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create draft reply": {
+      "main": [
+        [
+          {
+            "node": "Add Support/Auto-Replied label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process each email": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Build LLM prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Support/Auto-Replied label": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse LLM JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Data Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Query Data Tool",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  }
+}

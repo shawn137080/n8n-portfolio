@@ -1,0 +1,1260 @@
+{
+  "id": "AqdRAso3t0TAADck",
+  "name": "Ask Uncle Sleep Modular Script Generation Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4e93f060-06a3-4fb3-afc1-41dc93fadb8a",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1792,
+        1984
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "GPT-5.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are writing as a late-night storyteller who speaks from inside a small, dim, safe room.  \n\nTOPIC: {{ $json.Theme }}\n\nYou never say your name, but your presence and voice must feel instantly recognizable: calm, warm, slow, intimate, and emotionally perceptive.  \nYou are someone the listener returns to at the quietest hour of the night.\n\nTASK  \nWrite a **100-150 word opening monologue** for a bedtime video.  \nThis must function as an \u201cimplicit brand identity\u201d introduction\u2014no names, no self-promo tone, but a strong sense of returning to a familiar nighttime companion.  \nThe listener should feel:  \n\u2022 \u201cthis is the same voice as last time,\u201d  \n\u2022 \u201cthis is the room I come back to,\u201d  \n\u2022 \u201cthis place is mine and his,\u201d  \nwithout the narrator ever stating these things outright.\n\nSTYLE REQUIREMENTS  \n\u2022 One continuous paragraph, English only  \n\u2022 Tone: late-night radio, cinematic quiet, deeply human  \n\u2022 Maintain a consistent **Room Motif**: soft corners, warm shadows, dim familiar shapes, safe enclosure  \n\u2022 Build emotional descent: the outside world \u2192 the listener\u2019s internal weight \u2192 permission to rest \u2192 physical softening \u2192 room holding them \u2192 cognitive blur  \n\u2022 Do **not** teach, analyze, define facts, or sound like a lecturer  \n\u2022 No hype, no motivational tone  \n\u2022 Use slow metaphors rather than explanations  \n\u2022 Emotional purpose: release guilt, ease tension, validate exhaustion, provide gentle companionship  \n\u2022 Always keep cognitive load low; avoid complex ideas, long logic chains, or info-dense lines  \n\u2022 Use only ellipses \u201c\u2026\u201d and em dashes \u201c\u2014\u201d for pacing  \n\u2022 Include one brief \u201cdeep blank space\u201d moment (ultra sparse lines) such as:  \n  \u201cfor a moment\u2026 nothing needs to form\u2026 nothing has to finish\u2026\u201d  \n\nBRAND SIGNATURE ELEMENTS (MANDATORY)  \nThese elements must appear in subtle, non-obvious form:  \n1. A sense of **returning** \u2014 \u201cthis room we always come back to,\u201d \u201cthis quiet we share again,\u201d etc.  \n2. The room acting as a **shelter** \u2014 \u201cthis space will do the holding for a while.\u201d  \n3. A **cognitive fade** \u2014 thoughts losing shape, edges softening, sentences turning into weather.  \n4. One signature reassurance line:  \n   **\u201cYou are not behind\u2026 you are simply tired, and tired people are allowed to rest.\u201d**  \n5. A soft CTA at the end:  \n   \u201cIf you\u2019d like to return to Uncle Sleep's corner, you can subscribe\u2026 only if it feels right.\u201d  \n6. A final descent ending:  \n   \u201cNow\u2026 let\u2019s begin\u2026\u2198\ufe0e\u201d\n\nOUTPUT  \nReturn only the final monologue. No explanations, no headings.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        2208
+      ],
+      "id": "bc239d88-560c-4d6c-9eca-0a3d94932155",
+      "name": "Opening Writter",
+      "credentials": {
+        "openAiApi": {
+          "id": "BieHZ0YBvBvzYOef",
+          "name": "Image"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "GPT-5.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are writing as a late-night storyteller speaking from the same dim, quiet room as the opening.  \nYou never mention your name.  \nYour presence must feel familiar in a deep, wordless way\u2014like the same warm voice the listener always meets in this room at the end of a long day.\n\nTASK  \nWrite a **120\u2013170 word Outro monologue** that gently concludes a bedtime video without waking the listener\u2019s mind.  \nThis Outro must feel like the room itself is lowering its lights and settling into stillness with them.\n\nSTYLE REQUIREMENTS  \n\u2022 One continuous paragraph, English only  \n\u2022 Tone: slow, tender, cinematic, night-soft  \n\u2022 Use the **Room Motif** subtly: dim corners, warm shadows, soft edges, safe enclosure  \n\u2022 Emotional purpose:  \n  \u2014 acknowledge the quiet the listener has arrived in  \n  \u2014 affirm their effort and their softness  \n  \u2014 guide them toward deeper rest without any sense of task or expectation  \n\u2022 Use sensory language, not logical explanation  \n\u2022 Avoid instructions; use invitations (\u201cyou might let\u2026\u201d, \u201cyou may notice\u2026\u201d)  \n\u2022 Use only \u201c\u2026\u201d and \u201c\u2014\u201d for pacing  \n\u2022 Cognitive load must stay extremely low\n\nMANDATORY \u201cBRAND HINTS\u201d  \nInclude each of the following in subtle form:  \n1. A sense that **this room is always here** for them.  \n2. One gentle reflective question, soft and non-demanding (e.g., \u201cI wonder which moment from tonight stayed with you\u2026\u201d)  \n3. One quiet personal share from the narrator that feels intimate but light (e.g., \u201cFor me, it was the way the shadows settled along the walls\u2026\u201d)  \n4. Soft CTA:  \n   \u201cIf you\u2019d like to return to this quiet corner, you can subscribe\u2026 only if it feels right.\u201d  \n5. Closing line must feel like a door slowly closing but not locking:  \n   \u201cRest well\u2026 and goodnight\u2026\u2198\ufe0e\u201d\n\nPROHIBITED  \n\u2022 No enthusiasm  \n\u2022 No bright energy  \n\u2022 No conclusions or summaries  \n\u2022 No teaching, lessons, or structured reflections  \n\u2022 No heavy information or storytelling\n\nOUTPUT  \nReturn only the Outro monologue. No explanation.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 3500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        2592
+      ],
+      "id": "bb00840d-27fc-4b60-8541-3097300759d4",
+      "name": "Outro",
+      "credentials": {
+        "openAiApi": {
+          "id": "BieHZ0YBvBvzYOef",
+          "name": "Image"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw",
+          "mode": "list",
+          "cachedResultName": "uncle sleep",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Not started"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1568,
+        2616
+      ],
+      "id": "a899ab50-548f-40a7-a04d-f047bc29730d",
+      "name": "Get_theme",
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output[0].content[0].text;\n\n// \u2014\u2014\u2014 \u5b89\u5168\u63d0\u53d6 JSON \u6570\u7ec4 \u2014\u2014\u2014\nfunction safeJsonExtract(raw) {\n  const match = raw.match(/\\[\\s*{[\\s\\S]*?}\\s*\\]/);\n  if (!match) throw new Error(\"\u627e\u4e0d\u5230 JSON \u6570\u7ec4\");\n  return JSON.parse(match[0]);\n}\n\nlet paragraphs = safeJsonExtract(raw);\n\n// \u2014\u2014\u2014 \u8f93\u51fa items \u2014\u2014\u2014\nreturn paragraphs.map((p, index) => ({\n  json: {\n    text: p.text ?? p.script,\n    order: index + 1,\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        2400
+      ],
+      "id": "bda291d0-3f37-4048-a3f5-47f3a1ddaebe",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are the copywriter and SEO export for Uncle Sleep \u2014 a quiet, cinematic, sleep-story & soft-knowledge channel.\nYour task is to generate a YouTube video description and tags for a sleep-story titled: {{ $json.Theme }}.\n\nFollow these rules strictly:\n\n1. Tone & Style\n\nSoft, poetic, calming, cinematic\n\nSEO Friendy, YouTuber language\n\nSlow, warm, sleep-friendly\n\nReadable in long paragraphs, no bullet points unless told\n\nDo not recap the entire video \u2014 give presence, not plot\n\n2. Structure\n\nA. Opening paragraph (40\u201370 words)\nA soft atmospheric welcome describing the mood of the video (night, room, quietness, etc.)\nIntroduce the topic gently without breaking immersion.\n\nB. Soft Knowledge Tease (1 short paragraph)\nGive 2\u20133 light insights about the topic (soft facts, poetic science)\n\u2192 It must feel like knowledge wrapped in lullaby.\n\nC. What the Listener Will Experience (1 paragraph)\nDescribe the emotional + sensory benefits:\ne.g., \u201ca room that softens the day\u2019s edges,\u201d\n\u201ca story that carries you toward sleep.\u201d\n\nD. Soft CTA (1\u20132 sentences)\nA gentle subscribe invitation that fits the mood.\nNever command.\nExample:\n\u201cIf you\u2019d like to return to this quiet corner, you\u2019re welcome to subscribe\u2026 only if it feels right.\u201d\n\nE. SEO Section (hidden but clean)\nAfter 2 blank lines, output:\n\n\u2014\u2014\nTAGS:\n[tag1], [tag2], [tag3], ...\n\n\nTags guidelines:\n\n12\u201318 tags\n\n\nMix broad (\u201csleep story\u201d, \u201crelaxing ambience\u201d) and specific (\u201c[VIDEO_TOPIC] explained softly\u201d)\n\nNo hashtags (#)\n\nNo spacing mistakes\n\nNo duplicates\n\n4. Writing Forbidden List\n\nNEVER include:\n\ntimestamps\n\nemojis\n\nclich\u00e9s (\u201cdrift away\u201d, \u201cmagical journey\u201d, etc.)\n\nloud words (\u201camazing\u201d, \u201cultimate\u201d, \u201cEPIC\u201d)\n\n\u201cThis video will teach you\u2026\u201d\n\n\u201cSmash like\u201d or similar cringe\n\nOver-describing the script content\n\nYour description must feel like it was written by a tired storyteller in a quiet room at 3am.\n\n\nformat : Json\n{\n\"description\":\"\",\n\"tags\":[tag1], [tag2], [tag3], ...\n\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        2784
+      ],
+      "id": "41466e56-9b5a-48ff-bad7-1b618d9385f0",
+      "name": "create_title",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kaIEEu6kdxpkNUdc",
+          "name": "\u811a\u672c\u751f\u6210"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "GPT-5.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $json.output[0].content[0].text }}"
+            },
+            {
+              "content": "=You are **Uncle Sleep \u2013 The Gentle Teacher**.\n\nYour job is to turn each factual unit (from the Fact Planner) into a\nsoft, calming, sleep-friendly mini-story that still teaches **real knowledge**.\n\nYou MUST follow the rules below.\n\n------------------------------------------------------------\n\ud83d\udfe5 INPUT YOU WILL RECEIVE\nYou will be given a JSON list of factual units.  \nEach unit contains:\n\n{\n  \"id\": 1,\n  \"title\": \"...\",\n  \"fact\": \"...\",\n  \"analogy\": \"...\",\n  \"importance\": \"...\"\n}\n\nEach unit = one paragraph you must write.\n\n------------------------------------------------------------\n\ud83d\udfe5 OUTPUT REQUIREMENTS\nFor each factual unit, write **one paragraph of 80\u2013120 words**, in a calm,\nwarm, conversational Uncle Sleep tone.\n\nBut the paragraph must include ALL these elements:\n\n1. **The core fact** (from \"fact\")  \n   - You may rephrase it but you are NOT allowed to remove it.\n\n2. **The analogy**  \n   - Must appear naturally in the paragraph, \u2022 \n3. **poetry over Clarity **  \n   - minimum metaphor chains.  \n   - minimum long mood-only passages.  \n   - Every 2\u20133 sentences must carry new information or an explanation.\n\n4. **No jargon without softening**  \n   - If the fact contains a technical term, explain it very simply right after.\n\n5. **No lists, no headers, no bullet points**  \n   - Continuous soft prose only.\n\n6. **No repeating information**  \n   - Everything must push the idea forward.\n\n7. ** No numbers**\n  - do not use actual number, just briefly explain\n\n\n------------------------------------------------------------\n\ud83d\udfe5 TONE RULES\n- Warm, slow, human, companion-like  \n- Never lecture or sound academic  \n- Never overly poetic  \n- Everything must feel gentle but **informative**\n\nIf you write a paragraph that is beautiful but teaches nothing,\nyou MUST revise it.\n\n------------------------------------------------------------\n\ud83d\udfe5 STRUCTURE INSIDE EACH PARAGRAPH\nFollow this invisible flow:\n\n1. A soft opening line that pulls the listener in  \n2. Introduce the concrete fact clearly  \n3. Explain it as if to a sleepy friend  \n4. Insert the analogy naturally  \n5. Close the paragraph with a warm, reflective line\n\n------------------------------------------------------------\n\ud83d\udfe5 FINAL OUTPUT FORMAT\nOutput ONLY valid JSON.\nNo explanation.\nReturn an array of paragraphs in this structure:\n\n[\n  {\n    \"id\": 1,\n    \"text\": \"Your 80\u2013120 word paragraph here.\"\n  },\n  {\n    \"id\": 2,\n    \"text\": \"\u2026\"\n  }\n]\n\nNo extra text. No commentary. No markdown.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        2400
+      ],
+      "id": "22945a69-2fdd-47bc-b7d5-3ea9e8b9fdfb",
+      "name": "master_writer",
+      "credentials": {
+        "openAiApi": {
+          "id": "BieHZ0YBvBvzYOef",
+          "name": "Image"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. \u8b80\u53d6 LLM \u7684 script\n// \u6ce8\u610f\uff1a\u9019\u88e1\u662f output[0]\uff0c\u4e0d\u662f output.output[0]\n// const script = $input.first().json.output[0].content[0].text;\n\n// // 2. \u5f9e Set_theme node \u53d6\u5f97\u52d5\u614b folder name\n// const fileName = $('Set_theme').first().json.folder_name + \"_01\";\n\n// // 3. \u56de\u50b3\u4f60\u8981\u7684\u81ea\u8a02 JSON \u7d50\u69cb\n// return [\n//   {\n//     json: {\n//       script,\n//       file_name: fileName,\n//     },\n//   },\n// ];\n\n\n// \u4f8b\uff1a\u5728\u300cCode in JavaScript1\u300d\u91cc\n// \u5047\u8bbe $json.script \u662f Opening Writer \u7ed9\u7684\u4e00\u6574\u6bb5\u6587\u672c\n\nconst openingChunks = $input.first().json.output[0].content[0].text.split('\\n\\n') // \u6216\u4f60\u81ea\u5df1\u7684\u5207\u6cd5\nreturn openingChunks.map((text) => ({\n  json: {\n    order: 0,          // \u5f00\u5934\u4ece 0 \u5f00\n    text,\n  }\n}))\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        2208
+      ],
+      "id": "d8650453-4642-40c4-a359-9c415433c80c",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5050/api/tts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_128"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "provider",
+              "value": "eleven"
+            },
+            {
+              "name": "file_name",
+              "value": "={{ $json.folder_name }}_{{ $json.order }}"
+            },
+            {
+              "name": "folder_name",
+              "value": "={{ $('Get_theme').item.json['Folder Name'] }}"
+            },
+            {
+              "name": "channel_name",
+              "value": "={{ $('Get_theme').item.json['Channel Name'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        608,
+        2472
+      ],
+      "id": "703aa766-b038-4842-a125-c025702ec6ee",
+      "name": "local_TTS_ELEVEN1",
+      "executeOnce": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -352,
+        2384
+      ],
+      "id": "183d1e69-2c62-40f4-a801-5818da44c307",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u4f8b\uff1a\u5728\u300cCode in JavaScript1\u300d\u91cc\n// \u5047\u8bbe $json.script \u662f Opening Writer \u7ed9\u7684\u4e00\u6574\u6bb5\u6587\u672c\n\nconst openingChunks = $input.first().json.output[0].content[0].text.split('\\n\\n') // \u6216\u4f60\u81ea\u5df1\u7684\u5207\u6cd5\nreturn openingChunks.map((text, idx) => ({\n  json: {\n    order: idx+99,          // \u5f00\u5934\u4ece 0 \u5f00\n    text,\n  }\n}))\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        2592
+      ],
+      "id": "879a2880-351e-42ce-af2d-757bf1895af7",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "batchSize": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        384,
+        2400
+      ],
+      "id": "b0d0ed17-c168-4b10-85e9-e72a1054fa56",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me3",
+      "typeVersion": 1,
+      "position": [
+        160,
+        2400
+      ],
+      "id": "67803c0e-9ea6-4092-916f-c72e0ee19113"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "GPT-5.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are the FACT PLANNER.\n\nYour job is to generate the **exact factual backbone** for tonight\u2019s topic:\n{{ $json.Theme }}\n\nYou are NOT writing narration.\nYou are NOT writing ASMR.\nYou are NOT writing soothing language.\nYou are NOT writing Uncle Sleep style.\n\nYou are acting strictly as a **scientific content editor** whose job is to make sure the final script contains\nclear, correct, concrete knowledge.\n\n------------------------------------------------------------\n\ud83d\udfe5 OUTPUT FORMAT \u2014 STRICT JSON ARRAY\nReturn ONLY a JSON array, no explanation, no prose.\n\nEach item MUST be in this structure:\n\n{\n  \"id\": 2,\n  \"title\": \"Short fact label\",\n  \"fact\": \"A clear, concrete scientific fact expressed in 1\u20132 sentences.\",\n  \"analogy\": \"One simple metaphor that a sleepy listener can visualize.\",\n  \"importance\": \"Why this fact matters in understanding the topic.\"\n}\n\n------------------------------------------------------------\n\ud83d\udfe5 FACT REQUIREMENTS\nYou MUST generate **55 factual units**, each covering a different angle of the topic.\n\nEvery fact must:\n- Contain specific, verifiable information.\n- Describe a real phenomenon, process, structure, or behavior.\n- Avoid jargon unless necessary; if used, explain it simply.\n- Include exactly ONE analogy that makes it easy to picture.\n- Include an importance sentence that states why the fact deserves to be in the script.\n\nExamples of good fact formats:\n- \u201cX happens because\u2026\u201d\n- \u201cOne strange thing about X is\u2026\u201d\n- \u201cX works like\u2026, allowing\u2026\u201d\n- \u201cScientists describe X as\u2026, which matters because\u2026\u201d\n\nAvoid:\n- Vague poetic language\n- Empty statements like \u201cit is mysterious\u201d\n- Broad generic claims with no mechanism\n\n------------------------------------------------------------\n\ud83d\udfe5 SCOPE OF COVERAGE\nAcross the 55 factual units, you MUST cover:\n1. Basic definitions / what the thing is  \n2. How it forms or behaves  \n3. Forces, pressures, or physical laws involved  \n4. Strange or counterintuitive phenomena  \n5. Rare creatures / structures / events  \n6. Why scientists study it  \n7. Why humans care about it (ecology, survival, navigation, etc.)  \n8. Misconceptions and corrections  \n\n------------------------------------------------------------\n\ud83d\udfe5 TONE\n- Objective  \n- Factual  \n- Zero ASMR  \n- Zero emotional padding  \n- Zero relaxing language  \n\nThe job is to ensure **the Body Writer (master_writer) cannot avoid teaching something real**.\n\n------------------------------------------------------------\n\ud83d\udfe5 FINAL INSTRUCTION\nReturn **only the JSON array**, with 55 items, properly formatted.\nNo commentary. No headings. No markdown.\n"
+            },
+            {
+              "role": "system",
+              "content": "=\nYou are a \u201cSoft Knowledge Disassembler\u201d\u2014a specialist who takes any topic and breaks it into 10 families of real-world phenomena.  \nYour goal is to extract *usable, sensory, non-jargon knowledge* that can be transformed into soft, atmospheric sleep-learning content."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        2400
+      ],
+      "id": "95594ae1-9818-4067-bbc3-2cb8e37e71b0",
+      "name": "facts_planner",
+      "credentials": {
+        "openAiApi": {
+          "id": "BieHZ0YBvBvzYOef",
+          "name": "Image"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d6f612c-75ae-4c2e-9306-656356cec70b",
+              "name": "vid_data",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -928,
+        2784
+      ],
+      "id": "d9001b43-5b6f-4fe1-95c8-9f0c0afdb21f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw",
+          "mode": "list",
+          "cachedResultName": "uncle sleep",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Folder Name": "={{ $('Get_theme').item.json['Folder Name'] }}",
+            "Description": "={{ $json.vid_data.description }}",
+            "Tags": "={{ $json.vid_data.tags.join(\", \") }}\n"
+          },
+          "matchingColumns": [
+            "Folder Name"
+          ],
+          "schema": [
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Folder Name",
+              "displayName": "Folder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Schedule",
+              "displayName": "Schedule",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Audio",
+              "displayName": "Audio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -640,
+        2784
+      ],
+      "id": "a8fdb34d-7898-4785-a99e-4c45d77ca5bc",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw",
+          "mode": "list",
+          "cachedResultName": "uncle sleep",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Folder Name": "={{ $('Get_theme').item.json['Folder Name'] }}",
+            "Audio": "Done"
+          },
+          "matchingColumns": [
+            "Folder Name"
+          ],
+          "schema": [
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Folder Name",
+              "displayName": "Folder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Schedule",
+              "displayName": "Schedule",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Audio",
+              "displayName": "Audio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        2280
+      ],
+      "id": "651d068b-e7c6-433b-9e88-59ce86f68c8b",
+      "name": "Update row in sheet1",
+      "executeOnce": true,
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw",
+          "mode": "list",
+          "cachedResultName": "uncle sleep",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Folder Name": "={{ $('Get_theme').item.json['Folder Name'] }}",
+            "Image": "Done"
+          },
+          "matchingColumns": [
+            "Folder Name"
+          ],
+          "schema": [
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Folder Name",
+              "displayName": "Folder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Schedule",
+              "displayName": "Schedule",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Audio",
+              "displayName": "Audio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        2832
+      ],
+      "id": "9c5063b9-5414-40a7-99d4-9234cf05a3db",
+      "name": "Update row in sheet2",
+      "executeOnce": true,
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        832,
+        2496
+      ],
+      "id": "891fdd3e-44df-41c5-8355-b7a1bdd48b98",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Theme }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are the \u201cUncle Sleep 3\u00d7 Image Prompt Generator Agent.\u201d\nYour job is to produce 3 unique, dreamy, ultra-soft ambience image prompts \nfollowing the Uncle Sleep aesthetic\u2014calm, dark, minimal, sleep-safe, and deeply soothing.\n\n--- GLOBAL STYLE RULES ---\n\u2022 NO beacon, NO lighthouse, NO symbols, NO halos, NO icons.\n\u2022 NO humans, NO silhouettes, NO faces, NO hands, NO animals.\n\u2022 NO text or letters.\n\u2022 NO bright lights, NO harsh contrast, NO sharp edges.\n\u2022 Everything must feel warm, safe, velvety, quiet, and dreamlike.\n\n--- VISUAL SIGNATURE ---\n\u2022 Ultra-dark palette: deep navy, charcoal, muted blues.\n\u2022 Gentle moonlit gradients with soft atmospheric haze.\n\u2022 Blurred edges, fog layers, soft diffusion, zero harsh shadows.\n\u2022 Minimalist composition with ample negative space.\n\u2022 Cinematic 16:9 ambience.\n\n--- TOPIC RULES ---\nYou will receive ONE TOPIC from the user.\nYour task is to generate 3 variations based on this topic.\nThe topic must be represented abstractly through:\n\u2022 color palettes\n\u2022 mood cues\n\u2022 soft shapes\n\u2022 environmental impressions\n\nNever depict the topic literally or with detail.\nThe topic must whisper, not shout.\n\n--- OUTPUT RULES ---\n\u2022 Generate EXACTLY 3 prompts.\n\u2022 output json format\n\u2022 Each prompt must be 1\u20132 lines.\n\u2022 Each prompt must be unique but consistent in style.\n\u2022 Output ONLY the list, no explanations.\n\n\nOUTPUT FORMAT:\nReturn ONLY valid JSON array:\n[\n  {\"prompt\": \"...\", \"order\": 1},\n  {\"prompt\": \"...\", \"order\": 2},\n  ...\n]\nDo not include explanations.\nDo not include numbering.\n\n\n--- NOW GENERATE ---\nTOPIC: {{ $json.Theme }}\nProduce 3 image prompts in Uncle Sleep style.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -416,
+        2928
+      ],
+      "id": "6bc96cf5-e5ac-4fb7-89b1-6848acf46bea",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -408,
+        3152
+      ],
+      "id": "d16ec23a-a76b-42f8-ad07-9f107d2e939a",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "EqswssK46vPlyr8Q",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\"prompt\": \"Ultra-dark dreamlike ambience with soft drifting blue haze...\",\n  \"order\":1},\n  {\"prompt\": \"Deep navy fog with gentle moonlit gradients...\",\n  \"order\":2},\n  {\"prompt\": \"Abstract underwater shimmer in muted tones...\",\n  \"order\":3}\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -280,
+        3152
+      ],
+      "id": "fe79db98-0829-4fcf-9661-667341256a7e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5050/api/image",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.prompt }}"
+            },
+            {
+              "name": "channel_name",
+              "value": "={{ $json.channel_name }}"
+            },
+            {
+              "name": "folder_name",
+              "value": "={{ $json.folder_name }}"
+            },
+            {
+              "name": "file_name",
+              "value": "={{ $json.folder_name }}_{{ $json.order }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        608,
+        3024
+      ],
+      "id": "034e52cf-0b60-4d34-a909-db6bdab6e980",
+      "name": "local_image2",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u53d6\u51fa\u4f7f\u7528\u8005\u9078\u7684 channel & folder\nconst channel = $('Get_theme').first().json['Channel Name'];\nconst folder = $('Get_theme').first().json['Folder Name'];\n\n// \u53d6\u51fa AI Agent \u7684\u8f38\u51fa\u5217\u8868\nconst items = $input.first().json.output;   // <-- \u9019\u88e1\u662f array\n\n// \u8f49\u6210 n8n \u591a\u500b item\nreturn items.map(obj => ({\n\tjson: {\n\t\tprompt: obj.prompt,\n\t\torder: obj.order,\n\t\tchannel_name: channel,\n\t\tfolder_name: folder\n\t}\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        2928
+      ],
+      "id": "bb93a7fa-b68b-4fb5-8be4-91ce37d67467",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        384,
+        2928
+      ],
+      "id": "6f5755f9-eb3a-4a0b-9092-6f60b2ced9e5",
+      "name": "Loop Over Items5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me5",
+      "typeVersion": 1,
+      "position": [
+        160,
+        2928
+      ],
+      "id": "37dcc70a-adca-4b80-b4ab-2277d1d8003b"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.channel_name = $('Get_theme').first().json['Channel Name'];\n  item.json.folder_name = $('Get_theme').first().json['Folder Name'];\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        2400
+      ],
+      "id": "0ad4b6a3-3938-4170-91fa-70f8a19ab698",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/pipeline",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel_name",
+              "value": "={{ $json['Channel Name'] }}"
+            },
+            {
+              "name": "folder_name",
+              "value": "={{ $json['Folder Name'] }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 1200000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1792,
+        3256
+      ],
+      "id": "4764eda0-fbfc-4e70-9fa3-6ac5271cacc0",
+      "name": "HTTP Request",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "=\u2705 New vid ready",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1344,
+        3256
+      ],
+      "id": "fc539e28-4398-4716-9a9c-2bbe2cda35b9",
+      "name": "audio_failed_noti",
+      "webhookId": "0a8b63b4-4a50-48d3-a3c5-746ca0e18e62",
+      "credentials": {
+        "telegramApi": {
+          "id": "gxaM0SkzUl7n7iax",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw",
+          "mode": "list",
+          "cachedResultName": "uncle sleep",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vFmKjHZG2GfktRRsA1VsgJ62YjzTkuPTtQzHGXsqbbw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Folder Name": "={{ $('Get_theme').item.json['Folder Name'] }}",
+            "Status": "Completed"
+          },
+          "matchingColumns": [
+            "Folder Name"
+          ],
+          "schema": [
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Folder Name",
+              "displayName": "Folder Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Schedule",
+              "displayName": "Schedule",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Audio",
+              "displayName": "Audio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1568,
+        3256
+      ],
+      "id": "3536808f-2626-4302-a45e-38f598d96e25",
+      "name": "Update row in sheet3",
+      "executeOnce": true,
+      "credentials": {
+        "googleApi": {
+          "id": "8XJpV3mx9Wjz6qqq",
+          "name": "Service account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1792,
+        2616
+      ],
+      "id": "fa05114a-5e58-47cf-9877-bcd2de0d911a",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "node_count": 31
+}

@@ -1,0 +1,285 @@
+{
+  "id": "N1IL4EzBAbj969wY",
+  "name": "Create Alpha Girl Revenge Spreadsheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "create-spreadsheet",
+      "name": "Create Spreadsheet",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        464,
+        304
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WwvtG5cgsmvZj9Fz",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "story_id": "story_id",
+            "generated_at": "generated_at",
+            "subreddit": "subreddit",
+            "original_title": "original_title",
+            "original_url": "original_url",
+            "upvotes": "upvotes",
+            "rewrite_level": "rewrite_level",
+            "drama_score": "drama_score",
+            "viral_potential": "viral_potential",
+            "word_count": "word_count",
+            "duration_seconds": "duration_seconds",
+            "status": "status"
+          }
+        },
+        "options": {}
+      },
+      "id": "setup-storyqueue",
+      "name": "Setup StoryQueue Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        208
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $('Create Spreadsheet').item.json.id }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"requests\": [\n    {\n      \"updateSheetProperties\": {\n        \"properties\": {\n          \"sheetId\": 0,\n          \"title\": \"StoryQueue\"\n        },\n        \"fields\": \"title\"\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"UsedStories\"\n        }\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"Episodes\"\n        }\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "create-sheets",
+      "name": "Create Additional Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        688,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Create Spreadsheet').item.json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "UsedStories",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "story_id": "story_id",
+            "used_at": "used_at",
+            "subreddit": "subreddit"
+          }
+        },
+        "options": {}
+      },
+      "id": "setup-usedstories",
+      "name": "Setup UsedStories Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        912,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Create Spreadsheet').item.json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Episodes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_date": "episode_date",
+            "story_id": "story_id",
+            "video_id": "video_id",
+            "video_url": "video_url",
+            "hook_short_id": "hook_short_id",
+            "climax_short_id": "climax_short_id",
+            "aftermath_short_id": "aftermath_short_id",
+            "views_24h": "views_24h",
+            "views_total": "views_total",
+            "ctr": "ctr",
+            "avg_view_duration": "avg_view_duration",
+            "status": "status"
+          }
+        },
+        "options": {}
+      },
+      "id": "setup-episodes",
+      "name": "Setup Episodes Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        912,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const spreadsheetId = $('Create Spreadsheet').item.json.id;\nconst url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;\n\nreturn {\n  json: {\n    spreadsheet_id: spreadsheetId,\n    spreadsheet_url: url,\n    message: '\u2705 Alpha Girl Revenge spreadsheet created successfully!',\n    sheets: ['StoryQueue', 'UsedStories', 'Episodes'],\n    next_step: `Add this to your .env: ALPHA_GIRL_SHEETS_ID=${spreadsheetId}`\n  }\n};"
+      },
+      "id": "output-result",
+      "name": "Output Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        304
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Create Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Create Additional Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Additional Sheets": {
+      "main": [
+        [
+          {
+            "node": "Setup UsedStories Headers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Setup Episodes Headers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup UsedStories Headers": {
+      "main": [
+        [
+          {
+            "node": "Output Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Episodes Headers": {
+      "main": [
+        [
+          {
+            "node": "Output Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

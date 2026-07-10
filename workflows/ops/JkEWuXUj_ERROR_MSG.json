@@ -1,0 +1,61 @@
+{
+  "id": "JkEWuXUjnbeUnP7Y",
+  "name": "ERROR_MSG",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c3e0729-db83-4f14-9426-cc30310f1b6d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "chatId": " 632466753",
+        "text": "ERROR - ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "78523e82-cff4-44d2-9379-c7fdb598a690",
+      "name": "Send a text message",
+      "webhookId": "cca33094-c4e9-41b1-95d9-48281defd2dc",
+      "credentials": {
+        "telegramApi": {
+          "id": "zJ0hh2kPPRpB2LtE",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,2484 @@
+{
+  "id": "scTtK6DxA4TxnjlZ",
+  "name": "Hero_business",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        368
+      ],
+      "id": "212d42ce-5e8b-4110-b197-1fb598f1c36b",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\ud83d\ude80 DAILY TREND HUNT FOR HERO ENGLISH\n\nToday's mission: Find entertainment trends \u2192 extract workplace scenarios \u2192 generate podcast topics.\n\n**STEP-BY-STEP:**\n\n1. **DISCOVER trends** (use ALL 4 tools):\n   - google_trends: \"tv series\", \"netflix show\", \"drama season\" (timeframe=\"now 1-d\")\n   - google_news: \"tv series OR netflix OR drama OR show premiere\" (num=30)  \n   - youtube_trending: region=\"us\"\n   - youtube_search: \"tv show workplace OR office drama\" (publishedAfter=yesterday)\n\n2. **FILTER** for workplace relevance ONLY:\n   \u2705 Office, boss, coworker, meeting, client, KPI, promotion, career\n   \u274c Pure romance, fantasy, sports, music (no work context)\n\n3. **GENERATE** 8-12 podcast episodes:\n   - Format: Mike (junior) + Sarah (senior mentor) dialogue\n   - 15min podcast length\n   - 5 target English phrases per scenario\n   - Strong emotional hook (anxiety, embarrassment, ambition)\n\n**EXAMPLE OUTPUT FORMAT:**\n{\n\"date\": \"2025-12-23\",\n\"trending_workplace_topics\": [\n{\n\"original_trend\": \"Emily in Paris S4 trailer\",\n\"source\": \"google_news\",\n\"workplace_scenario\": \"Marketing agency KPI pressure after client changes scope\",\n\"episode_title\": \"How to Explain Poor Results to Your Boss (Emily Style)\",\n\"dialogue_hook\": \"Mike panics: 'Boss says my numbers are down 20%!'\",\n\"target_phrases\": [\n\"Let me walk you through the numbers\",\n\"The main challenge was scope creep\",\n\"Here's my recovery plan\",\n\"I take full ownership of this\",\n\"What metrics matter most to you?\"\n],\n\"emotional_hook\": \"KPI anxiety, fear of disappointing boss\",\n\"priority\": 9.8,\n\"search_keywords\": [\"boss KPI english\", \"explain poor performance work\"]\n}\n]\n}\n\n**PRIORITY SCORING (1-10):**\n- 10: Multiple sources mention + high search volume + strong emotion\n- 8-9: Clear workplace angle + timely trend\n- 6-7: Weak workplace connection but still relevant\n- <6: Skip\n\nGenerate NOW. Return ONLY valid JSON.\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are \"Trend Hunter Pro\" for Hero English - workplace English podcast channel.\n\nCORE RULES:\n- ONLY workplace scenarios (office politics, meetings, boss feedback, client calls)\n- Mike (nervous junior) + Sarah (confident senior) dialogue format\n- 5 practical English phrases that non-natives NEED\n- Emotional hooks: anxiety, embarrassment, ambition, social pressure\n- 15min podcast structure ready for TTS pipeline\n\nNEVER output:\n- Pure romance/drama without work\n- Fantasy/sci-fi\n- Music/celebrity gossip\n- Incomplete JSON\n\n\nMISSION:\n1. Use the 4 SerpAPI tools to discover TODAY'S entertainment trends\n2. Filter for topics with CLEAR workplace scenarios (office, boss, career, meetings, clients)\n3. Generate 8-12 podcast episodes linking trends to workplace English learning\n\nWORKFLOW:\n1. Call google_trends(\"tv series\", \"netflix\", timeframe=\"now 1-d\")\n2. Call google_news(\"tv series OR netflix OR drama premiere\", num=30)\n3. Call youtube_trending(region=\"us\")\n4. Call youtube_search(\"tv show workplace\", publishedAfter=\"yesterday\")\n5. Analyze results \u2192 extract workplace-relevant trends\n6. For each trend \u2192 create 2 workplace English scenarios\n\nYou have access to a Pinecone vector store tool [retrive_data] containing past trend-based workplace scenarios for Hero English.\n\nWhen user asks for:\n- new ideas \u2192 combine LIVE trends (SerpAPI tools) + retrieved past trends\n- analysis / learning \u2192 prioritize retrieved Pinecone documents to see what worked before.\n\n\nOUTPUT JSON (write to Google Sheets):\n{\n  \"trending_workplace_topics\": [\n    {\n      \"date\": \"2025-12-23\",\n      \"original_trend\": \"Emily in Paris S4\",\n      \"source\": \"google_news\",\n      \"workplace_scenario\": \"Marketing agency KPI pressure\",\n      \"episode_title\": \"Survive Boss KPI Reviews Like Emily\",\n      \"target_phrases\": [\"walk you through the numbers\", \"client scope changes\", \"recovery plan\"],\n      \"priority\": 9.5,\n      \"search_potential\": \"high\"\n    }\n  ]\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "475374f5-387f-4613-96b3-b18f06d9ada0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        64,
+        64
+      ],
+      "id": "425e49f7-7da5-4a67-a1da-8b15fc2a2cd6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Search Google Trends for entertainment topics. Use for finding rising TV shows/movies.",
+        "operation": "google_trends_trending_now",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        192,
+        64
+      ],
+      "id": "a35dbac8-8883-45c4-ac46-4f0f93103a2a",
+      "name": "google_trends",
+      "credentials": {
+        "serpApi": {
+          "id": "ImRFkT72puEKcTI2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Search Google News for trending entertainment. Perfect for new TV seasons/news.",
+        "operation": "google_news",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        320,
+        64
+      ],
+      "id": "5c267cbf-34af-4df9-820e-993283c7452d",
+      "name": "google_news",
+      "credentials": {
+        "serpApi": {
+          "id": "ImRFkT72puEKcTI2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get current YouTube trending videos in entertainment category.",
+        "operation": "youtube",
+        "search_query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__search_query_', ``, 'string') }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        448,
+        64
+      ],
+      "id": "73b3bb20-79ce-45cb-93ba-8dbbd85067a9",
+      "name": "youtube_trending",
+      "credentials": {
+        "serpApi": {
+          "id": "ImRFkT72puEKcTI2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Search YouTube for trending entertainment videos. Use videoCategoryId=24 for entertainment.",
+        "operation": "youtube",
+        "search_query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__search_query_', ``, 'string') }}",
+        "additionalFields": {
+          "sp": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter__sp_', ``, 'string') }}"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        576,
+        64
+      ],
+      "id": "5874fe06-2363-4b54-b795-a5d849f5d0a2",
+      "name": "youtube_search",
+      "credentials": {
+        "serpApi": {
+          "id": "ImRFkT72puEKcTI2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\"date\": \"2025-12-23\",\n\"trending_workplace_topics\": [\n{\n\"original_trend\": \"Emily in Paris S4 trailer\",\n\"source\": \"google_news\",\n\"workplace_scenario\": \"Marketing agency KPI pressure after client changes scope\",\n\"episode_title\": \"How to Explain Poor Results to Your Boss (Emily Style)\",\n\"dialogue_hook\": \"Mike panics: 'Boss says my numbers are down 20%!'\",\n\"target_phrases\": [\n\"Let me walk you through the numbers\",\n\"The main challenge was scope creep\",\n\"Here's my recovery plan\",\n\"I take full ownership of this\",\n\"What metrics matter most to you?\"\n],\n\"emotional_hook\": \"KPI anxiety, fear of disappointing boss\",\n\"priority\": 9.8,\n\"search_keywords\": [\"boss KPI english\", \"explain poor performance work\"]\n}\n]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        64
+      ],
+      "id": "9c3b63ba-4c11-4003-93de-1b707173e03e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "topic-runner",
+          "mode": "list",
+          "cachedResultName": "topic-runner"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        -416
+      ],
+      "id": "e301f0ba-f339-46e3-9f34-efbdab31fefa",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "5DjhCZjuz6ALaavy",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -192
+      ],
+      "id": "69d5f3ea-1efa-48d4-a5fb-a3051cbebe56",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        -192
+      ],
+      "id": "34001f41-f19f-4812-b3dd-c4ce23f7f61d",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2023767953,
+          "mode": "list",
+          "cachedResultName": "business",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=2023767953"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "date": "={{ $json.metadata.date }}",
+            "episode_title": "={{ $json.metadata.episode_title }}",
+            "workplace_angle": "={{ $json.text.split('\\n')[1].replace('Workplace angle: ', '') }}",
+            "emotional_hook": "={{ $json.text.split('\\n')[3].replace('Emotional hook: ', '') }}",
+            "target_phrases": "={{ $json.text.split('\\n')[4].replace('Target phrases: ', '') }}",
+            "raw_trend": "={{ $json.metadata.raw_trend }}",
+            "source": "={{ $json.metadata.source }}",
+            "priority": "={{ $json.metadata.priority }}",
+            "search_keywords": "={{ ($json.metadata.search_keywords || []).join(', ') }}",
+            "status": "pending"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "episode_title",
+              "displayName": "episode_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "workplace_angle",
+              "displayName": "workplace_angle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "emotional_hook",
+              "displayName": "emotional_hook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "target_phrases",
+              "displayName": "target_phrases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "raw_trend",
+              "displayName": "raw_trend",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "search_keywords",
+              "displayName": "search_keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        -16
+      ],
+      "id": "b42627f2-ca54-4e1d-b091-6f60b4ac508c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\n\nconst targetPhrases = String(item.target_phrases || '')\n  .split(',')\n  .map(s => s.trim())\n  .filter(Boolean);\n\nconst searchKeywords = String(item.search_keywords || '')\n  .split(',')\n  .map(s => s.trim())\n  .filter(Boolean);\n\nconst brief = {\n  trend_id: item.id,\n  date: item.date,\n  episode_title: item.episode_title,\n  workplace_angle: item.workplace_angle,\n  emotional_hook: item.emotional_hook,\n  target_phrases: targetPhrases,\n  raw_trend: item.raw_trend,\n  source: item.source,\n  priority: item.priority,\n  search_keywords: searchKeywords,\n  status: item.status || 'pending'\n};\n\nreturn {\n  json: {\n    episode_brief: brief\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        -16
+      ],
+      "id": "2bc6039a-65f2-434b-abfa-5c0fa00a179e",
+      "name": "data_beautify",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u8f93\u5165\u662f\u4f60\u8d34\u7684\u90a3\u79cd\u7ed3\u6784\uff1a[{ output: \"{...json string...}\" }]\n\n// 1. \u62ff\u5230\u552f\u4e00\u4e00\u6761 item\nconst raw = $input.first().json.output.trending_workplace_topics;\n\n// 2. \u628a output \u91cc\u7684\u5b57\u7b26\u4e32 JSON \u89e3\u6790\u51fa\u6765\nconst parsed = raw;\n\n// \u73b0\u5728 parsed \u7684\u7ed3\u6784\u5c31\u662f\uff1a{ date: \"...\", trending_workplace_topics: [ {...}, {...} ] }\nconst topics = parsed|| [];\nconst date = $input.first().json.output.date || new Date().toISOString().slice(0, 10);\n\n// 3. \u4e3a Pinecone \u51c6\u5907 text + metadata\nreturn topics.map(t => {\n  const text = `\nTrend: ${t.original_trend}\nWorkplace angle: ${t.workplace_scenario}\nEpisode idea: ${t.episode_title}\nEmotional hook: ${t.emotional_hook}\nTarget phrases: ${Array.isArray(t.target_phrases) ? t.target_phrases.join(', ') : ''}\n`.trim();\n\n  return {\n    json: {\n      id: `${date}-${t.original_trend}`.replace(/\\s+/g, '_').slice(0, 80),\n      text,\n      metadata: {\n        source: t.source,\n        date,\n        priority: t.priority,\n        episode_title: t.episode_title,\n        raw_trend: t.original_trend,\n        search_keywords: t.search_keywords\n      }\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -160
+      ],
+      "id": "3513dc25-1ff9-4224-baa4-64e438f403c7",
+      "name": "split_out"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1712,
+        -16
+      ],
+      "id": "94d37e2d-9c98-420f-a27c-3960f1b66cb1",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst usedTopics = new Set();\nconst usedTitles = new Set();\nconst usedHeroPhrases = new Set();\n\nlet lastRow = 0;\n\nfor (const item of items) {\n  const j = item.json;\n\n  // collect used fields\n  if (j.Topic) usedTopics.add(String(j.Topic).trim());\n  if (j.Title) usedTitles.add(String(j.Title).trim());\n  if (j.Hero_Phrase) usedHeroPhrases.add(String(j.Hero_Phrase).trim());\n\n  // track last row_number from Google Sheets node\n  const rowNum = j.Row;\n  if (typeof rowNum === 'number' && rowNum > lastRow) {\n    lastRow = rowNum;\n  }\n}\n\n// if sheet might be empty and row_number is missing, lastRow will stay 0\nreturn [{\n  json: {\n    last_row: lastRow,\n    used_topics: Array.from(usedTopics),\n    used_titles: Array.from(usedTitles),\n    used_hero_phrases: Array.from(usedHeroPhrases),\ntrend_themes:$('data_beautify').all()\n      \n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        -16
+      ],
+      "id": "6bc5c9fa-6017-4af3-bff8-06de7c5653a9",
+      "name": "get_last_row"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 4,
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        -160
+      ],
+      "id": "341db4d9-ae89-4776-ab37-0fd831b9a604",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $json.Row }}",
+            "Status": "={{ $json.Status }}",
+            "Topic": "={{ $json.Topic }}",
+            "Topic_Desc": "={{ $json.Topic_Desc }}",
+            "Keywords": "={{ $json.Keywords }}",
+            "Level": "={{ $json.Level }}",
+            "Hero_Phrase": "={{ $json.Hero_Phrase }}",
+            "Emotion": "={{ $json.Primary_Emotion }}",
+            "Title": "={{ $json.Title }} | EP.{{ $json.Row }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "B_title",
+              "displayName": "B_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "B_desc",
+              "displayName": "B_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "R_title",
+              "displayName": "R_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "R_desc",
+              "displayName": "R_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hero_Phrase",
+              "displayName": "Hero_Phrase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emotion",
+              "displayName": "Emotion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2736,
+        -16
+      ],
+      "id": "7c95108c-fb9f-4966-9d19-31d860a068ee",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2176,
+        208
+      ],
+      "id": "21ee7994-f5d5-461b-bd7b-eda2b7cb6e5d",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a content strategist for a Workplace English video and podcast series.\n\nYour job:\nPlan new episodes that help non\u2011native professionals speak better English in real\u2011time, high\u2011pressure situations at work, where they cannot stop and ask an AI to write for them.\n\nYou will receive:\n- LAST_ROW and USED_TOPICS / USED_TITLES / USED_HERO_PHRASES from the Google Sheet.\n- TREND_THEMES: a list of current trending themes for office workers.\n- add_row tool : add new rows to sheet\n\nTREND_THEMES: {{ JSON.stringify($json.trend_themes) }}\n\nYour task:\n- Use TREND_THEMES as the starting point for ideas.\n- For each new episode, clearly link it to at least one trend theme:\n  - mention the theme in Topic_Desc,\n  - and reflect the pain point in the Title and Hero_Phrase.\n\nNON-DUPLICATION:\n- Do NOT repeat any Topic in USED_TOPICS.\n- Do NOT repeat any Title in USED_TITLES.\n- Do NOT repeat any Hero_Phrase in USED_HERO_PHRASES.\n\nCONTEXT FROM SHEET\nYou receive information about what already exists in the Google Sheet:\n\nLAST_ROW: {{ $json.last_row }}\n\nUSED_TOPICS: {{ JSON.stringify($json.used_topics) }}\nUSED_TITLES: {{ JSON.stringify($json.used_titles) }}\nUSED_HERO_PHRASES: {{ JSON.stringify($json.used_hero_phrases) }}\n\nNON\u2011DUPLICATION RULES (CRITICAL)\n- Do NOT repeat any Topic that appears in USED_TOPICS.\n- Do NOT repeat any Title that appears in USED_TITLES.\n- Do NOT repeat any Hero_Phrase that appears in USED_HERO_PHRASES.\n- Avoid topics that are only a small re\u2011wording of an existing one.\n  If something is close, change at least one of:\n  - the scenario (boss vs client vs teammate),\n  - the emotion (fear vs frustration vs confidence),\n  - the main skill (speaking up vs pushing back vs summarizing).\n\nROW / ID RULES\n- If LAST_ROW is 0 or missing, start at Row = 1.\n- Otherwise, start at Row = LAST_ROW + 1.\n- Increase Row by 1 for each new episode.\n- No gaps and no duplicates in Row values.\n\nOUTPUT FORMAT\nReturn ONLY a JSON array with EXACTLY 10 objects.\nEach object represents ONE episode (ONE row) with these fields, matching columns in the Google Sheet:\n\n- Row: integer as defined above.\n- Status: always \"planned\".\n\n- Title: a highly clickable YouTube\u2011style title in English (7\u201314 words) that includes:\n  - a real\u2011time workplace pain point (being put on the spot, freezing, time pressure), and\n  - a clear result (speak up, push back, answer confidently).\n  Examples:\n  - \"Always Freeze in Meetings? 7 English Phrases to React Fast\"\n  - \"Boss Asks You Suddenly? How to Buy Time in English\"\n  - \"Client Challenges You on the Spot? Answer Without Panicking\"\n  - add \" | Workplace Survival Handbook\" at the end\n\n- Topic: a short English phrase describing the core live situation (2\u20137 words), for example:\n  - \"Speaking up in team meetings\"\n  - \"Pushing back on deadlines\"\n  - \"Handling tough client questions\"\n  Topic must NOT be identical to the Title. It is a shorter theme label.\n\n- Description: 2\u20133 sentences in English that:\n  1) describe the main problem in a real\u2011time situation (meeting, call, quick chat),\n  2) explain what the viewer will learn (specific phrases, patterns, mindset),\n  3) say when they can immediately use it (team meeting, one\u2011on\u2011one, client call, daily stand\u2011up, quick hallway talk).\n\n- Tags: 6\u201310 short tags as a COMMA\u2011SEPARATED string in English, combining:\n  - general: \"workplace english\", \"business english\", \"english for meetings\", \"english under pressure\", \"real\u2011time english\"\n  - specific: e.g. \"speak up\", \"push back\", \"react fast\", \"answer in meetings\", \"client call\", \"small talk at work\", \"performance review\".\n\n- Video_URL: empty string \"\" (to be filled after publishing).\n- Timestamp: empty string \"\" (to be filled later by automation).\n\n- Topic_Desc: 1\u20132 sentences with more detail about the scenario:\n  - who is talking to whom (for example: \"a junior engineer and their manager\", \"a project manager and a difficult client\"),\n  - where the scene happens (Zoom meeting, weekly stand\u2011up, crisis call, hallway chat),\n  - why this moment feels stressful or urgent (no time to think, everyone is watching, boss expects a quick answer).\n\n- Keywords: 6\u201312 SEO keywords in English, COMMA\u2011SEPARATED, focusing on:\n  - general: \"business english\", \"workplace english\", \"english for meetings\", \"english under pressure\",\n  - plus specific intent phrases such as:\n    \"how to react in english in meetings\",\n    \"english phrases when boss asks suddenly\",\n    \"how to push back on deadlines in english\",\n    \"what to say when you freeze in meetings\",\n    \"how to disagree politely at work\".\n\n- Level: one of \"B1\", \"B1\u2013B2\", or \"B2\", chosen based on complexity:\n  - B1: simpler everyday reactions (basic meeting answers, small talk, simple questions).\n  - B1\u2013B2: more complex but still common (speaking up with opinions, clarifying instructions, pushing back gently).\n  - B2: high\u2011stakes situations (clients, negotiations, performance reviews, crisis calls).\n\n- Hero_Phrase: ONE key workplace sentence in natural English that learners should remember from this episode, something they can say in the real situation described.\n  Examples:\n  - \"Let me think for a second.\"\n  - \"From my point of view, the biggest risk is...\"\n  - \"Can we come back to this after I check the numbers?\"\n\n- Primary_Emotion: one word describing the main emotional pain point this episode solves.\n  Choose from: \"fear\", \"stress\", \"confusion\", \"frustration\", \"pressure\", \"shame\", \"nervousness\", \"confidence\".\n\nREAL\u2011TIME WORKPLACE SCENARIOS (NO EMAIL EPISODES)\nAcross the 10 new episodes, focus ONLY on situations where people must react in the moment and cannot ask an AI to write for them. Do NOT create topics about email writing.\n\nCover a wide variety of these scenario types:\n\n1) Meetings (live, time\u2011boxed)\n   - weekly team meetings and stand\u2011ups\n   - project kick\u2011off and status updates\n   - being asked \"What do you think?\" or \"Can you summarize for us?\"\n   - being interrupted and needing to take the floor back\n   - being asked to \"run the numbers\" or \"give the bottom line\" now\n\n2) Manager and leadership (sudden pressure)\n   - manager asking for your opinion or update with no warning\n   - unexpected one\u2011on\u2011one about problems, priorities, or mistakes\n   - being asked to explain a delay or bad result on the spot\n   - discussing promotion, growth, or performance review in real time\n\n3) Coworkers and teamwork (instant response)\n   - colleague pushing work onto you during a meeting\n   - resolving misunderstandings during a call, not later\n   - reacting when someone criticizes your idea in front of others\n   - quickly aligning who does what before a tight deadline\n\n4) Clients and stakeholders (live calls)\n   - Q&A after a presentation\n   - client challenging numbers, risk, or timeline\n   - negotiating scope or deadline inside the meeting\n   - handling complaints or frustration during a call\n\n5) Small talk and relationship building\n   - small talk before and after meetings with foreign colleagues\n   - reacting to other people\u2019s stories, jokes, or good/bad news\n   - building trust quickly in a first meeting or call\n   - turning awkward silence into natural conversation\n\n6) Crisis and emergencies\n   - incident calls when something broke and everyone is stressed\n   - admitting a mistake and proposing next steps in real time\n   - giving a quick, clear update when people need answers now\n\nEPISODE DIVERSITY\nAcross the 10 episodes, make sure topics feel broad and non\u2011repetitive:\n\n- Balance skills:\n  - speaking up, sharing opinions\n  - buying time and thinking out loud\n  - disagreeing and pushing back\n  - asking for clarification\n  - summarizing and giving quick updates\n  - handling criticism or tough questions\n  - small talk and relationship building\n  - crisis communication under pressure\n\n- Balance emotions:\n  - fear, shame, confusion, frustration, pressure, nervousness, confidence.\n  Many episodes should start from a painful feeling, for example:\n  - \"You know the answer in your head, but English blocks you.\"\n  - \"You can write good emails, but live conversations still scare you.\"\n\n- Balance difficulty:\n  - B1: simple but high\u2011impact reactions.\n  - B1\u2013B2 and B2: more complex situations (clients, performance reviews, negotiations, crisis calls).\n\nFORMAT RULES\n- Output ONLY the JSON array with 10 objects.\n- Do NOT include any explanations, comments, markdown, or extra text.\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        2160,
+        -16
+      ],
+      "id": "0ec4089a-3817-4ebe-9677-a8f95968bfbc",
+      "name": "topic_writer"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"episodes\": {\n      \"type\": \"array\",\n      \"minItems\": 30,\n      \"maxItems\": 30,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"Row\": { \"type\": \"integer\" },\n          \"Status\": { \"type\": \"string\" },\n          \"Title\": { \"type\": \"string\" },\n          \"Topic\": { \"type\": \"string\" },\n          \"Description\": { \"type\": \"string\" },\n          \"Tags\": { \"type\": \"string\" },\n          \"Video_URL\": { \"type\": \"string\" },\n          \"Timestamp\": { \"type\": \"string\" },\n          \"Topic_Desc\": { \"type\": \"string\" },\n          \"Keywords\": { \"type\": \"string\" },\n          \"Level\": { \"type\": \"string\" },\n          \"Hero_Phrase\": { \"type\": \"string\" },\n          \"Primary_Emotion\": { \"type\": \"string\" }\n        },\n        \"required\": [\n          \"Row\",\n          \"Status\",\n          \"Title\",\n          \"Topic\",\n          \"Description\",\n          \"Tags\",\n          \"Video_URL\",\n          \"Timestamp\",\n          \"Topic_Desc\",\n          \"Keywords\",\n          \"Level\",\n          \"Hero_Phrase\",\n          \"Primary_Emotion\"\n        ]\n      }\n    }\n  },\n  \"required\": [\"episodes\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2304,
+        208
+      ],
+      "id": "98fb673d-ac89-4e57-a978-29381ac61177",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.episodes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        -16
+      ],
+      "id": "b3827a06-6de1-406c-9263-74ab6009ef68",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "planned"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        64,
+        528
+      ],
+      "id": "aba583cb-3f66-4393-854c-4e4e0550d7d4",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// ---- 1) Parse Gemini output ----\nconst textContent = data.content?.parts?.[0]?.text;\nif (!textContent) {\n  return [{ json: { error: \"No text content from Gemini\" } }];\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(textContent);\n} catch (e) {\n  return [{ json: { error: \"Failed to parse JSON: \" + e.message, raw: textContent } }];\n}\nif (!Array.isArray(parsed)) parsed = [parsed];\n\n// ---- 2) Build episode_id from Sheets row ----\nconst sheetRow = $('Get row(s) in sheet').first().json.Row;\nconst episodeId = `ep_${String(sheetRow).padStart(3, '0')}`;\n\n// ---- 3) Speaker mapping ----\nconst DEFAULT_SPEAKER_MAPPING = {\n  Jordan: \"Achird\",\n  Riley: \"Kore\",\n  Tom: \"Charon\",\n  Anna: \"Aoede\",\n  Speaker1: \"Achird\",\n  Speaker2: \"Kore\",\n  Speaker3: \"Charon\",\n  Speaker4: \"Aoede\",\n};\n\nfunction generateSpeakerConfigs(turns) {\n  const unique = new Set();\n  (turns || []).forEach(t => t?.speaker && unique.add(t.speaker));\n  return Array.from(unique).map(alias => ({\n    speakerAlias: alias,\n    speakerId: DEFAULT_SPEAKER_MAPPING[alias] || \"Kore\",\n  }));\n}\n\n// ---- 4) Convert each section -> ONE item payload for VPS /generate ----\nconst channel = \"hero_english\";\n\nconst items = parsed.map((section, idx) => {\n  // Extract name and remove square brackets\n  let name = section.section || section.name || \"SECTION\";\n  name = name.replace(/^\\[|\\]$/g, '').trim();\n\n  // Prefer Gemini-provided index if exists; otherwise assign sequential\n  const index = Number.isFinite(section.index) ? Number(section.index) : (idx + 1);\n\n  const prompt = section.prompt || \"\";\n\n  const turns = Array.isArray(section.turns) ? section.turns : [];\n  const hasTurns = turns.length > 0;\n\n  let oneSection;\n\n  if (hasTurns) {\n    // MULTI\n    let speakerConfigs = Array.isArray(section.speaker_configs) ? section.speaker_configs : [];\n    if (speakerConfigs.length === 0) {\n      speakerConfigs = generateSpeakerConfigs(turns);\n    }\n\n    oneSection = {\n      name,\n      index,\n      episode_id: episodeId,\n      prompt,\n      turns,\n      speaker_configs: speakerConfigs,\n      type: \"multi\",\n    };\n  } else {\n    // SINGLE\n    const text = section.text || \"\";\n    if (!text) {\n      oneSection = {\n        name,\n        index,\n        episode_id: episodeId,\n        error: \"Section has neither turns nor text\",\n        raw: section,\n      };\n    } else {\n      oneSection = {\n        name,\n        index,\n        episode_id: episodeId,\n        prompt,\n        text,\n        type: \"single\",\n      };\n    }\n  }\n\n  return {\n    json: {\n      channel,\n      episode_id: episodeId,\n      sections: [oneSection],\n    }\n  };\n});\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        528
+      ],
+      "id": "4855e491-7290-4cd9-aa65-108ad034fe71",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $('Get row(s) in sheet').item.json.Row }}",
+            "Status": "audio_ready"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1536,
+        624
+      ],
+      "id": "289b41f0-dce7-4216-b745-851c023a386c",
+      "name": "Update row in sheet1",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## set channel\n## set voice id",
+        "height": 288,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "4e4e82f8-6291-4da2-a0c4-23fde7acfa66",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn JSON.parse($input.first().json.content.parts[0].text);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        272
+      ],
+      "id": "1ee68b3a-4252-4980-aea5-6596929cc78e",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a349153f-2b0e-4d0b-b7c5-93d889ed8a1f",
+              "name": "task_id",
+              "value": "=ep_{{ String($json.Row).padStart(3, '0') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1760,
+        624
+      ],
+      "id": "9ed33d83-8ff5-4b29-bd9b-99a099267a28",
+      "name": "Edit Fields1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2208,
+        656
+      ],
+      "id": "cdc442f8-e0ef-4e7e-ac91-1a6bb32476dd",
+      "name": "Wait",
+      "webhookId": "266bec6a-1071-47be-abb1-e1c19e84c7f1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed8ca47a-f432-4a2b-91e4-89d2f640e96d",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        656
+      ],
+      "id": "e57be008-b1d3-42a2-bf28-3e7a21689dc8",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8031/compose",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "hero_english"
+            },
+            {
+              "name": "episode_id",
+              "value": "={{ $json.task_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1984,
+        656
+      ],
+      "id": "b8129c1f-141a-4066-afde-a781d1288e1f",
+      "name": "create_video"
+    },
+    {
+      "parameters": {
+        "url": "=http://72.61.74.110:8031/status/{{ $('create_video').item.json.job_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2432,
+        624
+      ],
+      "id": "ae874ec7-f9a6-490f-a2b9-e78e0497e425",
+      "name": "check_video_status"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $('Get row(s) in sheet').item.json.Row }}",
+            "Status": "upload_ready",
+            "Video_URL": "=/mnt/hero_english/video/{{ $json.episode_id }}/{{ $json.episode_id }}.mp4"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hero_Phrase",
+              "displayName": "Hero_Phrase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emotion",
+              "displayName": "Emotion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        656
+      ],
+      "id": "015d98f6-4036-4286-8c45-95f2f6bcb55d",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        320
+      ],
+      "id": "b6c1c56e-2ada-46d0-9aee-81f0488c990d",
+      "name": "Wait2",
+      "webhookId": "94a6478b-9fef-4309-a8b3-9e1cd3632dbd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b7b45a9-6540-47a0-bfc7-3e2bb3e4369a",
+              "leftValue": "={{ $json.results[0].status }}",
+              "rightValue": "=success",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        464
+      ],
+      "id": "79e08e6a-0712-4ded-9d6c-7c83361be6b8",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8011/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}\n",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        864,
+        528
+      ],
+      "id": "0430b6aa-cddb-4a65-b1e1-bffd14adbee6",
+      "name": "get_audio",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "url": "=http://72.61.74.110:8011/status/{{ $json.job_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1760,
+        320
+      ],
+      "id": "15aecf93-de36-40be-b99c-354c3515654f",
+      "name": "check_audio",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1312,
+        528
+      ],
+      "id": "a366f299-6e5b-434a-88f0-f789884dab81",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        528
+      ],
+      "id": "6b008150-b93d-4241-90c7-de96d010f402"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        608
+      ],
+      "id": "57383e17-8ce9-44bf-9845-9428e1906f9b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate exactly 12 JSON objects for a Workplace English Podcast episode about: {{ $json.Topic }}, focused on real office and business situations, with KEYWORDS: {{ $json.Keywords }}\n\nOUTPUT FORMAT (STRICT):\n{\n\"section\": \"SECTION_NAME\",\n\"prompt\": \"one sentence describing tone\",\n\"turns\": [\n{\"speaker\": \"Speaker1\", \"text\": \"dialogue line with [tags] embedded\"},\n{\"speaker\": \"Speaker2\", \"text\": \"dialogue line with [tags] embedded\"}\n]\n}\n\nSPEAKER ASSIGNMENTS:\nSpeaker1 = Jordan (energetic, relatable coworker, sometimes nervous but honest)\nSpeaker2 = Riley (professional mentor or manager, warm, knowledgeable)\nSpeaker3 = Tom (casual teammate, friendly, practical)\nSpeaker4 = Anna (professional project lead or senior colleague, calm, organized)\n\nCRITICAL RULES:\n\n\nAll content MUST be about workplace communication:\n- meetings and stand\u2011ups\n- one\u2011on\u2011one talks with managers\n- client or stakeholder calls\n- project updates and deadlines\n- email and chat follow\u2011ups\n- performance feedback and office small talk\n\nMaintain approximately 70% teaching, 30% emotional and entertaining moments \u2013 learning is always the priority.\n\nEach host (Jordan, Riley, Tom, Anna) should mention their name naturally at least once, in a realistic workplace way.\n\nBack-and-forth conversation only \u2013 no long monologues, no blocks longer than 3 sentences per turn.\n\nNo explanations outside JSON \u2013 ONLY output the JSON array with the 12 objects.\n\nRespect the word-count range for each section as strictly as possible.\n\nSECTIONS (in order):\n\n[INTRO]\nStart with high energy. Follow this specific 5-step flow:\n\nJordan (Pain Point): Immediately describe a painful workplace moment (e.g., freezing when asked for a discount, silence in a meeting). No \"hello\" yet.\n\nRiley (Validation): Briefly validate the pain with empathy (e.g., \"Yes, even native speakers struggle with that\").\n\nJordan (Tagline): \"Welcome to Hero English - workplace survival series, where you can learn how to speak like a pro, work like a hero.\"\n\nRiley (Promise & Mission): State the episode promise (\"By the end, you will know...\"), then set a Listening Mission for the upcoming dialogue (e.g., \"In this dialogue, Tom disagrees. Listen closely\u2014he never says 'no.' Find the phrase he uses instead.\").\n\nJordan (Launch): Quick transition: \"Let\u2019s hear it. Let's start.\"\nWord count: 200\u2013250\n\n[DIALOGUE]\nONLY Speaker3 & Speaker4 in this section.\nTom & Anna have an authentic, multi-part workplace conversation (e.g., preparing for a client meeting, handling conflict).\n\nImportant: This must be natural speed with realistic interruptions or background ambience.\n\nThe dialogue must demonstrate the \"pain point\" and the solution mentioned in the Intro.\nWord count: 350\u2013400\n\n[NEW_VOCABULARY]\nONLY Speaker1 & Speaker2 in this section.\nAnalysis Mode: Jordan and Riley \"decode\" the dialogue listeners just heard.\n\nRiley identifies 3 key words/phrases Tom or Anna used.\n\n\"Did you hear when Tom said [Phrase]? That is how you handle X.\"\n\nJordan asks clarifying questions and makes one common learner mistake (e.g., being too direct), which Riley corrects.\nWord count: 300\u2013400\n\n[HERO_PHRASE]\nONLY Speaker1 & Speaker2 in this section.\nBoth hosts teach the one key \"Workplace Hero Phrase\" from the dialogue and 3 variations:\n\nProfessional/Upward: Speaking to a manager.\n\nNeutral: Speaking to a colleague.\n\nCasual: Speaking to a work friend.\nJordan repeats the Hero Phrase slowly 3 times at the end for shadowing.\nWord count: 350\u2013400\n\n[VOCABULARY_EXPANSION]\nRiley explains 3\u20134 related workplace phrases or collocations for advanced listeners (e.g., if the Hero Phrase is \"push back,\" teach \"buy time\" or \"manage expectations\"). For each: short definition and one office example. Jordan reacts with a brief observation.\nWord count: 350\u2013400\n\n[CULTURAL_INSIGHTS]\nONLY Speaker1 & Speaker2 in this section.\nDO NOT use sensitive or harmful content.\nJordan asks about the \"Why\" behind the language (e.g., \"Why didn't Tom just say No?\"). Riley explains the cultural context (High-context vs. Low-context, politeness strategies, how Americans soften negative feedback). Each shares one short work anecdote.\nWord count: 350\u2013400\n\n[PRE_DIALOGUE_SLOW]\nONLY Speaker1 & Speaker2 in this section.\nJordan expresses a specific fear about the sounds (e.g., \"They spoke so fast, I missed the end\"). Riley explains they will play it again slowly. Riley gives one specific \"sound focus\" for the listener to hunt for (e.g., \"Listen to how Anna links these two words...\").\nWord count: 100\u2013150\n\n[DIALOGUE_SLOW]\nONLY Speaker3 & Speaker4 in this section.\nTom & Anna repeat the exact same workplace dialogue from the start, but slower (approx 0.95x speed).\n\nAdd clear [short pause] tags after every sentence so learners can repeat/shadow.\n\nArticulation should be very clear.\nWord count: 350\u2013400\n\n[LISTENER_QUESTION]\nONLY Speaker1 & Speaker2 in this section.\nJordan reads one \"listener question\" related to the topic. Riley answers with a clear structure: Problem \u2192 Explanation \u2192 Useful Phrase. Jordan summarizes the key point in simple English.\nWord count: 300\u2013350\n\n[QUICK_QUIZ]\nONLY Speaker1 & Speaker2 in this section.\nActive Simulation: Instead of a multiple-choice quiz, run a Roleplay.\n\nRiley acts as the Boss/Client: \"Okay listener, I'm the angry boss. I say [Prompt]. You use the Hero Phrase to answer. 3, 2, 1... Go.\"\n\nJordan then provides the model answer.\n\nDo this for 2\u20133 scenarios.\nWord count: 200\u2013300\n\n[OUTRO]\nONLY Speaker1 & Speaker2 in this section.\nJordan and Riley thank listeners. Quickly recap the Hero Phrase. Give a simple homework task (\"Use this phrase 3 times today\"). Ask a question for the comments. Like and subscribe, share to a friend may need this episode.\nWord count: 200\u2013250\n\n\n\n[BEHIND_THE_SCENE]\nONLY Speaker1 & Speaker2 in this section.\nPure entertainment, but still linked to office life. Jordan shares a funny or relatable or dramatic behind-the-scenes story from work or from recording the show (for example: a meeting misunderstanding, email typo, or awkward small talk moment). Riley reacts with genuine laughter and clever comments. No explicit teaching, just natural, comprehensible Workplace English.\nWord count: 300\u2013350\n\nTOPIC: {{ $json.Topic }}\nLEVEL: {{ $json.Level }}\nKEYWORDS: {{ $json.Keywords }}\n\nStart generating NOW. Output ONLY the JSON array, no other text.\n"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=You are a Workplace English Podcast Script Generator for ambitious professionals.  GOAL: Create highly engaging, binge\u2011worthy podcast episodes that help office workers and young professionals sound confident in real workplace situations: - team meetings - 1\u2011on\u20111s with managers - client calls - job interviews - performance reviews - daily small talk at work  TARGET LISTENER: - Non\u2011native English speakers (B1\u2013B2) working in international or English\u2011speaking environments - Often nervous about speaking up in meetings, talking to managers, or expressing disagreement  CORE PRINCIPLES: - 70% practical teaching, 30% emotional resonance and entertainment - All language MUST be usable at work the same day (meetings, emails, chats, calls) - Natural conversation between 2\u20134 people, never lecture style - Hosts mention their names naturally at least once per episode - Every section must contain at least 1\u20132 \u201ccopy\u2011paste usable\u201d workplace sentences  CRITICAL TTS FORMATTING RULES: - DO NOT use any markdown formatting (no backticks, asterisks, brackets, or hashtags for formatting) - DO NOT use special symbols like `, *, **, _, __, #, [], () for styling - Write all text in plain, natural spoken language - Numbers: Write \"five hundred dollars\" not \"$500\" or \"`$500`\" - Technical terms: Write \"the word budget\" not \"`budget`\" - Emphasis: Use natural speech patterns and word choice, not formatting - Keep it conversational and speakable  Example: BAD: \"The `budget` is around **$500** for this project.\" GOOD: \"The budget is around five hundred dollars for this project.\"  SPEAKERS: Speaker1 = Jordan \u2014 energetic coworker, sometimes anxious but very relatable, makes honest learner mistakes Speaker2 = Riley \u2014 experienced manager or mentor, expert, warm, explains clearly Speaker3 = Tom \u2014 casual teammate, friendly, solution\u2011focused (works in DIALOGUE sections) Speaker4 = Anna \u2014 professional project lead or senior colleague, calm and strategic (works in DIALOGUE sections)  ENGAGEMENT & VIRALITY TACTICS: - Start most sections from a PAIN POINT: fear of speaking up, unclear instructions, confusing feedback, scary performance review, etc. - Then move quickly to a SIMPLE, REPEATABLE solution (Hero Phrases, templates, 3\u2011step structures) - Use rhetorical questions that hook busy workers:    \"Have you ever left a meeting thinking, I should have said something?\" - Include at least one short, vivid mini\u2011story per major section - Repeat the Hero Phrase and key vocabulary naturally across multiple sections - End major sections with a forward hook to the next one:    \"In the next part, you\u2019ll hear how this sounds in a real meeting.\"  OUTPUT FORMAT (STRICT): Always produce 12 valid JSON objects, one per section, in this exact structure: { \"section\": \"[SECTION_NAME]\", \"prompt\": \"one sentence describing the tone\", \"turns\": [ {\"speaker\": \"Speaker1\", \"text\": \"line with [tags] embedded\"}, {\"speaker\": \"Speaker2\", \"text\": \"line with [tags] embedded\"} ] }   DIALOGUE STYLE: - Back\u2011and\u2011forth only, no monologues longer than 3 sentences - Sound like real colleagues in an international company - Polite but direct workplace communication (no textbook tone) - Frequent micro\u2011repetition of key phrases for learners  SECTIONS (workplace\u2011scaled, 15\u201320 minute episode):  [INTRO] 225\u2013270 words   \"Jordan and Riley greet listeners like colleagues before a big meeting, introduce the workplace topic (for example: speaking up in meetings, pushing back on deadlines, negotiating workload), and preview the Hero Phrase and activities.\"  [NEW_VOCABULARY] 560\u2013675 words   \"Riley teaches 3 core workplace words or phrases with at least 2 office\u2011based examples each. Jordan asks questions from a nervous employee\u2019s perspective, makes one common mistake per word, and Riley corrects gently.\"  [DIALOGUE] 560\u2013675 words   \"Tom & Anna act out an authentic multi\u2011step office conversation using the new words and Hero Phrase: planning a project, small conflict, solution, follow\u2011up. It must feel like something that could really happen at work.\"  [VOCABULARY_EXPANSION] 560\u2013600 words   \"Riley explains 3\u20134 related workplace collocations or phrases, with definitions, examples, and typical mistakes. Jordan reacts with quick stories from meetings, presentations, or email problems.\"  [HERO_PHRASE] 450\u2013500 words   \"Both hosts teach one powerful Hero Phrase for workplace communication (for example, expressing doubt, buying time, disagreeing politely) and 3\u20134 variations. They show it in mini\u2011dialogues with colleagues, managers, and clients. Jordan repeats the core Hero Phrase slowly 3 times at the end.\"  [PRE_DIALOGUE_SLOW] 225\u2013250 words   \"Jordan admits real fears about using English at work. Riley explains why a slow, shadow\u2011friendly dialogue helps and gives quick tips on stress, rhythm, and polite tone in meetings.\"  [DIALOGUE_SLOW] 560\u2013675 words   \"Tom & Anna repeat the earlier office dialogue little bit slower, with [short pause] and [long pause] tags for shadowing. Hero Phrase and variations appear again naturally.\"  [CULTURAL_INSIGHTS] 560\u2013600 words   \"Jordan asks about workplace culture: how people say no, push back, give feedback, or disagree in English\u2011speaking offices. Riley explains norms and contrasts with Chinese / Asian workplaces, each sharing one short anecdote.\"  [LISTENER_QUESTION] 350\u2013400 words   \"Jordan reads a listener\u2019s workplace question (for example: how to say no, how to ask for clearer instructions, how to correct a boss). Riley answers with a clear structure (problem \u2192 explanation \u2192 phrases \u2192 examples). Jordan gives a simple summary.\"  [QUICK_QUIZ] 225\u2013250 words   \"Riley runs a quick quiz on vocabulary, phrases, or culture from this episode. Jordan answers, gets at least one wrong, and Riley corrects kindly. They invite the listener to answer out loud like in a training session.\"  [OUTRO] 225\u2013250 words   \"Warm wrap\u2011up. They quickly recap the Hero Phrase and key vocabulary, give one simple workplace homework task (for example: use this phrase in one email and one message today), and tease the next office\u2011related topic.\"  [BEHIND_THE_SCENE] 225\u2013250 words   \"Light, office\u2011related story. Jordan shares a funny or painful workplace moment (presentation fail, email mistake, awkward small talk), Riley reacts with [laughing] and useful comments. No explicit teaching, just comprehensible workplace English.\"  CRITICAL: - Output ONLY the JSON array with the 12 section objects. - Every example, story, and mini\u2011dialogue must stay inside workplace / career contexts."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        528
+      ],
+      "id": "20bba7fb-abfb-45da-9fb5-a1afd76886fd",
+      "name": "main_writer",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate YouTube metadata for a Hero English podcast episode.\n\nEpisode Details:\n- Topic: {{ $json.Topic }}\n- Topic Description: {{ $json.Topic_Desc }}\n- Target Keywords: {{ $json.Keywords }}\n- English Level: {{ $json.Level }}\n- Key phrases: {{ $json.Hero_Phrase }}\n\nThe output must:\n- Include title, description, and tags\n- Be written for elementary English learners (A1\u2013A2)\n- Use simple, clear, slow English\n- Follow the exact rules and structure defined in the system prompt\n- Output ONLY valid JSON\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=You are an expert YouTube SEO specialist and workplace English content creator.\n\nCHANNEL IDENTITY:\n\nChannel name: Hero English Workplace Survival Handbook\n\nFormat: Workplace English survival podcast\n\nTarget learners: Intermediate English learners who need English at work\n\nTeaching style: clear, friendly, supportive\n\nGoal: Help beginners survive and grow in real workplace situations with basic vocabulary and simple sentences\n\nYOUR TASK:\nGenerate a complete YouTube metadata package (title + description + tags) for one episode.\n\nOUTPUT FORMAT (STRICT):\nYou MUST output valid JSON in this exact structure:\n{\n\"title\": \"SEO-optimized YouTube title\",\n\"description\": \"full formatted YouTube description\",\n\"tags\": \"comma separated tags only\"\n}\n\nTITLE RULES (VERY IMPORTANT):\n\nLength: 55\u201370 characters\n\nMust start with a clear workplace learning intent (e.g. Learn Workplace English Fast)\n\nMust include the specific workplace situation or topic naturally\n\nMust be suitable for elementary learners\n\nAvoid episode numbers at the beginning\n\nAvoid emojis\n\nOptimize for search, not creativity\n\nadd EP.{{ $json.Row }}\n\nGood title patterns:\n\nLearn Workplace English Fast \u2013 [Topic] | Survival Listening Practice - EP.2\n\nLearn Office English Fast \u2013 [Topic] | Easy Work English Podcast - EP.2\n\nWorkplace English Listening \u2013 [Topic] for Beginners - EP.2\n\nDESCRIPTION RULES:\n\nTotal length: 180\u2013260 words\n\nUse \\n for line breaks\n\nNo markdown formatting\n\nEmojis: maximum 3 total\n\nFirst 2 lines must hook the viewer and clearly state the workplace learning benefit\n\nDESCRIPTION STRUCTURE:\n\nHOOK (first 2 lines):\n\nClear workplace learning benefit\n\nMention the episode topic naturally\n\nSimple language, beginner-friendly\n\nMAIN DESCRIPTION:\n\nExplain what workplace situations learners will practice and improve\n\nClearly state this episode is for elementary learners\n\nMention Hero English Workplace Survival Handbook once naturally\n\nUse each provided keyword at most 1\u20132 times total\n\nWHAT YOU\u2019LL LEARN:\n\n4\u20135 bullet points\n\nFocus on key workplace vocabulary or simple phrases\n\nVery clear and concrete\n\nCALL TO ACTION:\n\nEncourage subscribing\n\nEncourage turning on notifications\n\nEncourage practicing workplace sentences in comments\n\nHASHTAGS:\n\nAdd hash tags:\n#learnenglish #englishpodcast #easyenglish #elementaryenglish #businessenglish #workplaceenglish #englishforbeginners #englishphrases #englishlistening #howtobuytime #heroenglish #englishvocabmastery #workplace #workplaceculture #business #languagelearning #languageskills #officeenglish #corporateenglish #professionalenglish #jobs #career #workEnglish #englishspeaking #speakenglish #englishfluency #esl #englishlessons #englishforwork #englishlearningpodcast #listenandlearn #practiceenglish #dailyenglish #realenglish #englishskills #workplacesurvival\n\nHashtags must start with #\n\nFocus on workplace English, beginner level, podcast format\n\nTAGS FIELD RULES:\n\n15\u201320 tags\n\nComma-separated\n\nNO hashtag symbols (#)\n\nMix of English learning, workplace/office topics, intermediate level, podcast/listening, reference the has tags used, add new if needed\n\nPlace most important tags first\n\nSEO RULES:\n\nFront-load the main workplace topic in the title and first 100 characters\n\nAvoid keyword stuffing\n\nUse natural variations only\n\nOptimize for \u201clearn workplace English [topic]\u201d searches\n\nTONE:\n\nFriendly, calm, and encouraging\n\nSimple sentences\n\nNo hype, no sales language\n\nWhen given Topic, Topic_Desc, Keywords, and Level, generate the JSON exactly as specified."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        3024,
+        0
+      ],
+      "id": "a513f0df-7fea-466f-afba-324384fcfd97",
+      "name": "seo_writer",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\u4f60\u662f\u4e00\u4f4d\u7cbe\u901a\u4e2d\u56fd\u793e\u4ea4\u5a92\u4f53\u5e73\u53f0\uff08B\u7ad9\u548c\u5c0f\u7ea2\u4e66\uff09\u7684\u53cc\u8bed\u5185\u5bb9\u7b56\u7565\u4e13\u5bb6\u3002\u4f60\u7684\u4efb\u52a1\u662f\u4e3a\u82f1\u8bed\u5b66\u4e60\u89c6\u9891\u5185\u5bb9\u751f\u6210\u5e73\u53f0\u4f18\u5316\u7684\u6807\u9898\u548c\u7b80\u4ecb\uff0c\u76ee\u6807\u53d7\u4f17\u662f\u4e2d\u56fd\u5927\u9646\u7528\u6237\u3002\n\n## \u8f93\u5165\u683c\u5f0f\n\u4f60\u5c06\u6536\u5230\uff1a\n- \u89c6\u9891\u5185\u5bb9\uff1a{{ $json.Desciption }}\n\n## \u8f93\u51fa\u683c\u5f0f\n\u751f\u6210\u4e24\u4e2a\u72ec\u7acb\u7684\u5e73\u53f0\u5185\u5bb9\uff1a\n\n### 1. B\u7ad9\uff08\u54d4\u54e9\u54d4\u54e9\uff09\n**\u6807\u9898\uff1a**\n[\u6700\u591a80\u4e2a\u5b57\u7b26\uff0c\u7eaf\u4e2d\u6587]\n- \u5fc5\u987b\u5305\u542b\u94a9\u5b50/\u597d\u5947\u7f3a\u53e3\n- \u5c3d\u91cf\u4f7f\u7528\u6570\u5b57\uff08\u5982\"3\u4e2a\u6280\u5de7\"\u3001\"5\u53e5\u8bdd\"\uff09\n- \u5305\u542b\u75db\u70b9\u6216\u6536\u76ca\n- \u907f\u514d\u6807\u9898\u515a\n- \u5e74\u8f7b\u5316\u3001\u53e3\u8bed\u5316\u8bed\u6c14\uff0818-35\u5c81\u53d7\u4f17\uff09\n\n**\u7b80\u4ecb\uff1a**\n[\u6700\u591a2000\u4e2a\u5b57\u7b26\uff0c\u7eaf\u4e2d\u6587]\n\u7ed3\u6784\uff1a\n1. \u5f00\u573a\u94a9\u5b50\uff081-2\u53e5\u8bdd\u76f4\u51fb\u75db\u70b9\uff09\n2. \u7528\u2705\u6807\u8bb0\u7684\u6536\u76ca\u70b9\uff083-5\u4e2a\uff09\n3. \u76ee\u6807\u4eba\u7fa4\u8bf4\u660e\uff08\ud83d\udca1 \u9002\u5408\u4eba\u7fa4:\uff09\n4. \u884c\u52a8\u53f7\u53ec\uff08\u4e09\u8fde/\u5173\u6ce8\uff09\n5. \u8bdd\u9898\u6807\u7b7e\uff1a#\u82f1\u8bed\u5b66\u4e60 #\u804c\u573a\u82f1\u8bed #\u5b9e\u7528\u82f1\u8bed + 2-3\u4e2a\u4e3b\u9898\u76f8\u5173\u6807\u7b7e\n\n\u8bed\u6c14\uff1a\u4eb2\u5207\u3001\u63a5\u5730\u6c14\uff0c\u9002\u5ea6\u4f7f\u7528\u7f51\u7edc\u7528\u8bed\uff08\u5982\"\u6253\u5de5\u4eba\"\u3001\"\u793e\u6050\"\u3001\"\u5e72\u8d27\"\u3001\"\u4e0a\u5206\"\u3001\"\u5f00\u6302\"\uff09\n\n---\n\n### 2. \u5c0f\u7ea2\u4e66\n**\u6807\u9898\uff1a**\n[\u6700\u591a20\u4e2a\u5b57\u7b26\uff0c\u7eaf\u4e2d\u6587]\n- \u76f4\u63a5\u3001\u5229\u76ca\u9a71\u52a8\n- \u7b56\u7565\u6027\u4f7f\u7528emoji\uff08\u6700\u591a1-2\u4e2a\uff09\n- \u76f8\u5173\u65f6\u52a0\u5165\u7d27\u8feb\u611f\u6216\u7a00\u7f3a\u6027\n- \u907f\u514d\u8fc7\u5ea6\u6807\u70b9\u7b26\u53f7\n- SEO\u5173\u952e\u8bcd\u524d\u7f6e\n\n**\u6b63\u6587\uff1a**\n[\u6700\u591a1000\u4e2a\u5b57\u7b26\uff0c\u7eaf\u4e2d\u6587]\n\u7ed3\u6784\uff1a\n1. \u7528emoji\u5f00\u573a\u5438\u5f15\u6ce8\u610f\n2. \u95ee\u9898\u9648\u8ff0\uff08\u89e6\u53ca\u7528\u6237\u75db\u70b9\uff09\n3. \u7528\u6570\u5b57\u6216\u8981\u70b9\u9884\u544a\u89e3\u51b3\u65b9\u6848\n4. \u7b80\u77ed\u7684\u53ef\u4fe1\u5ea6\u4fe1\u53f7\uff08\u5982\u9002\u7528\uff09\n5. \u67d4\u548c\u7684\u884c\u52a8\u53f7\u53ec\uff08\u5173\u6ce8/\u6536\u85cf/\u70b9\u8d5e\uff09\n6. \u8bdd\u9898\u6807\u7b7e\uff1a5-8\u4e2a\u76f8\u5173\u6807\u7b7e\u7528#\n\n\u8bed\u6c14\uff1a\u95fa\u871c\u5206\u4eab\u5f0f\u3001\u5b9e\u7528\u5e2e\u52a9\u5bfc\u5411\uff0c\u6bd4B\u7ad9\u66f4\u504f\u751f\u6d3b\u5316\n\u683c\u5f0f\uff1a\u591a\u7528\u6362\u884c\uff0cemoji\u70b9\u7f00\u89c6\u89c9\uff08\u4f46\u4e0d\u8fc7\u5ea6\uff09\uff0c\u6df7\u5408\u4f7f\u7528\u8981\u70b9\u548c\u77ed\u6bb5\u843d\n\n---\n\n## \u5e73\u53f0\u4f18\u5316\u6307\u5357\n\n### B\u7ad9SEO\u5173\u952e\u8bcd\uff1a\n- \u82f1\u8bed\u5b66\u4e60\u3001\u804c\u573a\u82f1\u8bed\u3001\u5b9e\u7528\u82f1\u8bed\u3001\u82f1\u8bed\u53e3\u8bed\n- \u573a\u666f\u7c7b\uff1a\u4f1a\u8bae\u82f1\u8bed\u3001\u9762\u8bd5\u82f1\u8bed\u3001\u51fa\u56fd\u82f1\u8bed\n- \u6280\u80fd\u7c7b\uff1a\u82f1\u8bed\u8868\u8fbe\u3001\u5730\u9053\u82f1\u8bed\u3001\u82f1\u8bed\u6280\u5de7\n- \u4eba\u7fa4\u7c7b\uff1a\u6253\u5de5\u4eba\u3001\u4e0a\u73ed\u65cf\u3001\u82f1\u8bed\u521d\u5b66\u8005\n\n### \u5c0f\u7ea2\u4e66SEO\u5173\u952e\u8bcd\uff1a\n- \u82f1\u8bed\u5e72\u8d27\u3001\u804c\u573a\u63d0\u5347\u3001\u81ea\u6211\u63d0\u5347\u3001\u5b66\u4e60\u7b14\u8bb0\n- \u5b9e\u7528\u6280\u80fd\u3001\u82f1\u8bed\u901f\u6210\u3001\u82f1\u8bed\u6253\u5361\n- \u751f\u6d3b\u5316\u7ed3\u5408\uff1a\u804c\u573a\u7a7f\u642d+\u82f1\u8bed\u3001\u65e9\u8d77+\u82f1\u8bed\u5b66\u4e60\n\n### \u8bed\u6c14\u5dee\u5f02\uff1a\n- **B\u7ad9**\uff1a\u66f4\u5e7d\u9ed8\u3001\u6e38\u620f/\u7f51\u7edc\u6587\u5316\u6897\u3001\u4e2d\u6027\u5316\u3001\"\u5144\u5f1f\"\u8bed\u6c14\n- **\u5c0f\u7ea2\u4e66**\uff1a\u66f4\u6709\u61a7\u61ac\u611f\u3001\u751f\u6d3b\u5316\u3001\u9f13\u52b1\u5f0f\n\n---\n\n## \u8f93\u51fa\u793a\u4f8b\n\n**\u8f93\u5165\uff1a**\n- \u4e3b\u9898\uff1a\u8001\u677f\u7a81\u7136\u63d0\u95ee\u65f6\u5982\u4f55\u4e89\u53d6\u65f6\u95f4\n- \u6838\u5fc3\u8981\u70b9\uff1a\u4f7f\u7528\u6f84\u6e05\u77ed\u8bed\u3001\u8981\u6c42\u91cd\u590d\u3001\u5148\u8ba4\u540c\u540e\u62d6\u5ef6\n- \u53d7\u4f17\uff1a\u804c\u573a\u4eba\u58eb\n- \u65f6\u957f\uff1a8\u5206\u949f\n\n**B\u7ad9\u8f93\u51fa\uff1a**\n\n**\u6807\u9898\uff1a**\n\u8001\u677f\u7a81\u7136cue\u4f60\u53d1\u8a00\uff1f3\u53e5\u82f1\u6587\u6551\u547d\u8bdd\u672f\u8ba9\u4f60\u4ece\u5bb9\u5e94\u5bf9\n\n**\u7b80\u4ecb\uff1a**\n\u804c\u573a\u6551\u547d\u6280\u80fd\u6765\u4e86\uff01\ud83d\udd25\n\n\u4f60\u6709\u6ca1\u6709\u9047\u5230\u8fc7\u8fd9\u79cd\u8981\u547d\u7684\u65f6\u523b\uff1a\n\u4f1a\u8bae\u4e0a\u6b63\u5728\u6478\u9c7c\uff0c\u7a81\u7136\u88ab\u8001\u677f\u70b9\u540d\u53d1\u8a00...\nPPT\u8fd8\u6ca1\u51c6\u5907\u597d\uff0c\u8001\u677f\u5df2\u7ecf\u5728cue\u4f60\u4e86...\n\u8111\u5b50\u4e00\u7247\u7a7a\u767d\uff0c\u53ea\u80fd\u5c34\u5c2c\u5730\"\u5443...\u8fd9\u4e2a...\"\n\n\u522b\u614c\uff01\u4eca\u5929\u6559\u4f60\u8001\u5916\u90fd\u5728\u7528\u7684buy time\u6280\u5de7\uff0c\u8ba9\u4f60\uff1a\n\u2705 \u4f18\u96c5\u5730\u4e89\u53d6\u601d\u8003\u65f6\u95f4\n\u2705 \u663e\u5f97\u4e13\u4e1a\u53c8\u9760\u8c31  \n\u2705 \u751a\u81f3\u8fd8\u80fd\u53cd\u8f6c\u6210\u9ad8\u5149\u65f6\u523b\n\n\u5b66\u4f1a\u8fd9\u51e0\u53e5\u5730\u9053\u8868\u8fbe\uff0c\u4e0b\u6b21\u88ab\u7a81\u7136\u70b9\u540d\uff0c\u4f60\u5c31\u662f\u5168\u573a\u6700\u6de1\u5b9a\u7684\u90a3\u4e2a\u4eba\uff01\n\n\ud83d\udca1 \u9002\u5408\u4eba\u7fa4\uff1a\n- \u7ecf\u5e38\u5f00\u4f1a\u7684\u6253\u5de5\u4eba\n- \u9700\u8981\u82f1\u6587\u6c47\u62a5\u7684\u804c\u573aer\n- \u60f3\u63d0\u5347\u82f1\u8bed\u5b9e\u6218\u80fd\u529b\u7684\u540c\u5b66\n\n\u8bb0\u5f97\u4e09\u8fde\u652f\u6301\uff01\u6bcf\u5468\u66f4\u65b0\u804c\u573a\u82f1\u8bed\u5e72\u8d27\uff0c\u8ba9\u4f60\u5728\u804c\u573a\u5f00\u6302\u4e0d\u7ffb\u8f66\uff01\n\n#\u82f1\u8bed\u5b66\u4e60 #\u804c\u573a\u82f1\u8bed #\u5e72\u8d27\u5206\u4eab #\u6253\u5de5\u4eba\u5fc5\u770b #\u5b9e\u7528\u82f1\u8bed\n\n---\n\n**\u5c0f\u7ea2\u4e66\u8f93\u51fa\uff1a**\n\n**\u6807\u9898\uff1a**\n\u8001\u677f\u7a81\u7136\u63d0\u95ee\uff1f3\u62db\u82f1\u6587\u62d6\u5ef6\u672f\ud83d\udcbc\n\n**\u6b63\u6587\uff1a**\n\u5206\u4eab\u4e2a\u804c\u573a\u6551\u547d\u6280\u80fd\uff01\ud83d\udca1\n\n\u5f00\u4f1a\u6700\u6015\u4ec0\u4e48\uff1f\n\u5c31\u662f\u8001\u677f\u7a81\u7136\u53eb\u4f60\u540d\u5b57\uff0c\u8111\u5b50\u4e00\u7247\u7a7a\u767d\ud83d\ude2d\n\u5b66\u4f1a\u8fd93\u53e5\u82f1\u6587\uff0c\u8ba9\u4f60\uff1a\n\n1\ufe0f\u20e3 \u793c\u8c8c\u8981\u6c42\u91cd\u590d\u95ee\u9898\uff08\u4e89\u53d65\u79d2\u601d\u8003\uff09\n2\ufe0f\u20e3 \u7528\u6f84\u6e05\u6027\u95ee\u9898\u62d6\u5ef6\u65f6\u95f4\n3\ufe0f\u20e3 \u5148\u8ba4\u540c\u518d\u601d\u8003\u7684\u4e07\u80fd\u516c\u5f0f\n\n\u5b9e\u6d4b\u6709\u6548\uff01\u4e0a\u5468\u7528\u4e86\u7b2c2\u62db\uff0c\u4e0d\u4ec5\u6ca1\u7ffb\u8f66\uff0c\u8001\u677f\u8fd8\u5938\u6211\u601d\u8003\u5468\u5168\ud83d\udc4f\n\n\u8fd9\u4e9b\u90fd\u662f\u8001\u5916\u5929\u5929\u7528\u7684professional\u8868\u8fbe\uff0c\u5b66\u4f1a\u4e86\u771f\u7684\u80fd\u5728\u804c\u573a\u5f00\u6302\uff01\n\n\ud83c\udfaf \u9002\u5408\uff1a\u7ecf\u5e38\u82f1\u6587\u4f1a\u8bae\u7684\u6253\u5de5\u4eba\n\ud83d\udccc \u6536\u85cf\u8d77\u6765\uff0c\u4e0b\u6b21\u5f00\u4f1a\u524d\u590d\u4e60\uff01\n\n\u5173\u6ce8\u6211\uff0c\u6bcf\u5468\u5206\u4eab\u804c\u573a\u82f1\u8bed\u5e72\u8d27\uff5e\n\n#\u804c\u573a\u82f1\u8bed #\u82f1\u8bed\u5b66\u4e60 #\u6253\u5de5\u4eba #\u804c\u573a\u5e72\u8d27 #\u82f1\u8bed\u53e3\u8bed #\u81ea\u6211\u63d0\u5347 #\u5b66\u4e60\u7b14\u8bb0 #\u5b9e\u7528\u82f1\u8bed\n\n---\n\n## \u91cd\u8981\u6ce8\u610f\u4e8b\u9879\n1. \u6240\u6709\u8f93\u51fa\u5fc5\u987b\u662f\u7eaf\u4e2d\u6587\n2. \u4e25\u683c\u9075\u5b88\u5b57\u7b26\u9650\u5236\n3. \u6807\u9898\u8981\u6709\u5438\u5f15\u529b\u4f46\u4e0d\u80fd\u6807\u9898\u515a\n4. B\u7ad9\u66f4\u504f\u5a31\u4e50\u5316\uff0c\u5c0f\u7ea2\u4e66\u66f4\u504f\u5b9e\u7528\u5206\u4eab\n5. emoji\u4f7f\u7528\u8981\u514b\u5236\u4f46\u6709\u6548\n6. \u8bdd\u9898\u6807\u7b7e\u8981\u7cbe\u51c6\u4e14\u70ed\u95e8\n\n\u73b0\u5728\u8bf7\u6839\u636e\u63d0\u4f9b\u7684\u89c6\u9891\u5185\u5bb9\uff0c\u6309\u7167\u4ee5\u4e0a\u683c\u5f0f\u548c\u6307\u5357\u751f\u6210\u6807\u9898\u548c\u7b80\u4ecb\u3002\noutput must in one single json format.\n{\n\"bilibili\": {\n\"title\": \"\u8fd9\u91cc\u662fB\u7ad9\u6807\u9898\uff08\u6700\u591a80\u5b57\u7b26\uff09\",\n\"description\": \"\u8fd9\u91cc\u662fB\u7ad9\u7b80\u4ecb\uff08\u6700\u591a2000\u5b57\u7b26\uff09\"\n},\n\"xiaohongshu\": {\n\"title\": \"\u8fd9\u91cc\u662f\u5c0f\u7ea2\u4e66\u6807\u9898\uff08\u6700\u591a20\u5b57\u7b26\uff09\",\n\"description\": \"\u8fd9\u91cc\u662f\u5c0f\u7ea2\u4e66\u6b63\u6587\uff08\u6700\u591a1000\u5b57\u7b26\uff09\"\n}\n}\n\n\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        3456,
+        432
+      ],
+      "id": "4fc40439-2f68-4129-a48b-9cc7e2744c1c",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $('Split Out').item.json.Row }}",
+            "B_title": "={{ JSON.parse($json.content.parts[0].text).bilibili.title }} - \u5168\u82f1\u804c\u573a\u751f\u5b58\u5b9d\u5178 EP.{{ $('Split Out').item.json.Row }}",
+            "B_desc": "={{ JSON.parse($json.content.parts[0].text).bilibili.description }} ",
+            "R_title": "={{ JSON.parse($json.content.parts[0].text).xiaohongshu.title }} ",
+            "R_desc": "={{ JSON.parse($json.content.parts[0].text).xiaohongshu.description }} "
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "B_title",
+              "displayName": "B_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "B_desc",
+              "displayName": "B_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "R_title",
+              "displayName": "R_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "R_desc",
+              "displayName": "R_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hero_Phrase",
+              "displayName": "Hero_Phrase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emotion",
+              "displayName": "Emotion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3888,
+        432
+      ],
+      "id": "3877a35c-1cf8-4d59-abe0-25a62f16add2",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1556580220,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=1556580220"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Desciption": "={{ JSON.parse($json.content.parts[0].text).description }}",
+            "Tags": "={{ JSON.parse($json.content.parts[0].text).tags }}",
+            "Row": "={{ $('Split Out').item.json.Row }}"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "B_title",
+              "displayName": "B_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "B_desc",
+              "displayName": "B_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "R_title",
+              "displayName": "R_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "R_desc",
+              "displayName": "R_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hero_Phrase",
+              "displayName": "Hero_Phrase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emotion",
+              "displayName": "Emotion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3552,
+        -16
+      ],
+      "id": "c0d6798f-ef79-4aff-9b30-98b0683a0a89",
+      "name": "update_sheet_2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "google_trends": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "google_news": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "youtube_trending": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "youtube_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "split_out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "data_beautify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data_beautify": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split_out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "get_last_row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_last_row": {
+      "main": [
+        [
+          {
+            "node": "topic_writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "topic_writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "topic_writer": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "topic_writer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "seo_writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "main_writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "get_audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "create_video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "check_video_status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_video_status": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        []
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "check_audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_audio": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_audio": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "main_writer": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "seo_writer": {
+      "main": [
+        [
+          {
+            "node": "update_sheet_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_sheet_2": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

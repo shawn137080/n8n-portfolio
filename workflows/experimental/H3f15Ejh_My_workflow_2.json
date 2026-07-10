@@ -1,0 +1,770 @@
+{
+  "id": "H3f15EjhyOw1yCL0",
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "cf043fe9-51e5-4729-9d8a-e2fef07e98cf",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. \u7372\u53d6\u6240\u6709\u6578\u64da\nconst allSubjects = $('Database_Subjects').all().map(i => i.json);\nconst allLenses = $('Database_Lenses').all().map(i => i.json);\nconst history = $('Generator_Output').all().map(i => i.json);\n\n// 2. \u5efa\u7acb\u6b77\u53f2\u8a18\u9304\u7684 \"\u6307\u7d0b\u5eab\" (\u7528\u65bc\u53bb\u91cd)\n// \u683c\u5f0f: \"Subject_Lens\" (\u8f49\u5c0f\u5beb\u4ee5\u907f\u514d\u5927\u5c0f\u5beb\u8aa4\u5dee)\nconst historySet = new Set();\nhistory.forEach(item => {\n  if (item.Subject && item.Lens) {\n    historySet.add(`${item.Subject.trim().toLowerCase()}_${item.Lens.trim().toLowerCase()}`);\n  }\n});\n\n// 3. \u8a2d\u7f6e\u76ee\u6a19\u751f\u6210\u6578\u91cf\nconst TARGET_COUNT = 100;\nlet results = [];\n\n// 4. \u512a\u5148\u7d1a\u9078\u984c\u908f\u8f2f (Round-Robin with Priority)\n// \u6211\u5011\u4e0d\u96a8\u6a5f\u9078 Subject\uff0c\u800c\u662f\u5f9e\u982d(\u6d41\u884c\u5ea6\u9ad8)\u904d\u6b77\u5230\u5c3e\u3002\n// \u70ba\u78ba\u4fdd\u591a\u6a23\u6027\uff0c\u6211\u5011\u6bcf\u4e00\u8f2a\u53ea\u7d66\u6bcf\u500b Subject \u5206\u914d 1 \u500b Lens\uff0c\u76f4\u5230\u6e4a\u6eff 50 \u500b\u3002\n\nlet subjectsLoopCount = 0; // \u9632\u6b62\u6b7b\u5faa\u74b0\nwhile (results.length < TARGET_COUNT && subjectsLoopCount < 5) { // \u6700\u591a\u904d\u6b77\u6574\u500bSubject\u5217\u88685\u6b21\n  \n  for (let i = 0; i < allSubjects.length; i++) {\n    if (results.length >= TARGET_COUNT) break;\n\n    const subjectObj = allSubjects[i];\n    const subjectName = subjectObj.Subject;\n\n    // \u5617\u8a66\u70ba\u9019\u500b Subject \u627e\u4e00\u500b\u53ef\u7528\u7684 Lens\n    // \u70ba\u4e86\u591a\u6a23\u6027\uff0c\u6211\u5011 \"\u96a8\u6a5f\" \u5617\u8a66 Lens\uff0c\u76f4\u5230\u627e\u5230\u4e00\u500b\u6c92\u7528\u904e\u7684\n    // (\u5982\u679c Lens \u5217\u8868\u5f88\u5927\uff0c\u96a8\u6a5f\u5617\u8a66\u6548\u7387\u5f88\u9ad8)\n    \n    let attempts = 0;\n    let foundLens = null;\n    \n    // \u5275\u5efa\u4e00\u500b Lens \u7684\u96a8\u6a5f\u7d22\u5f15\u6578\u7d44\uff0c\u907f\u514d\u91cd\u8907\u5617\u8a66\u540c\u4e00\u500b Lens\n    let lensIndices = Array.from({length: allLenses.length}, (_, k) => k);\n    // Fisher-Yates Shuffle \u96a8\u6a5f\u6253\u4e82 Lens \u9806\u5e8f\n    for (let k = lensIndices.length - 1; k > 0; k--) {\n        const j = Math.floor(Math.random() * (k + 1));\n        [lensIndices[k], lensIndices[j]] = [lensIndices[j], lensIndices[k]];\n    }\n\n    // \u904d\u6b77\u6253\u4e82\u5f8c\u7684 Lens \u5217\u8868\n    for (let idx of lensIndices) {\n      const lensObj = allLenses[idx];\n      const lensName = lensObj.Lens;\n      const uniqueKey = `${subjectName.trim().toLowerCase()}_${lensName.trim().toLowerCase()}`;\n\n      // \u6aa2\u67e5\u662f\u5426\u5728\u6b77\u53f2\u5eab\u4e2d\n      if (!historySet.has(uniqueKey)) {\n        // \u6aa2\u67e5\u662f\u5426\u5728 \"\u672c\u6b21\u5df2\u9078\" \u5217\u8868\u4e2d (\u9632\u6b62\u672c\u6b21\u91cd\u8907)\n        const isCurrentlySelected = results.some(r => \n          r.json.subject === subjectName && r.json.lens === lensName\n        );\n\n        if (!isCurrentlySelected) {\n          foundLens = lensObj;\n          break; // \u627e\u5230\u4e00\u500b\u5c31\u505c\uff0c\u63db\u4e0b\u4e00\u500b Subject\n        }\n      }\n    }\n\n    if (foundLens) {\n      results.push({\n        json: {\n          subject: subjectObj.Subject,\n          category: subjectObj.Category,\n          traits: subjectObj.Traits,\n          lens: foundLens.Lens,\n          focus: foundLens.Focus\n        }\n      });\n    }\n  }\n  subjectsLoopCount++;\n}\n\nconst cleanList = results.map(item => item.json);\n\n// 2. \u8fd4\u56de\u4e00\u500b\u55ae\u7368\u7684 Item\uff0c\u88e1\u9762\u5305\u542b\u6574\u500b\u5217\u8868\nreturn [\n  {\n    json: {\n      // \u9019\u5c31\u662f\u4f60\u8981\u7684\u5927 JSON \u5b57\u7b26\u4e32\uff0c\u65b9\u4fbf AI \u8b80\u53d6\n      // \u4f60\u4e5f\u53ef\u4ee5\u4e0d stringify\uff0c\u76f4\u63a5\u50b3\u6578\u7d44\uff0c\u4f46 stringify \u5c0d Token \u63a7\u5236\u66f4\u7cbe\u78ba\n      all_candidates_json: cleanList,\n      \n      // \u9019\u662f\u539f\u59cb\u6578\u7d44\u683c\u5f0f\uff0c\u5982\u679c\u4f60\u5f8c\u7e8c\u9084\u60f3\u7528 Code \u8655\u7406\n      all_candidates_array: cleanList\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -64
+      ],
+      "id": "dc3a9680-c9a4-4129-99af-8ffdd93a5f28",
+      "name": "Code in JavaScript",
+      "executeOnce": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1815905861,
+          "mode": "list",
+          "cachedResultName": "Database_Subjects",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=1815905861"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange"
+            }
+          },
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        -64
+      ],
+      "id": "282381f7-c7c2-48d5-bfbf-29e470d54aa9",
+      "name": "Database_Subjects",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2075882035,
+          "mode": "list",
+          "cachedResultName": "Database_Lenses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=2075882035"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "201bc793-7aee-4711-a29f-2671a4dae90f",
+      "name": "Database_Lenses",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 756467032,
+          "mode": "list",
+          "cachedResultName": "Generator_Output",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=756467032"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        -64
+      ],
+      "id": "fc8f93f8-98fe-4b96-87c4-d44e1ccaa69b",
+      "name": "Generator_Output",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=**Input Data:**\n{{ JSON.stringify($json.all_candidates_json) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=**Role:**\nYou are a strict JSON Data Filter and Logic Validator.\nYou are NOT a content writer. You are NOT a creative assistant.\nYour ONLY job is to remove items from a list based on logic rules.\n\n**The Golden Command:**\nDO NOT REWRITE ANY TEXT.\nDO NOT CHANGE ANY JSON KEYS.\nDO NOT INVENT NEW ITEMS.\nOutput the EXACT JSON objects from the input, word-for-word, character-for-character.\n\n**Filtering Logic (The Only Decision You Make):**\nReview each item in the provided list.\n1. **KEEP** the item if the \"Lens\" can metaphorically or physically apply to the \"Subject\".\n   - (e.g., \"Robot + Dental Health\" is VALID because it implies gear/maintenance issues).\n   - (e.g., \"Skeleton + Osteoporosis\" is VALID).\n2. **DISCARD** the item ONLY if it is a hard, impossible contradiction.\n   - (e.g., \"Ghost + Dermatitis\" -> Ghost has no skin -> Discard).\n   - (e.g., \"Sword + Diarrhea\" -> Sword has no bowels -> Discard).\n\n**Output Rule:**\nReturn a single JSON object containing the array of kept items.\n\n**Example Output:**\n-VALID JSON ONLY\n\n{\n  \"valid_items\": [\n    {\n      \"subject\": \"Skeleton\",\n      \"category\": \"Creature\",\n      \"traits\": \"Bony, undead...\",\n      \"lens\": \"Osteoporosis\",\n      \"focus\": \"Bone density issues...\"\n    },\n    {\n      \"subject\": \"Fire Elemental\",\n      \"category\": \"Creature\",\n      \"traits\": \"Made of fire...\",\n      \"lens\": \"Fuel Exhaustion\",\n      \"focus\": \"Running out of wood...\"\n    }\n  ]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1136,
+        -704
+      ],
+      "id": "dd2bb7f4-465e-4bcb-a592-c03f67a30ddc",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "all_candidates_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        -240
+      ],
+      "id": "d8d4885a-08a4-4662-b080-7a359f0911b3",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf3f0fa4-376b-4c11-8b68-a40e692dc65c",
+              "name": "results",
+              "value": "={{ $json.all_candidates_json }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        -352
+      ],
+      "id": "63714739-ebe6-4abf-99fd-ac999bd36ef1",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=# Role\nYou are a cynical biological auditor and forensic pathologist. Your goal is to deconstruct fantasy creatures, mythological figures, and fairy tale tropes by applying strict, brutal, real-world laws of physics, biology, and economics.\n\n# Quantity Constraint (CRITICAL)\n**STRICT 1:1 MAPPING:** You must generate exactly one output node for EVERY single input item provided.\n* If the input list has 5 items, the output list MUST have 5 items.\n* If the input list has 20 items, the output list MUST have 20 items.\n* **DO NOT SKIP ANY ITEMS.**\n* **DO NOT MERGE ITEMS.**\n\n# The Logic: \"The 3-Layer Filter\"\nFor EACH item, apply these filters:\n1.  **Materialist:** Focus only on biological/physical failure (friction, bacteria, gravity). No emotion.\n2.  **Undignified:** Find the detail that ruins their majesty (incontinence, debt, filth).\n3.  **Fatal Logic:** The failure must be an inevitable consequence of their biology.\n\n# Content Requirements\n\n## 1. The Boring Reality\n* **Tone:** Clinical, dry, brutal. Like a coroner's report.\n* **Content:** Explain the physical mechanism of failure. Use medical terms (Sepsis, Necrosis, Ischemia).\n* **Constraint:** Max 3 sentences.\n\n## 2. The Sleepless Hook (Title)\n* **Length:** Max 60 characters.\n* **Vocabulary:** Use strong verbs (Liquefies, Snaps, Bursts, Starves). **AVOID \"Rotting\" if possible.**\n\n## 3. Sensory Keywords\n* **Content:** 8-10 distinct words for texture/smell/sound.\n\n# Output Format\nReturn a **valid JSON array** containing the objects.\n\n```json\n[\n  {\n    \"subject\": \"Input Subject\",\n    \"lens\": \"Input Lens\",\n    \"boring_reality\": \"Explanation...\",\n    \"sleepless_hook\": \"Title...\",\n    \"sensory_keywords\": [\"Word1\", \"Word2\", \"Word3\", \"Word4\", \"Word5\", \"Word6\", \"Word7\", \"Word8\"]\n  }\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        -64
+      ],
+      "id": "baf60f02-7427-4367-a3fc-6fead3d1f564",
+      "name": "Message a model1",
+      "executeOnce": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content.parts[0].text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        -480
+      ],
+      "id": "58b3b2af-0c33-469d-9a54-bb0b502b15c6",
+      "name": "Aggregate",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=# Role: The Viral Pop-Science Copywriter\nYou are the final polish for \"The Sleepless Historian\" YouTube channel. Your job is to take complex biological failures and explain them simply, brutally, and vividly to a general audience.\n\n# The Shift\n**REJECT** complex medical jargon (e.g., \"Necrotizing Fasciitis\", \"Ischemia\", \"Hypoxia\").\n**EMBRACE** simple, visceral language (e.g., \"Flesh-eating bugs\", \"Starving blood\", \"Suffocation\").\n\n# The Goal\nMake the reader instantly *feel* the horror without needing a biology degree.\n\n# Your Task: The 3-Step Polish\n\n## Step 1: Refine \"The Boring Reality\" (The Explainer)\n* **Action:** Rewrite the logic to be simple, direct, and brutal.\n* **Tone:** \"Explain Like I'm 5 (and I want to be grossed out).\"\n* **Constraint:** Max 3 sentences. Focus on physical sensations (wet, heavy, itch, break, ooze).\n* **Rule:** If a 10-year-old can't understand the word, replace it.\n    * *Bad:* \"The subject suffers from periodontal ligament degradation.\"\n    * *Good:* \"The gums turn into mush, and their teeth fall out like wet corn.\"\n\n## Step 2: Perfect \"The Sleepless Hook\" (The Title)\n* **Action:** Create a clickable YouTube title (< 60 chars).\n* **Formula:** `[Subject] + [Specific Action/Failure]`.\n* **CRITICAL RULE (NO REPETITION):** Do NOT use the word \"Rot\" or \"Rotting\" as a default. You must use a verb that matches the specific mechanism:\n    * *If Heat:* **Boil, Cook, Melt, Burn, Sizzle.**\n    * *If Pressure:* **Burst, Snap, Crush, Pop, Splinter.**\n    * *If Water/Chemicals:* **Dissolve, Liquefy, Leak, Drip.**\n    * *If Disease:* **Puke, Ooze, Infect, Fester, Scab.**\n    * *If Hunger:* **Starve, Wither, Hollow, Eat Self.**\n    * *If Sensory:* **Blind, Deafen, Go Mad, Shake.**\n\n## Step 3: Curate \"Sensory Keywords\"\n* **Action:** Select 5-7 words that describe the *texture* and *smell* for image generation.\n\n# Output Format\nReturn a JSON array. strictly follow this structure:\nvalid json only\n[\n  {\n    \"subject\": \"String\",\n    \"lens\": \"String\",\n    \"boring_reality\": \"Simple, brutal explanation.\",\n    \"sleepless_hook\": \"Title under 60 chars (Avoid Rotting!)\",\n    \"sensory_keywords\": [\"Word1\", \"Word2\", \"Word3\"]\n  }\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2608,
+        -384
+      ],
+      "id": "3944414c-52e8-4d4a-b511-d852fbb33835",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b5724ba-761c-4614-ba81-73da62f67d95",
+              "name": "content",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2896,
+        -368
+      ],
+      "id": "459ed1ef-4b87-4542-95a8-366f5fdc96fd",
+      "name": "Edit Fields1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3168,
+        -416
+      ],
+      "id": "0c5491be-2f98-4ba5-9103-cd0ca463309c",
+      "name": "Split Out1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 756467032,
+          "mode": "list",
+          "cachedResultName": "Generator_Output",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=756467032"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "pending",
+            "Subject": "={{ $json.subject }}",
+            "Lens": "={{ $json.lens }}",
+            "Concept Logic": "={{ $json.boring_reality }}",
+            "Sensory Details": "={{ $json.sensory_keywords }}",
+            "Hook Title": "={{ $json.sleepless_hook }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lens",
+              "displayName": "Lens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hook Title",
+              "displayName": "Hook Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concept Logic",
+              "displayName": "Concept Logic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sensory Details",
+              "displayName": "Sensory Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        -64
+      ],
+      "id": "7a88e76b-885f-43b5-b6e2-3bb6806f243d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{JSON.stringify($json)}}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "=# Role: The Sleepless Historian Editor\nYou are the gatekeeper for \"The Sleepless Historian,\" a fictional encyclopedia that deconstructs mythology through a lens of brutal realism, cynicism, and mundane horror.\n\n# The Editorial Standard\nYour job is to review a list of raw content nodes and categorize them into **Approved** or **Rejected** based on their fit for the channel's brand.\n\n## The Scoring Criteria (0-10)\nEvaluate each node based on the **\"Misery & Irony Score\"**:\n1.  **Visceral Discomfort (The \"Pain\" Factor):** Does it describe a specific, relatable sensation of pain, filth, or physical failure? (e.g., \"Grinding bone,\" \"Sticky rot,\" \"Suffocation\").\n2.  **The Boring Reality (The \"Logic\" Factor):** Is the deconstruction clever? Does it use physics, economics, or biology to ruin the magic in a cynical way? (e.g., \"Invisible Man is blind\" = High Score; \"Orc is just ugly\" = Low Score).\n3.  **The \"Ruined Childhood\" Factor:** Does it effectively destroy the majesty/innocence of the subject?\n\n## Filter Rules\n* **APPROVED (Score 7-10):** High concept, brutal logic, specific details. Even if the mechanism is similar (e.g., two \"Back Pain\" entries), if the Subject is different and the description is good, KEEP IT. Non-biological angles (Economic ruin, Bureaucracy) are ACCEPTABLE if they are sufficiently miserable.\n* **REJECTED (Score 0-6):** Vague, too \"soft,\" relies on magic instead of logic, or the \"Boring Reality\" feels lazy/forced.\n\n# Task\n1.  Read the user's input list.\n2.  Sort every item into \"Approved\" or \"Rejected\".\n3.  Provide a short, cynical reason for the decision.\n\n# Output Format\n\n## \u2705 Approved List\n* **[Subject] + [Lens]**\n    * **Score:** [X]/10\n    * **Why:** [Brief reason. e.g., \"Excellent use of physics to prove he is blind.\"]\n\n## \u274c Rejected List\n* **[Subject] + [Lens]**\n    * **Score:** [X]/10\n    * **Reason:** [Critique. e.g., \"Too generic. 'Sadness' isn't physical enough.\"]\n\n# Execution\nProcess the provided list now."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        3968,
+        -64
+      ],
+      "id": "5339c19b-1b91-44b0-967d-48c8c775a2ff",
+      "name": "Message a model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc",
+          "mode": "list",
+          "cachedResultName": "nyxel_status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 756467032,
+          "mode": "list",
+          "cachedResultName": "Generator_Output",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Xa6YWDIXr8vGEmKvngqquqgy7PoDivxxx1Ffi15AuVc/edit#gid=756467032"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3520,
+        -64
+      ],
+      "id": "0dedd22e-37c1-4d69-8163-d6a68c7f2758",
+      "name": "Get row(s) in sheet",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        -64
+      ],
+      "id": "1c52de5f-e119-49d4-91ec-de1f762f3fcf",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst item = JSON.parse($input.first().json.content.parts[0].text)\n\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        -64
+      ],
+      "id": "1c4be6de-af45-4892-9833-4eb069afe7e1",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4528,
+        -64
+      ],
+      "id": "d4ee7817-86d4-4266-a3e7-1546df739fc5",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst item = $input.first().json.content.parts[0].text\nreturn JSON.parse(item);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -64
+      ],
+      "id": "28b817bc-cc74-4067-b36c-9be8ceb5862d",
+      "name": "Code in JavaScript2"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Database_Subjects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database_Subjects": {
+      "main": [
+        [
+          {
+            "node": "Database_Lenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database_Lenses": {
+      "main": [
+        [
+          {
+            "node": "Generator_Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generator_Output": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        []
+      ]
+    },
+    "Message a model3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Message a model3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "id": "fu5Kb8SVpvclDERdi26VI",
+  "name": "Daily Payment Email Scanner",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "fb0460e9-545b-4867-8707-f6ab333152bb",
+      "name": "Search Payment Emails",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        64
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "jsCode": "// Classify and extract amount from email\nconst items = $input.all();\nconst results = [];\n\nconst POSITIVE_PATTERNS = [\n  [/(?:receipt| invoice|order\\s*(confirmation|summary)|payment\\s*(received|processed|confirmed)|thank you for your purchase|you.?ve been charged|amount\\s*paid|order\\s*confirmed|charged.*\\d)/i, 'Receipt'],\n  [/invoice/i, 'Invoice'],\n  [/(?:transaction\\s*confirmation|payment\\s*for)/i, 'Transaction Confirmation']\n];\n\nconst NEGATIVE_PATTERNS = [\n  /gift\\s*(her|him|card)/i,\n  /savings?\\s*(for\\s*you|big)/i,\n  /celebrate.*with\\s*popcorn/i,\n  /rewards?\\s*(members?)?\\s*get/i,\n  /payment\\s*(was\\s*)?unsuccessful/i,\n  /wasn.?t\\s*able\\s*to\\s*charge/i,\n  /interac.*received/i,\n  /ve\\s*been\\s*automatically\\s*deposited/i,\n  /affirm/i,\n  /star\\s*wars/i,\n  /cineplex/i,\n  /westjet/i,\n  /big\\s*city\\s*plans/i,\n  /you.?ve\\s*received.*from/i,\n  /funds.*deposited/i\n];\n\nfunction extractAmount(text) {\n  const totalPatterns = [\n    /(?:^|[,\\s])[Tt]otal[:\\s]*\\$?[\\d,]+\\.\\d{2}/,\n    /you.?ve\\s*been\\s*charged\\s*\\$?[\\d,]+\\.\\d{2}/,\n    /charged\\s*\\$?[\\d,]+\\.\\d{2}/,\n    /Amount\\s*(?:paid|charged)?[:\\s]*\\$?[\\d,]+\\.\\d{2}/\n  ];\n  for (const p of totalPatterns) {\n    const m = text.match(p);\n    if (m) {\n      const amt = (m[0].match(/\\$?[\\d,]+\\.\\d{2}/) || [])[0];\n      if (amt) return amt.startsWith('$') ? amt : '$' + amt;\n    }\n  }\n  const amounts = text.match(/\\$[\\d,]+\\.\\d{2}/g) || [];\n  if (amounts.length) {\n    return amounts.sort((a, b) => parseFloat(b.replace(/[$,]/g,'')) - parseFloat(a.replace(/[$,]/g,'')))[0];\n  }\n  return '';\n}\n\nfunction classify(subject, body) {\n  const text = (subject + ' ' + body).toLowerCase();\n  for (const p of NEGATIVE_PATTERNS) {\n    if (p.test(text)) return 'Other';\n  }\n  for (const [pat, cat] of POSITIVE_PATTERNS) {\n    if (pat.test(text)) return cat;\n  }\n  return 'Other';\n}\n\nfor (const item of items) {\n  const msg = item.json;\n  const body = msg.bodyText || msg.snippet || '';\n  const amount = extractAmount(body);\n  const category = classify(msg.subject || '', body);\n  results.push({\n    json: {\n      id: msg.id,\n      subject: msg.subject,\n      sender: msg.from,\n      date: msg.date,\n      snippet: msg.snippet,\n      amount,\n      category,\n      link: `https://mail.google.com/mail/u/0/#inbox/${msg.id}`\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "6e93c0a3-400b-4483-9c71-e6e5e390de35",
+      "name": "Classify & Extract Amount",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "value": "1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo"
+        },
+        "sheetName": {
+          "value": "Sheet1"
+        },
+        "options": {}
+      },
+      "id": "4c5905e0-4913-43d6-a68d-81b53f392038",
+      "name": "Get Existing Entries",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        752,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter: skip no-amount, Other (not tax-related), and duplicates\nconst inputItems = $input.all();\nconst existingIds = $('Get Existing Entries').all().map(i => i.json.id).filter(Boolean);\nconst results = [];\n\n\nfor (const item of inputItems) {\n  const data = item.json;\n  \n  if (existingIds.includes(data.id)) {\n    continue; // duplicate - skip\n  }\n  if (!data.amount) {\n    continue; // no amount\n  }\n  if (data.category === 'Other') {\n    continue; // not tax-related\n  }\n  results.push({ json: data });\n}\n\nreturn results;"
+      },
+      "id": "8e403612-5dba-44f4-815b-1b560b191cde",
+      "name": "Filter Duplicates & Tax",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "A": {
+              "value": "date"
+            },
+            "B": {
+              "value": "sender"
+            },
+            "C": {
+              "value": "subject"
+            },
+            "D": {
+              "value": "amount"
+            },
+            "E": {
+              "value": "category"
+            },
+            "F": {
+              "value": "snippet"
+            },
+            "G": {
+              "value": "link"
+            },
+            "H": {
+              "value": "Logged"
+            }
+          }
+        },
+        "options": {}
+      },
+      "id": "48fee0ef-8f69-4d0b-b9e7-a927371d12c8",
+      "name": "Append to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1152,
+        64
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "39448aeb-c015-4a5d-abf7-0a3fa9f6c620",
+      "name": "Mark as Read & Label",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        64
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        336
+      ],
+      "id": "01b69192-5be0-4ef6-8f67-293708620929",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Classify & Extract Amount": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Entries": {
+      "main": [
+        [
+          {
+            "node": "Filter Duplicates & Tax",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Duplicates & Tax": {
+      "main": [
+        [
+          {
+            "node": "Append to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  }
+}

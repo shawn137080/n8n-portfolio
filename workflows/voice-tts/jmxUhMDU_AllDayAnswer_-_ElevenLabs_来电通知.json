@@ -1,0 +1,320 @@
+{
+  "id": "jmxUhMDUEzygG5BH",
+  "name": "AllDayAnswer \u2014 ElevenLabs \u6765\u7535\u901a\u77e5",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "elevenlabs-call-ended",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "b2c3d4e5-0001-4001-8001-100000000001",
+      "name": "ElevenLabs Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "bda00001-e11b-4b05-8000-b11dayanswer1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nreturn [{ json: body }];"
+      },
+      "id": "b2c3d4e5-0001-4001-8001-100000000008",
+      "name": "Verify Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\n// ElevenLabs real payload: { type, event_timestamp, data: { agent_id, conversation_id, transcript, analysis, ... } }\nconst body = raw.data || raw;\n\nconst agentId = body.agent_id || '';\nconst conversationId = body.conversation_id || '';\n\n// data_collection_results is a dict: { fieldName: { value, operator, data_collection_id } }\nconst dc = body.analysis?.data_collection_results || body.analysis?.data_collection || {};\n\n// ElevenLabs Data Collection fields: name, address, post code, number\nconst customerName = dc['name']?.value || dc['name'] || dc['customer_name']?.value || dc['customer_name'] || '';\nconst address = dc['address']?.value || dc['address'] || '';\nconst postCode = dc['post code']?.value || dc['post code'] || dc['postcode']?.value || dc['postcode'] || '';\nconst location = [address, postCode].filter(Boolean).join(', ') || dc['location']?.value || dc['location'] || '';\nconst issue = dc['issue']?.value || dc['issue'] || dc['problem']?.value || dc['problem'] || '';\n\n// Customer-provided phone number (from conversation)\nconst customerPhone = dc['number']?.value || dc['number'] || dc['phone']?.value || dc['phone'] || '';\n\nconst transcriptArr = body.transcript || [];\nconst transcript = transcriptArr.map(t => (t.role || t.speaker || '') + ': ' + (t.message || t.text || '')).join('\\n');\n\nconst callDuration = body.metadata?.call_duration_secs || body.call_length || 0;\nconst recordingUrl = body.metadata?.recording?.url || body.recording_url || '';\n\n// Caller number from Twilio metadata (the actual incoming caller ID)\nconst callerNumber =\n  body.conversation_initiation_client_data?.custom_llm_extra_body?.caller_number ||\n  body.metadata?.caller_number ||\n  body.call?.from_number ||\n  body.caller_id ||\n  customerPhone || '';\n\nreturn [{ json: { agent_id: agentId, conversation_id: conversationId, customer_name: customerName, location, issue, transcript, call_duration: callDuration, recording_url: recordingUrl, caller_number: callerNumber, customer_phone: customerPhone } }];"
+      },
+      "id": "b2c3d4e5-0002-4001-8001-100000000002",
+      "name": "Parse Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://fjjcwooebuhapugpopud.supabase.co/rest/v1/clients?agent_id=eq.{{$json.agent_id}}&limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer <TOKEN>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0003-4001-8001-100000000003",
+      "name": "Get Client",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst clients = Array.isArray(response) ? response : [response];\nif (clients.length === 0 || !clients[0].agent_id) {\n  throw new Error('Client not found: ' + $('Parse Payload').first().json.agent_id);\n}\nconst c = clients[0];\nconst p = $('Parse Payload').first().json;\nreturn [{ json: { owner_name: c.owner_name, owner_email: c.owner_email, tg_chat_id: c.tg_chat_id, agent_id: p.agent_id, conversation_id: p.conversation_id, customer_name: p.customer_name || 'Unknown', location: p.location || 'Not provided', issue: p.issue || 'Not described', transcript: p.transcript, call_duration: p.call_duration, recording_url: p.recording_url, caller_number: p.caller_number || 'Unknown' } }];"
+      },
+      "id": "b2c3d4e5-0004-4001-8001-100000000004",
+      "name": "Validate & Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fjjcwooebuhapugpopud.supabase.co/rest/v1/call_logs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer <TOKEN>"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "agent_id",
+              "value": "={{ $json.agent_id }}"
+            },
+            {
+              "name": "owner_email",
+              "value": "={{ $json.owner_email }}"
+            },
+            {
+              "name": "caller_number",
+              "value": "={{ $json.caller_number }}"
+            },
+            {
+              "name": "customer_name",
+              "value": "={{ $json.customer_name }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "name": "issue",
+              "value": "={{ $json.issue }}"
+            },
+            {
+              "name": "transcript",
+              "value": "={{ $json.transcript }}"
+            },
+            {
+              "name": "recording_url",
+              "value": "={{ $json.recording_url }}"
+            },
+            {
+              "name": "call_duration",
+              "value": "={{ $json.call_duration }}"
+            },
+            {
+              "name": "elevenlabs_conversation_id",
+              "value": "={{ $json.conversation_id }}"
+            },
+            {
+              "name": "tg_message_sent",
+              "value": "=false"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0005-4001-8001-100000000005",
+      "name": "Insert Call Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('Validate & Merge').first().json;\nconst recording = d.recording_url ? '\\n\ud83c\udf99\ufe0f Recording\uff1a' + d.recording_url : '';\nconst text = '\ud83d\udea8 <b>Hey\uff01' + d.owner_name + 'new booking</b>\\n\\n' +\n  '\ud83d\udc64 Name\uff1a' + d.customer_name + '\\n' +\n  '\ud83d\udccd Location\uff1a' + d.location + '\\n' +\n  '\ud83d\udd27 Description\uff1a' + d.issue + '\\n' +\n  '\ud83d\udcde Phone\uff1a' + d.caller_number + recording;\nreturn [{ json: { tg_chat_id: d.tg_chat_id, tg_message: text } }];"
+      },
+      "id": "b2c3d4e5-0006-4001-8001-100000000006",
+      "name": "Format Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8394361363:AAGo88x8ll-Cwq5mQdqrHJAUVKlVkdUqHBA/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $json.tg_chat_id }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.tg_message }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "HTML"
+            },
+            {
+              "name": "disable_web_page_preview",
+              "value": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0007-4001-8001-100000000007",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        304
+      ]
+    }
+  ],
+  "connections": {
+    "ElevenLabs Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature": {
+      "main": [
+        [
+          {
+            "node": "Parse Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Payload": {
+      "main": [
+        [
+          {
+            "node": "Get Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Client": {
+      "main": [
+        [
+          {
+            "node": "Validate & Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Merge": {
+      "main": [
+        [
+          {
+            "node": "Insert Call Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Call Log": {
+      "main": [
+        [
+          {
+            "node": "Format Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Telegram": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Toronto",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

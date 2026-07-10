@@ -1,0 +1,42 @@
+{
+  "id": "uxw0dx0dIRXPUZCP",
+  "name": "ERROR_NOTIFICATION",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3cbee5ab-7332-41c4-90e9-7476444955de",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "=\u203c\ufe0f===IMPORTANT===\u203c\ufe0f\n\nerror:{{ $json.execution.error.message }}\nworkflow: {{ $json.workflow.name }}\nnode: {{ $json.execution.lastNodeExecuted }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        0
+      ],
+      "id": "1e873f5c-0f5d-4401-879e-e720c7fa6e34",
+      "name": "err_noti",
+      "webhookId": "0a8b63b4-4a50-48d3-a3c5-746ca0e18e62",
+      "credentials": {
+        "telegramApi": {
+          "id": "gxaM0SkzUl7n7iax",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "node_count": 2
+}

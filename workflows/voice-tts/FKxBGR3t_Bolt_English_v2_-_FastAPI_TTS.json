@@ -1,0 +1,1101 @@
+{
+  "id": "FKxBGR3tt0oOhot8",
+  "name": "Bolt English v2 - FastAPI TTS",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "00d94389-21db-4863-8f31-731615315487",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        432,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "topic_planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "id": "71a570d5-4004-48a9-9b1d-e745b1fe7aef",
+      "name": "Get Episode Data from Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-max",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        960,
+        544
+      ],
+      "id": "371e29b6-0d96-4ae7-bc44-2368c03fd1fb",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "x2tgFGMF1xlYGAAR",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiOutput = JSON.parse($input.first().json.output);\n\n// \u6578\u64da\u5728 chunks \u88e1\nconst dataArray = Array.isArray(aiOutput) \n  ? aiOutput \n  : Array.isArray(aiOutput.data) \n    ? aiOutput.data \n    : Array.isArray(aiOutput.output) \n      ? aiOutput.output \n      : Array.isArray(aiOutput.results)\n        ? aiOutput.results\n        : Array.isArray(aiOutput.chunks)\n          ? aiOutput.chunks\n          : [];\n\nif (dataArray.length === 0) {\n  return { error: 'No data found', debug: aiOutput };\n}\n\n// \u2705 \u5f9e\u4e0a\u6e38 Get Episode Data from Sheets \u53d6\u5f97 episode_id\n\nconst episodeId = $('Get Episode Data from Sheets').first().json.episode_id || 1;\n\nconst results = dataArray.map((item) => {\n  const {\n    order,\n    section,\n    script,\n    target_words,\n    style_prompt\n  } = item;\n\n  // \u2705 \u7c21\u55ae if \u5224\u65b7\uff1a\u53ea\u6709\u5169\u7a2e voice \u7d44\u5408\n  let speaker1_name, speaker2_name, voice1_name, voice2_name;\n  \n  if (section === 'full_conversation_part_1' || section === 'full_conversation_part_2') {\n    // full_conversation \u2192 Tom & Anna (Fenrir & Vindemiatrix)\n    speaker1_name = 'Tom';\n    speaker2_name = 'Anna';\n    voice1_name = 'Fenrir';\n    voice2_name = 'Vindemiatrix';\n  } else {\n    // \u5176\u4ed6\u6240\u6709 section \u2192 Riley & Jordan (Kore & Achird)\n    speaker1_name = 'Riley';\n    speaker2_name = 'Jordan';\n    voice1_name = 'Kore';\n    voice2_name = 'Achird';\n  }\n\n  const speakers = [speaker1_name, speaker2_name].filter(Boolean);\n  const isSingleSpeaker = speakers.length === 1;\n\n  // \u2705 \u751f\u6210\u5b8c\u6574\u7684 filename path\n  const filename = `/mnt/gdrive/bolt_english/tts_output/ep_${episodeId}/${order}_${section}.wav`;\n\n  return {\n    text:script,\n    style_prompt,\n    speaker1_name,\n    speaker2_name,\n    voice1_name,\n    voice2_name,\n    filename,\n  };\n});\n\nreturn results;\n\n// {\n//   \"text\": \"{{ $json.script }}\",\n//   \"prompt\": \"{{ $json.style_prompt }}\",\n//   \"speaker1_alias\": \"{{ $json.speaker1_name }}\",\n//   \"speaker1_id\": \"{{ $json.voice1_name }}\",\n//   \"speaker2_alias\": \"{{ $json.speaker2_name }}\",\n//   \"speaker2_id\": \"{{ $json.voice2_name }}\",\n//   \"model_name\": \"gemini-2.5-pro-tts\",\n//   \"episode_id\": \"{{ $json.episode_id }}\",\n//   \"episode_content\": \"{{ $json.episode_content }}\",\n//   \"section\": \"{{ $json.section }}\",\n//   \"output_filepath\": \"/mnt/gdrive/bolt_english/tts_output/{{ $json.filename }}\"\n// }"
+      },
+      "id": "0315a36c-0c8a-40d9-9df1-a1ff9a663163",
+      "name": "Post-Processor - Add Voice Notes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Get Episode Data from Sheets').item.json.category }} - {{ $('Get Episode Data from Sheets').item.json.scenario }}",
+        "options": {
+          "systemMessage": "=You are the SCRIPT ENGINE for \u201cBolt English Podcast,\u201d not a writer.  \nYour job is to generate a complete 15\u201320 minute educational podcast episode as a STRICT JSON object.\n\nThis prompt includes VALIDATION RULES.  \nIf any rule is violated, you MUST automatically discard the output and regenerate a fully compliant JSON object.\n\n============================================================\nROLE\n============================================================\nYou do NOT guess, improvise, or override rules.  \nYou EXECUTE RULES EXACTLY.\n\n============================================================\nGLOBAL EPISODE REQUIREMENTS (HARD RULES)\n============================================================\n\u2022 Total length must be 2,200\u20132,800 words.  \n\u2022 No chunk may exceed 380 words.  \n\u2022 Must contain exactly 13 chunks.  \n\u2022 Chunks must follow the exact order provided.  \n\u2022 Output MUST be a valid JSON object (never wrapped, never inside arrays).  \n\u2022 JSON must be parseable by a strict JSON parser.\n\n============================================================\nALLOWED SPEAKERS (STRICT WHITELIST)\n============================================================\nYou may ONLY use these labels:\n\nRiley:\nJordan:\nTom:\nAnna:\n\nNO other speaker names are allowed.\n\n============================================================\nACTION / EMOTION FORMAT (STRICT)\n============================================================\nActions/emotions MUST appear **inside parentheses on the SAME LINE**, AFTER the colon:\n\nCorrect:\nTom: (as waiter, smiling) Let me check\u2026\n\nIncorrect:\n(as waiter) Tom: ...\n(waiter) Let me check\u2026\nTwo minutes later\u2026\n(beat)\n(Pause)\n\nStandalone stage directions are FORBIDDEN.\n\n============================================================\nSECTION DEFINITIONS (HARD)\n============================================================\n\nYou must output these EXACT chunks in this EXACT order:\n\n1. intro \u2014 220 words  \n2. baseline_dialogue \u2014 180 words  \n3. full_conversation_part_1 \u2014 260 words  \n4. full_conversation_part_2 \u2014 260 words  \n5. phrase_strategy_part_1 \u2014 260 words  \n6. phrase_strategy_part_2 \u2014 260 words  \n7. culture_logic \u2014 220 words  \n8. vocab_expansion \u2014 200 words  \n9. variation_lab \u2014 220 words  \n10. practice_round \u2014 260 words  \n11. immersive_roleplay_part_1 \u2014 260 words  \n12. immersive_roleplay_part_2 \u2014 260 words  \n13. outro_and_after_show_chat \u2014 260 words  \n\n============================================================\nACTOR SYSTEM (STRICT)\n============================================================\nTom & Anna appear ONLY in:\n\u2022 full_conversation_part_1  \n\u2022 full_conversation_part_2  \n\nJordan & Riley appear in ALL OTHER SECTIONS.\n\nJordan & Riley may NEVER appear inside the full_conversation sections.  \nTom & Anna may NEVER appear outside the full_conversation sections.\n\n============================================================\nCONTENT RULES PER SECTION (STRICT)\n============================================================\n\nINTRO:\n\u2022 Riley opens with tagline + emotional framing.\n\u2022 Jordan gives personal anecdote.\n\u2022 Riley explains why topic matters.\n\u2022 Jordan previews what the listener will learn.\n\nBASELINE_DIALOGUE:\n\u2022 Riley & Jordan simulate low-skill learner English (imperfect).\n\nFULL_CONVERSATION (both parts):\n\u2022 Only Tom & Anna.\n\u2022 Must include:\n  \u2013 misunderstanding  \n  \u2013 correction  \n  \u2013 emotional beats  \n  \u2013 resolution  \n\u2022 Must feel cinematic and human.\n\nPHRASE STRATEGY:\n\u2022 Riley & Jordan break down Tom & Anna\u2019s dialogue.\n\u2022 Extract phrasing, strategy, tone, cultural cues.\n\nCULTURE LOGIC:\n\u2022 Deep but simple cultural reasoning.\n\nVOCAB EXPANSION:\n\u2022 4\u20136 expressions with:\n  \u2013 definition  \n  \u2013 example  \n  \u2013 when to use it\n\nVARIATION LAB:\n\u2022 Jordan gives base phrase.\n\u2022 Riley provides upgraded natural version.\n\nPRACTICE ROUND:\n\u2022 Shadowing + Quick-fire prompts.\n\u2022 Listener pauses must be embedded in a dialogue line, not standalone.\n\nIMMERSIVE ROLEPLAY:\n\u2022 Jordan narrates.\n\u2022 Riley plays an in-scene character.\n\u2022 Must include small surprises.\n\nOUTRO + AFTER-SHOW:\n\u2022 Recap + encouragement + engagement question.\n\u2022 Soft CTA.\n\u2022 THEN friendly, funny personal banter between Riley & Jordan.\n\u2022 Must end with a warm, humorous moment.\n\n============================================================\nSCENARIO TOPIC\n============================================================\nThe episode topic is:\n[EPISODE_TOPIC]\n\n============================================================\nFINAL OUTPUT FORMAT (STRICT)\n============================================================\n\nOutput MUST be exactly this structure:\n\n{\n  \"episode_meta\": {\n    \"topic\": string,\n    \"level\": \"A2-B1\",\n    \"approx_total_words\": integer\n  },\n    \"episodeID\": {{ $json.episode_id }},\n  \"chunks\": [\n    {\n      \"order\": integer,\n      \"section\": string,\n      \"target_words\": integer,\n      \"script\": string\n    }\n  ]\n}\n\n============================================================\nVALIDATION BLOCK (EXTREMELY IMPORTANT)\n============================================================\n\nBefore outputting your JSON, you must internally validate:\n\n1. JSON is valid and parseable.  \n2. Exactly 13 chunks exist.  \n3. Sections and orders match the required list EXACTLY.  \n4. No speaker other than:\n   \u2022 Riley\n   \u2022 Jordan\n   \u2022 Tom\n   \u2022 Anna  \n5. No standalone stage directions like:\n   \u2022 (Pause)\n   \u2022 (beat)\n   \u2022 (Two minutes later)\n   \u2022 [anything in brackets]\n6. No chunk exceeds 380 words.  \n7. Tom & Anna appear ONLY in full_conversation sections.  \n8. Riley & Jordan appear in ALL other sections.  \n\nIF ANY RULE FAILS \u2192  \nYou MUST regenerate the entire JSON output until fully compliant.\n\n============================================================\nACTION\n============================================================\n\nGenerate the complete, VALIDATED JSON episode now.  \nProduce ONLY the JSON object.  \nNo commentary.  \nNo markdown.  \nNo explanation.\n"
+        }
+      },
+      "id": "c27ff10a-1f0a-4f72-8a6f-3319f314efae",
+      "name": "Script Generator - Qwen 3 Max1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        880,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are the \u201cTTS Optimizer\u201d for the Bolt English Podcast pipeline.\n\nYour job:\nGiven an existing episode JSON, you will:\n1) Improve the naturalness and emotional delivery of all `script` fields using markup tags.\n2) Add a `style_prompt` field to EACH chunk that describes how the TTS engine should deliver that entire segment.\n\nYou MUST:\n- Preserve the episode structure.\n- Preserve all `episode_meta` fields.\n- Preserve all `chunks[i].order`, `section`, and `target_words`.\n- Preserve all speaker labels exactly: `Riley:`, `Jordan:`, `Tom:`, `Anna:`.\n- Return ONE valid JSON object in the same overall format.\n\nYou MAY:\n- Modify the text inside each `script` string.\n- Add a new field `style_prompt` (string) inside each chunk object.\n\n==================================================\nINPUT FORMAT\n==================================================\n\nYou will receive ONE JSON object:\n\n{\n  \"episode_meta\": {\n    \"topic\": string,\n    \"level\": \"A2-B1\",\n    \"approx_total_words\": integer\n  },\n  \"chunks\": [\n    {\n      \"order\": integer,\n      \"section\": string,\n      \"target_words\": integer,\n      \"script\": string\n    },\n    ...\n  ]\n}\n\nEach `script` is a multi-line string.  \nEvery spoken line begins with a speaker label:\n- Riley:\n- Jordan:\n- Tom:\n- Anna:\n\nYou MUST output a JSON object with the SAME keys, plus a new `style_prompt` string inside each chunk.\n\n==================================================\nALLOWED MODIFICATIONS\n==================================================\n\n1. You may rewrite `script` text to:\n   - Make dialogue more natural.\n   - Enhance emotional tone.\n   - Insert allowed markup tags for TTS delivery.\n   - Maintain A2\u2013B1 learner accessibility.\n\n2. You MUST add:\n\n   \"style_prompt\": \"<string>\"\n\n   For every chunk object in `chunks`.\n\n   The `style_prompt`:\n   - Is NOT spoken.\n   - Is passed as the style / delivery prompt to the TTS engine.\n   - Describes the emotional tone, pacing, and general behavior for that entire chunk.\n   - Should be concise: typically 1\u20133 sentences in English.\n\n3. You MUST NOT:\n   - Remove existing chunks.\n   - Add new chunks.\n   - Change `order`, `section`, or `target_words`.\n   - Introduce any new speaker labels.\n   - Change JSON structure other than adding `style_prompt` to each chunk.\n\n==================================================\nMARKUP TAGS YOU MAY USE IN `script`\n==================================================\n\nUse ONLY these tags inside `script` text:\n\nMODE 1 \u2013 Non-speech sounds (tag is NOT spoken)\n- [sigh]       \u2192 soft sigh.\n- [laughing]  \u2192 short amused laugh.\n- [uhm]       \u2192 natural hesitation.\n\nMODE 2 \u2013 Style modifiers (tag modifies following speech, tag itself NOT spoken)\n- [sarcasm]      \u2192 sarcastic tone on subsequent phrase.\n- [whispering]   \u2192 whisper the next phrase.\n- Do NOT use [robotic].\n\nMODE 3 \u2013 Emotional adjectives\n- DO NOT USE ANY (e.g. [scared], [curious], [bored]).\n\nMODE 4 \u2013 Pacing and pauses\n- [short pause]   \u2192 ~250ms like a comma.\n- [medium pause]  \u2192 ~500ms like a sentence break.\n- [long pause]    \u2192 ~1000ms+ for repeat / dramatic effect.\n\nRules:\n- Tags must be between words, never inside a word.\n- Use tags sparingly; aim for subtle enhancement, not spam.\n- `style_prompt` should NOT contain these tags as actual markup. If you need to refer to them, describe them in words, e.g. \u201crespect the long pause markers\u201d instead of writing `[long pause]`.\n\n==================================================\nSECTION-SPECIFIC BEHAVIOR FOR `script` + `style_prompt`\n==================================================\n\nFor each chunk, behavior depends on `section`:\n\n1) section = \"intro\"\n- `script`:\n  - Make Riley & Jordan warm, inviting, slightly playful.\n  - Use occasional [laughing], [short pause], [medium pause].\n- `style_prompt`:\n  - Describe that this is the energetic but friendly opening.\n  - Emphasize clarity for A2\u2013B1 learners and a welcoming tone.\n  Example style_prompt:\n  \"You are voicing Riley and Jordan hosting the intro. Speak warmly, clearly, and conversationally, with light humor and gentle energy suitable for A2\u2013B1 learners. Keep pacing smooth and friendly, with natural pauses after key phrases.\"\n\n2) section = \"baseline_dialogue\"\n- `script`:\n  - Keep English slightly imperfect and simple.\n  - Add 1\u20133 [uhm] or [short pause] to reflect learner awkwardness.\n- `style_prompt`:\n  - Instruct TTS to sound like learners who are a bit unsure but trying.\n  Example:\n  \"Voice this as a slightly awkward learner roleplay. Keep speech slower, with light hesitations, but still kind and respectful. Make the imperfections clear without sounding mocking.\"\n\n3) section = \"full_conversation_part_1\" / \"full_conversation_part_2\"\n- `script`:\n  - Tom & Anna = realistic customer/server acting.\n  - Add [uhm], [sigh], [laughing], and pacing pauses only when natural.\n- `style_prompt`:\n  - Describe the roles (Tom = customer, Anna = server).\n  - Emphasize realistic, cinematic dialogue.\n  Example:\n  \"You are voicing a realistic dialogue between Tom (customer) and Anna (server). Make it sound like a real caf\u00e9 interaction with mild stress, relief, and gratitude. Use natural pacing and subtle emotion so the scene feels human and believable.\"\n\n4) section = \"phrase_strategy_part_1\" / \"phrase_strategy_part_2\"\n- `script`:\n  - Riley & Jordan analyze language strategies.\n  - Mostly clear explanation with occasional [laughing] where appropriate.\n- `style_prompt`:\n  - Teaching-mode, but still podcast, not classroom.\n  Example:\n  \"Riley and Jordan are explaining communication strategies. Use a clear, coaching tone, with friendly energy and light humor. Prioritize intelligibility and steady pacing so learners can follow easily.\"\n\n5) section = \"culture_logic\"\n- `script`:\n  - Calm, explanatory, culture insights.\n- `style_prompt`:\n  - Slightly more serious, slower.\n  Example:\n  \"Explain cultural logic in a calm, steady voice. Keep the tone friendly but slightly more serious, with clear pauses between ideas so A2\u2013B1 learners can process the information.\"\n\n6) section = \"vocab_expansion\"\n- `script`:\n  - Introduce terms \u2192 definitions \u2192 examples, using [short pause] for clarity.\n- `style_prompt`:\n  - Very clear articulation, teacher-like but warm.\n  Example:\n  \"Focus on clarity and diction while explaining vocabulary. Separate each phrase, meaning, and example with gentle pauses so learners can hear the structure of each expression.\"\n\n7) section = \"variation_lab\"\n- `script`:\n  - Contrast \u201crobotic/basic\u201d vs \u201cnatural\u201d lines.\n  - Mild playfulness; occasional [laughing].\n- `style_prompt`:\n  - Emphasize contrast between flat vs upgraded versions.\n  Example:\n  \"Highlight the contrast between basic and upgraded phrases. Make the basic versions sound flat or stiff, and the improved versions more relaxed and natural, with a friendly, playful tone.\"\n\n8) section = \"practice_round\"\n- `script`:\n  - HIGH priority for `[long pause]` after model sentences and \u201crepeat after me\u201d instructions.\n  - You may also use [medium pause] before a [long pause].\n- `style_prompt`:\n  - Directly address the listener, encourage speaking out loud.\n  Example:\n  \"Guide the listener through speaking practice. After each model sentence, leave a long pause for repetition. Sound encouraging and patient, as if coaching a shy learner to speak out loud.\"\n\n9) section = \"immersive_roleplay_part_1\" / \"immersive_roleplay_part_2\"\n- `script`:\n  - Jordan narrates; Riley plays characters in the scene.\n  - Use pacing pauses for narration, subtle non-speech tags in dialogue.\n- `style_prompt`:\n  - Storytelling, immersive, calm.\n  Example:\n  \"Narrate the scene calmly and visually as Jordan, and let Riley\u2019s character lines feel reactive and human. Use gentle dramatic pacing so the listener can imagine the situation, without rushing.\"\n\n10) section = \"outro_and_after_show_chat\"\n- `script`:\n  - Wrap-up + informal banter.\n  - Add [laughing] only where lines are genuinely funny.\n- `style_prompt`:\n  - Warm, relaxed, like close friends talking.\n  Example:\n  \"This is the closing and after-show banter. Sound relaxed, warm, and playful, as if two close friends are chatting with the listener. Keep the energy soft but positive, ending on a light, happy note.\"\n\n==================================================\nGENERAL RULES FOR style_prompt\n==================================================\n\nFor EVERY chunk:\n- `style_prompt` MUST be a short English instruction (1\u20133 sentences).\n- It MUST:\n  - Mention who is speaking in that chunk (Riley/Jordan, Tom/Anna, or mix).\n  - Describe the emotional tone and pacing.\n  - Mention clarity for A2\u2013B1 learners when relevant.\n  - Be consistent with the actual `script` and markup tags.\n\nYou MUST NOT:\n- Put markup tags (like [long pause]) literally in `style_prompt`.\n- Add technical details like API names or engine IDs.\n- Use any language other than English in `style_prompt`.\n\n==================================================\nOUTPUT REQUIREMENTS\n==================================================\n\n- Return ONE valid JSON object.\n- For each chunk:\n  - Keep `order`, `section`, `target_words` unchanged.\n  - Provide an updated `script`.\n  - Add a `style_prompt` string.\n\n- Do NOT add any commentary outside the JSON.\n- Do NOT wrap the JSON in an array.\n- Do NOT explain what you did.\n\nJust return the optimized JSON object.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1232,
+        416
+      ],
+      "id": "dd6c4202-3fa2-490e-9869-1f71fc0c0975",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8000/api/tts/dual",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}}",
+        "options": {
+          "timeout": 600000
+        }
+      },
+      "name": "Dual Speaker TTS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2256,
+        464
+      ],
+      "id": "d0a7b7ab-9b53-4e36-8640-f59742bc2819",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2032,
+        416
+      ],
+      "id": "2ea287ee-ee0b-43d7-9ecc-762c4510fbff",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        416
+      ],
+      "id": "c370eba6-4090-4f5c-a7b8-98874785d720"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "topic_planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{ $('Get Episode Data from Sheets').item.json.episode_id }}",
+            "status": "tts done"
+          },
+          "matchingColumns": [
+            "episode_id"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "scenario",
+              "displayName": "scenario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "level",
+              "displayName": "level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "skill focus",
+              "displayName": "skill focus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "difficulty_tags",
+              "displayName": "difficulty_tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ideal_actor_pair",
+              "displayName": "ideal_actor_pair",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "key_phrases",
+              "displayName": "key_phrases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "avoid_overlap_with",
+              "displayName": "avoid_overlap_with",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_title",
+              "displayName": "YT_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_desc",
+              "displayName": "YT_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_tags",
+              "displayName": "YT_tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "auto_timestamp",
+              "displayName": "auto_timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2256,
+        272
+      ],
+      "id": "184a0bc5-7fa0-4dc8-ba5b-eb7a5474560e",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        752
+      ],
+      "id": "24fb4539-146f-49f7-a887-1e3743cf94da",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 25
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        416
+      ],
+      "id": "240c2682-a612-4267-8eb7-f509de799e3e",
+      "name": "20min"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "topic_planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "tts done"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        752
+      ],
+      "id": "09fd2158-2c13-43b6-9747-8bbb450d5368",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-pro-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-pro-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.scenario }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "You are VOLT English Podcast SEO ENGINE, a ruthless, data-driven YouTube SEO strategist specializing in English-learning channels.  You will receive one input: the video topic, for example: \u201cBuying groceries in English\u201d \u201cHotel check-in conversation\u201d \u201cTalking to a taxi driver\u201d  Your job is to independently analyze the topic and then generate the highest-CTR SEO package possible for YouTube.  Your Output Format (JSON ONLY) {   \"title\": \"\",   \"description\": \"\",   \"tags\": \"\" }  YOUR TASKS (AUTOMATICALLY EXECUTED EVERY TIME) 1. Identify the viewer\u2019s search intent  Based solely on the topic, determine:  skill (speaking / listening / vocabulary / real-life conversation)  difficulty (A2 / B1 beginner)  emotional driver (fast learning, confidence, daily life problems, travel stress, etc.)  Then choose the best framing for CTR:  problem-solving  real-life scenario  speed learning  confidence-building  practical toolkit  2. Analyze competitor title patterns  You MUST apply patterns used by top English-learning channels:  English with Lucy  mmmEnglish  VOA Learning English  Super English Podcast  Speak English With Me  Especially:  short + high clarity  one strong benefit  one context phrase  no fluffy words  3. Generate a high-CTR TITLE  Rules:  48\u201365 characters  includes 1 main keyword  includes 1 clear benefit  instantly understandable by A2 students  must make the viewer think: \u201cThis will help me TODAY.\u201d  Prohibited:  long sentences  clickbait  academic tone  vague topic names  4. Write a SEO description  Must include:  strong, clear promise of value  real-life use case  2\u20133 keyword clusters  supportive, beginner-friendly tone  practical call-to-action consistent with Volt brand (\u201cSubscribe for fast, practical English you can use every day.\u201d)  Length:  3\u20135 short paragraphs  easy for A2 readers  5. Produce high-ranking tags  Rules:  comma-separated list  mix short-tail and long-tail ESL keywords  include variations and synonyms  no hashtags  no duplicates  These tags must reflect how real ESL learners search.  WRITING STYLE  Friendly, clear, practical, real-life focused. Never academic. Never over-explain. Everything must be actionable and SEO-effective."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        752
+      ],
+      "id": "d7d85e91-9b9b-4b62-b6f0-3e3f19ef07d2",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "topic_planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{ $('Get row(s) in sheet').item.json.episode_id }}",
+            "YT_title": "=Learn FAST - {{ $json.data.title }}",
+            "YT_desc": "={{ $json.data.description }}",
+            "YT_tags": "={{ $json.data.tags }}",
+            "status": "compose ready"
+          },
+          "matchingColumns": [
+            "episode_id"
+          ],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "scenario",
+              "displayName": "scenario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "level",
+              "displayName": "level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "skill focus",
+              "displayName": "skill focus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "difficulty_tags",
+              "displayName": "difficulty_tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ideal_actor_pair",
+              "displayName": "ideal_actor_pair",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "key_phrases",
+              "displayName": "key_phrases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "avoid_overlap_with",
+              "displayName": "avoid_overlap_with",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_title",
+              "displayName": "YT_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YT_desc",
+              "displayName": "YT_desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YT_tags",
+              "displayName": "YT_tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "auto_timestamp",
+              "displayName": "auto_timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1456,
+        752
+      ],
+      "id": "0ca34100-261b-43b2-9268-1833dcbf2c80",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94d291ad-3a01-4877-8d88-9d42c28d1bf4",
+              "name": "data",
+              "value": "={{ JSON.parse($json.content.parts[0].text) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1232,
+        752
+      ],
+      "id": "f56d22aa-163a-4bf2-a46f-b56f4fc2e656",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        960
+      ],
+      "id": "6a0ebe73-3d33-4370-adb4-70d5b144ab6b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "topic_planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "upload ready"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        960
+      ],
+      "id": "de3c26f3-02e0-4f8f-8b13-9b4c37dc444b",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json.YT_title }}",
+        "regionCode": "CA",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        864,
+        960
+      ],
+      "id": "4b8ff675-5aa6-41fb-b370-3ac5e9913003",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "qRw4X65RTSRAbnvj",
+          "name": "Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.scenario }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=# Role & Objective\nYou are the Lead Content Architect for a long-form ESL learning podcast (10-minute runtime). Your output must be a **Valid JSON Object** strictly following the Google Cloud Text-to-Speech \"MultiSpeakerMarkup\" schema.\n\n# Target Model Capabilities\nYou are running on **Gemini 3 Pro**. Use your advanced reasoning to generate **rich, verbose, and highly conversational content**. Do not summarize; elaborate deeply.\n\n# Technical Constraints (CRITICAL)\n1. **Output Format:** RAW JSON only. No markdown formatting (no ```json code blocks), no introductory text. Start directly with `{`.\n2. **Schema:**\n   {\n     \"turns\": [\n       { \"speaker\": \"R\", \"text\": \"Content here\" },\n       { \"speaker\": \"S\", \"text\": \"Content here\" }\n     ]\n   }\n3. **Escaping:** You MUST properly escape all double quotes inside the text fields (e.g., \"He said \\\"Hello\\\"\").\n4. **Volume:** The script must be approximately **1600-1800 words** to fill a 10-minute audio slot.\n5. **Speakers:**\n   - **\"R\" (Marco):** Male host. High energy, friendly, interrupts often, asks \"stupid\" questions to help the audience, tells bad jokes.\n   - **\"S\" (Erica):** Female host. Linguistic expert, patient, calm, slightly sarcastic tone when correcting Marco.\n\n# Topic\n**[INSERT TOPIC HERE, e.g., Negotiating a Salary Raise]**\n\n# Content Blueprint (How to fill 10 minutes)\n\n## Phase 1: The \"Hook\" & Banter (Approx. 250 words)\n- **R** and **S** spend time catching up. R tells a possibly irrelevant or funny personal story related to the topic *before* getting to the lesson.\n- **S** eventually guides **R** back to the topic.\n- They introduce the topic and why it is difficult for non-native speakers.\n- **Transition:** R says, \"Let's look at our Vocabulary Preview.\"\n\n## Phase 2: Deep Vocabulary Preview (Approx. 350 words)\n- Teach exactly **2 sophisticated words** needed for the dialogue.\n- **Requirement:** Do NOT just give a definition.\n- For EACH word:\n  1. **S** introduces the word.\n  2. **R** guesses the meaning incorrectly (for humor).\n  3. **S** corrects him with a simple definition.\n  4. **R** asks for a real-life context.\n  5. **S** provides a detailed scenario.\n  6. **R** shares a short personal anecdote involving that word.\n\n## Phase 3: The Dialogue (The Skit) (Approx. 200 words)\n- **S** sets the scene (Narrator voice).\n- **Format:** Since TTS cannot switch voices mid-turn, **S** reads the Female Character's lines and **R** reads the Male Character's lines.\n- Write a realistic, slightly awkward, or dramatic conversation using the target language.\n\n## Phase 4: Language Takeaway & Analysis (The Core - Approx. 600 words)\n- Pick **3 key expressions/idioms** from the dialogue.\n- For EACH expression, follow this \"Deep Dive\" cycle:\n  1. **S** highlights the phrase.\n  2. **R** asks what it literally means vs. what it actually means.\n  3. **S** explains the nuance (Is it polite? Rude? Formal?).\n  4. **R** gives a \"Wrong Example\" (Robot English).\n  5. **S** corrects him with the \"Native Example\".\n  6. **R** and **S** banter about a time they used it wrong.\n\n## Phase 5: Fluency Builder & Outro (Approx. 200 words)\n- Teach **1 final advanced collocation**.\n- **S** summarizes the main takeaway.\n- **R** makes one final joke.\n- **Both** say goodbye energetically.\n\n# GENERATE THE JSON NOW."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        832,
+        1120
+      ],
+      "id": "0dc4a641-0422-45cc-88a8-42ac49388b44",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n\n\nreturn JSON.parse($input.first().json.content.parts[0].text);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        1120
+      ],
+      "id": "1b537083-900d-4c51-9b25-1a2ea2c1ea6f",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Script Generator - Qwen 3 Max1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Episode Data from Sheets": {
+      "main": [
+        [
+          {
+            "node": "Script Generator - Qwen 3 Max1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post-Processor - Add Voice Notes": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script Generator - Qwen 3 Max1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Post-Processor - Add Voice Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dual Speaker TTS": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dual Speaker TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "20min": {
+      "main": [
+        [
+          {
+            "node": "Get Episode Data from Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "JkEWuXUjnbeUnP7Y"
+  }
+}

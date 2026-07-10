@@ -1,0 +1,720 @@
+{
+  "id": "9p4Sd6oz7I0Zabh9",
+  "name": "Volt",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        2400
+      ],
+      "id": "1e100870-062e-48e5-9756-a155a09b5c3b",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-max",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        2640
+      ],
+      "id": "0930a151-eb8b-4492-bca9-896c7ecf6601",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "x2tgFGMF1xlYGAAR",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "options": {
+          "systemMessage": "=You are the SCRIPT WRITER for Bolt English, an A2\u2013B1 English-learning podcast.\n\nYour job in THIS NODE:\n \u2192 Only write the requested sections (listed later).\n \u2192 Output natural spoken English in dialogue form.\n \u2192 Every line must begin with a speaker name + colon.\n\n    Example:\n    Jordan: ...\n    Riley: ...\n    Tom: ...\n    Anna: ...\n\nGLOBAL RULES\n\n\u2022 Level: A2\u2013B1 English.\n\u2022 Style: Natural spoken English, short sentences, clear rhythm.\n\u2022 MUST use contractions (it's, don't, they're\u2026).\n\u2022 No narration from the system. No prose paragraphs. Only dialogues.\n\u2022 Do NOT add TTS tags. Do NOT add voice notes. (Another node will handle that.)\n\u2022 Do NOT repeat previous node scripts.\n\u2022 Each section must follow its word target (A2\u2013B1 meaningful content, full sentences).\n- no \\n or new line \n\nSECTION-SPECIFIC SPEAKER RULES\n\nintro \u2192 Jordan + Riley only  \nhook \u2192 Jordan + Riley only  \ncore_content_1 \u2192 Tom + Anna only  \nlanguage_breakdown \u2192 Jordan + Riley only  \ncore_content_2 \u2192 Jordan + Riley OR Tom + Anna  \npractice_round_1 \u2192 Jordan + Riley  \npractice_round_2 \u2192 Jordan + Riley  \nstory_example \u2192 Jordan OR Riley (choose one and stay consistent)  \nrecap \u2192 Jordan + Riley  \noutro \u2192 Jordan + Riley\n\nOUTPUT RULES\n\n\u2022 Output ONLY a JSON array.\n\u2022 Each JSON object must contain:\n\n{\n  \"script\": \"<dialogue text only>\",\n  \"voice_note\": \"\",\n  \"order\": <number>,\n  \"section\": \"<section_name>\"\n}\n\n\u2022 NO headings, NO explanations, NO markdown formatting.\n\n\n\nFOR THIS NODE \u2014 WRITE ONLY THE FOLLOWING SECTIONS:\n\n1) intro (280\u2013340 words in script)   \n    \u2022 always start this exact tagline once at the beginning:\n    It can be Jordan or Riley saying \u201cWelcome to Bolt English, where you can build confidence in English with everyday conversations.\u201d\n    - \n   \u2022 follow by Jordan & Riley intoruce themselve.\n   - Jordan & Riley only.\n   \u2022 Warm, human, friendly.\n   \u2022 Include a small personal remark or relatable memory.\n   \u2022 Preview what the episode will help the listener do.\n   \u2022 Dialogue format only.\n \n\n2) hook (120\u2013160 words in script)\n   \u2022 Jordan & Riley only.\n   \u2022 Create an immersive emotional scenario related to the topic: <TOPIC>.\n   \u2022 Show mild tension, uncertainty, or a small \u201cproblem moment\u201d.\n   \u2022 NO meta language (\u201cin this section\u201d, \u201clater we will\u2026\u201d).\n\nOUTPUT FORMAT (strict):\n[\n  {\n    \"script\": \"<intro dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 1,\n    \"section\": \"intro\"\n  },\n  {\n    \"script\": \"<hook dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 2,\n    \"section\": \"hook\"\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1408,
+        2416
+      ],
+      "id": "39bafbf0-d5ff-49bf-bca7-8518b27c9e13",
+      "name": "Intro"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are the SCRIPT WRITER for Bolt English, an A2\u2013B1 English-learning podcast.\n\nYour job in THIS NODE:\n \u2192 Only write the requested sections (listed later).\n \u2192 Output natural spoken English in dialogue form.\n \u2192 Every line must begin with a speaker name + colon.\n\n    Example:\n    Jordan: ...\n    Riley: ...\n    Tom: ...\n    Anna: ...\n\nGLOBAL RULES\n\n\u2022 Level: A2\u2013B1 English.\n\u2022 Style: Natural spoken English, short sentences, clear rhythm.\n\u2022 MUST use contractions (it's, don't, they're\u2026).\n\u2022 No narration from the system. No prose paragraphs. Only dialogues.\n\u2022 Do NOT add TTS tags. Do NOT add voice notes. (Another node will handle that.)\n\u2022 Do NOT repeat previous node scripts.\n\u2022 Each section must follow its word target (A2\u2013B1 meaningful content, full sentences).\n- no \\n or new line\n\nSECTION-SPECIFIC SPEAKER RULES\n\nintro \u2192 Jordan + Riley only  \nhook \u2192 Jordan + Riley only  \ncore_content_1 \u2192 Tom + Anna only  \nlanguage_breakdown \u2192 Jordan + Riley only  \ncore_content_2 \u2192 Jordan + Riley OR Tom + Anna  \npractice_round_1 \u2192 Jordan + Riley  \npractice_round_2 \u2192 Jordan + Riley  \nstory_example \u2192 Jordan OR Riley (choose one and stay consistent)  \nrecap \u2192 Jordan + Riley  \noutro \u2192 Jordan + Riley\n\nOUTPUT RULES\n\n\u2022 Output ONLY a JSON array.\n\u2022 Each JSON object must contain:\n\n{\n  \"script\": \"<dialogue text only>\",\n  \"voice_note\": \"\",\n  \"order\": <number>,\n  \"section\": \"<section_name>\"\n}\n\n\u2022 NO headings, NO explanations, NO markdown formatting.\n\n\n\nFOR THIS NODE \u2014 WRITE ONLY THE FOLLOWING SECTIONS:\n\n1) core_content_1 (400\u2013480 words)\n   \u2022 Tom + Anna ONLY.\n   \u2022 Full real-life scene about <TOPIC>.\n   \u2022 Include:\n       \u2013 A misunderstanding or unclear detail.\n       \u2013 Polite clarification.\n       \u2013 Correction and resolution.\n   \u2022 Dialogue must feel natural, with hesitations, soft doubt, polite tone.\n   \u2022 NO other speakers allowed.\n\n2) language_breakdown (400\u2013480 words)\n   \u2022 Jordan + Riley ONLY.\n   \u2022 Explain 4\u20136 useful phrases from the Tom\u2013Anna scene.\n   \u2022 For each phrase:\n       \u2013 Say the phrase.\n       \u2013 Explain when to use it (simple A2\u2013B1).\n       \u2013 Give 1\u20132 example sentences.\n       \u2013 Mention the feeling/tone (simple terms).\n   \u2022 Dialogue format (Jordan explains; Riley reacts, clarifies, adds examples).\n\nOUTPUT FORMAT:\n[\n  {\n    \"script\": \"<core_content_1 dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 3,\n    \"section\": \"core_content_1\"\n  },\n  {\n    \"script\": \"<language_breakdown dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 4,\n    \"section\": \"language_breakdown\"\n  }\n]\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1056,
+        2480
+      ],
+      "id": "24becd90-6ab3-49c8-89e4-9cd3fe4044b4",
+      "name": "core1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are the SCRIPT WRITER for Bolt English, an A2\u2013B1 English-learning podcast.\n\nYour job in THIS NODE:\n \u2192 Only write the requested sections (listed later).\n \u2192 Output natural spoken English in dialogue form.\n \u2192 Every line must begin with a speaker name + colon.\n\n    Example:\n    Jordan: ...\n    Riley: ...\n    Tom: ...\n    Anna: ...\n\nGLOBAL RULES\n\n\u2022 Level: A2\u2013B1 English.\n\u2022 Style: Natural spoken English, short sentences, clear rhythm.\n\u2022 MUST use contractions (it's, don't, they're\u2026).\n\u2022 No narration from the system. No prose paragraphs. Only dialogues.\n\u2022 Do NOT add TTS tags. Do NOT add voice notes. (Another node will handle that.)\n\u2022 Do NOT repeat previous node scripts.\n\u2022 Each section must follow its word target (A2\u2013B1 meaningful content, full sentences).\n- no \\n or new line\n\nSECTION-SPECIFIC SPEAKER RULES\n\nintro \u2192 Jordan + Riley only  \nhook \u2192 Jordan + Riley only  \ncore_content_1 \u2192 Tom + Anna only  \nlanguage_breakdown \u2192 Jordan + Riley only  \ncore_content_2 \u2192 Jordan + Riley OR Tom + Anna  \npractice_round_1 \u2192 Jordan + Riley  \npractice_round_2 \u2192 Jordan + Riley  \nstory_example \u2192 Jordan OR Riley (choose one and stay consistent)  \nrecap \u2192 Jordan + Riley  \noutro \u2192 Jordan + Riley\n\nOUTPUT RULES\n\n\u2022 Output ONLY a JSON array.\n\u2022 Each JSON object must contain:\n\n{\n  \"script\": \"<dialogue text only>\",\n  \"voice_note\": \"\",\n  \"order\": <number>,\n  \"section\": \"<section_name>\"\n}\n\n\u2022 NO headings, NO explanations, NO markdown formatting.\n\n\nFOR THIS NODE \u2014 WRITE ONLY THE FOLLOWING SECTIONS:\n\n1) core_content_2 (400\u2013480 words)\n   \u2022 EITHER:\n       \u2013 Tom + Anna (continuing the situation), OR\n       \u2013 Jordan + Riley (teaching \u201cupgrade expressions\u201d)\n   \u2022 Still related to <TOPIC>.\n   \u2022 Include more natural but simple expressions.\n   \u2022 Show how these phrases are used in context.\n   \u2022 Must remain A2\u2013B1.\n\n2) practice_round_1 (300\u2013350 words)\n   \u2022 Jordan + Riley ONLY.\n   \u2022 Guided repetition.\n   \u2022 Structure:\n       \u2013 Riley sets a simple situation.\n       \u2013 Jordan models a phrase.\n       \u2013 Riley instructs listener to repeat (\u201cNow you repeat that.\u201d \u201cSay it after Jordan.\u201d)\n   \u2022 NO TTS tags, no timing \u2014 raw dialogue only.\n\n3) practice_round_2 (300\u2013350 words)\n   \u2022 Jordan + Riley ONLY.\n   \u2022 Guided role-play:\n       \u2013 Jordan pretends to be staff (ticket counter).\n       \u2013 Riley guides the listener as the customer.\n       \u2013 Many clear prompts for \u201cNow you say\u2026\u201d type instructions.\n\nOUTPUT FORMAT:\n[\n  {\n    \"script\": \"<core_content_2 dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 5,\n    \"section\": \"core_content_2\"\n  },\n  {\n    \"script\": \"<practice_round_1 dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 6,\n    \"section\": \"practice_round_1\"\n  },\n  {\n    \"script\": \"<practice_round_2 dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 7,\n    \"section\": \"practice_round_2\"\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -704,
+        2560
+      ],
+      "id": "7bf09bef-90dd-45ea-a80c-3d492647d45f",
+      "name": "core2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are the SCRIPT WRITER for Bolt English, an A2\u2013B1 English-learning podcast.\n\nYour job in THIS NODE:\n \u2192 Only write the requested sections (listed later).\n \u2192 Output natural spoken English in dialogue form.\n \u2192 Every line must begin with a speaker name + colon.\n\n    Example:\n    Jordan: ...\n    Riley: ...\n    Tom: ...\n    Anna: ...\n\nGLOBAL RULES\n\n\u2022 Level: A2\u2013B1 English.\n\u2022 Style: Natural spoken English, short sentences, clear rhythm.\n\u2022 MUST use contractions (it's, don't, they're\u2026).\n\u2022 No narration from the system. No prose paragraphs. Only dialogues.\n\u2022 Do NOT add TTS tags. Do NOT add voice notes. (Another node will handle that.)\n\u2022 Do NOT repeat previous node scripts.\n\u2022 Each section must follow its word target (A2\u2013B1 meaningful content, full sentences).\n- no \\n or new line\n\nSECTION-SPECIFIC SPEAKER RULES\n\nintro \u2192 Jordan + Riley only  \nhook \u2192 Jordan + Riley only  \ncore_content_1 \u2192 Tom + Anna only  \nlanguage_breakdown \u2192 Jordan + Riley only  \ncore_content_2 \u2192 Jordan + Riley OR Tom + Anna  \npractice_round_1 \u2192 Jordan + Riley  \npractice_round_2 \u2192 Jordan + Riley  \nstory_example \u2192 Jordan OR Riley (choose one and stay consistent)  \nrecap \u2192 Jordan + Riley  \noutro \u2192 Jordan + Riley\n\nOUTPUT RULES\n\n\u2022 Output ONLY a JSON array.\n\u2022 Each JSON object must contain:\n\n{\n  \"script\": \"<dialogue text only>\",\n  \"voice_note\": \"\",\n  \"order\": <number>,\n  \"section\": \"<section_name>\"\n}\n\n\u2022 NO headings, NO explanations, NO markdown formatting.\nFOR THIS NODE \u2014 WRITE ONLY THE FOLLOWING SECTIONS:\n\n1) story_example (300\u2013380 words)\n   \u2022 Choose ONE speaker: Jordan OR Riley.\n   \u2022 The other may react briefly.\n   \u2022 Must be a personal-feeling story related to <TOPIC>.\n   \u2022 Include confusion, embarrassment, or a small fear.\n   \u2022 End with a gentle lesson.\n\n2) recap (250\u2013300 words)\n   \u2022 Jordan + Riley ONLY.\n   \u2022 Summarize 3\u20135 key takeaways from the episode.\n   \u2022 Add a simple mission for the listener:\n       \u2013 e.g., \u201cNext time you buy a ticket, try saying\u2026\u201d\n\n3) outro (150\u2013180 words)\n   \u2022 Jordan + Riley ONLY.\n   \u2022 MUST include this listener prompt:\n     \u201cBefore we go, a quick question for you\u2026\u201d\n   \u2022 Ask about the listener\u2019s own experience.\n   \u2022 Friendly goodbye.\n\nOUTPUT FORMAT:\n[\n  {\n    \"script\": \"<story_example dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 8,\n    \"section\": \"story_example\"\n  },\n  {\n    \"script\": \"<recap dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 9,\n    \"section\": \"recap\"\n  },\n  {\n    \"script\": \"<outro dialogue>\",\n    \"voice_note\": \"\",\n    \"order\": 10,\n    \"section\": \"outro\"\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -352,
+        2624
+      ],
+      "id": "fd2db07b-3b6d-4e16-8248-6d12c0fcec80",
+      "name": "outro"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://texttospeech.googleapis.com/v1/text:synthesize?key=<GOOGLE_API_KEY>\n",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.ttsBody}}",
+        "options": {
+          "timeout": 600000
+        }
+      },
+      "name": "Google TTS (Gemini 2.5)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1696,
+        2416
+      ],
+      "id": "73bbd94e-1764-4289-8472-2cc33ac8d2f4",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "notesInFlow": false,
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "ToCtv522rewy3Wp6",
+          "name": "Google account"
+        },
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        },
+        "googleApi": {
+          "id": "wxC3FLc44n8zpQcp",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        2416
+      ],
+      "id": "c20662b2-3370-4690-8956-848f7d3fb560",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        2416
+      ],
+      "id": "b6be1c07-eb74-4360-931f-cab250467a83"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.merged }}",
+        "options": {
+          "systemMessage": "=You are the TTS optimization engine for the \u201cBolt English\u201d podcast.\n\nINPUT FORMAT\nYou receive ONE JSON ARRAY with this structure:\n[\n  {\n    \"script\": \"<multi-line dialogue>\",\n    \"order\": <number>,\n    \"section\": \"<section_name>\"\n  },\n  ...\n]\n\nYOUR JOB \u2014 FOR EACH OBJECT IN THE ARRAY:\n1. Keep the structure and speakers exactly as given.\n2. Rewrite the script into natural spoken English suitable for TTS.\n3. Insert micro TTS markup tags for emotion and rhythm.\n4. Add a \u201cvoice_note\u201d field describing tone, pacing, speaker qualities, and emotional context.\n5. Return an array with the SAME LENGTH and SAME ORDER.\n\nOUTPUT FORMAT (STRICT)\nEach item must look like this:\n{\n  \"script\": \"<optimized script with tags>\",\n  \"voice_note\": \"<short description>\",\n  \"order\": <same number>,\n  \"section\": \"<same string>\"\n}\n\nSPOKEN LANGUAGE RULES (MANDATORY)\n- A2\u2013B1 English level.\n- Use contractions: it's, don't, we're, you're, that's, there\u2019s, etc.\n- Short, spoken sentences. No academic tone.\n- If a sentence is too long, split it.\n- Preserve original meaning but adjust wording for clarity and sound.\n\nTTS TAG RULES (STRICT)\nAllowed tags ONLY:\n[short pause], [medium pause], [long pause],\n[laughing], [sigh], [whispering], [uhm], [curious]\n\nRules:\n- Tags ONLY for micro emotion / timing.\n- Do NOT invent new tags.\n- Use tags sparingly but consistently.\n- Tags appear INLINE, e.g.:\n  Jordan: I'm not sure about this [uhm] but I can try.\n\nSPEAKER RULES\n- Keep all speaker names exactly the same.\n- No new characters.\n- Do NOT delete any lines.\n- Each line MUST start with \"SpeakerName: \".\n\nVOICE_NOTE RULES\n- 3\u20134 sentences.\n- MUST include:\n  \u2022 Tone & pacing\n  \u2022 Speaker qualities\n  \u2022 Emotional context\n\nCRITICAL RULES\n- Do NOT merge items.\n- Do NOT drop items.\n- Do NOT wrap the output in markdown.\n- Output ONLY the final JSON ARRAY.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        448,
+        2416
+      ],
+      "id": "a137217c-6972-410f-b307-76996df17836",
+      "name": "TTS_optimization",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        528,
+        2640
+      ],
+      "id": "08e7bfb9-42e1-406f-8d08-19afe7242eae",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "x2tgFGMF1xlYGAAR",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr = JSON.parse($input.first().json.output);  // \u8fd9\u662f 10 \u4e2a segment \u7684\u6570\u7ec4\n\nconst results = [];\n\nfor (const seg of arr) {\n  const section = seg.section;\n  const text = seg.script;\n  const prompt =\n    seg.voice_note ||\n    \"Speak like a calm, friendly English podcast for beginner learners.\";\n\n  let speakerVoiceConfigs;\n\n  if (section === \"core_content_1\") {\n    // Tom & Anna\n    speakerVoiceConfigs = [\n      { speakerAlias: \"Tom\",  speakerId: \"Schedar\" },\n      { speakerAlias: \"Anna\", speakerId: \"Zephyr\" },\n    ];\n  } else {\n    // \u9ed8\u8ba4 Jordan & Riley\n    speakerVoiceConfigs = [\n      { speakerAlias: \"Jordan\", speakerId: \"Achird\" },\n      { speakerAlias: \"Riley\",  speakerId: \"Kore\"   },\n    ];\n  }\n\n  const ttsBody = {\n    input: { prompt, text },\n    voice: {\n      languageCode: \"en-US\",\n      modelName: \"gemini-2.5-pro-tts\",\n      multiSpeakerVoiceConfig: { speakerVoiceConfigs },\n    },\n    audioConfig: {\n      audioEncoding: \"LINEAR16\",\n      sampleRateHertz: 24000,\n    },\n  };\n\n  results.push({\n    json: {\n      script: seg.script,\n      voice_note: seg.voice_note,\n      order: seg.order,\n      section: seg.section,\n      ttsBody,\n    },\n  });\n}\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        2416
+      ],
+      "id": "48100258-aac5-4175-b222-81ab28015c36",
+      "name": "inject_tts_voice"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) \u62ff\u5230\u6240\u6709\u4e0a\u6e38 items\nconst items = $input.all();\n\n// 2) \u628a\u6bcf\u4e2a item.json.output \u89e3\u6790\u5e76\u5408\u5e76\nlet merged = [];\n\nfor (const item of items) {\n  const raw = item.json.output;\n  if (!raw) continue;\n\n  // output \u53ef\u80fd\u662f string \u4e5f\u53ef\u80fd\u5df2\u7ecf\u662f array\n  let arr;\n  if (typeof raw === 'string') {\n    try {\n      arr = JSON.parse(raw);   // \"[{...},{...}]\" -> [{...},{...}]\n    } catch (e) {\n      continue; // \u721b\u8cc7\u6599\u5c31\u76f4\u63a5\u8df3\u904e\n    }\n  } else if (Array.isArray(raw)) {\n    arr = raw;\n  } else {\n    continue;\n  }\n\n  if (Array.isArray(arr)) {\n    merged = merged.concat(arr);\n  }\n}\n\n// 3) \u6309 order \u6392\u5e8f\uff08\u5982\u679c\u6709\uff09\nmerged.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));\n\n// 4) n8n \u898f\u5247\uff1ajson \u5fc5\u9808\u662f\u300c\u7269\u4ef6\u300d\uff0c\u4e0d\u80fd\u76f4\u63a5\u662f array\n// \u6240\u4ee5\u7528\u4e00\u500b key \u628a array \u5305\u8d77\u4f86\uff0c\u4f8b\u5982 merged\nreturn [\n  {\n    json: {\n      merged,   // \u9019\u88e1\u5c31\u662f 10 \u500b {script, voice_note, order, section}\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        2416
+      ],
+      "id": "62eb63fe-8f03-4c2b-9002-3b930f2e4df7",
+      "name": "merge_script"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "=ep_{{ $('get_row').first().json.episode_id }}\n",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1b9t_RXNTxD5JmgeQU3s-Jn3YB3ExsZun",
+          "mode": "list",
+          "cachedResultName": "TTS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1b9t_RXNTxD5JmgeQU3s-Jn3YB3ExsZun"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1600,
+        2416
+      ],
+      "id": "3d71c32c-c3ee-4d40-bc23-c4789487527e",
+      "name": "create_folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WwvtG5cgsmvZj9Fz",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY",
+          "mode": "list",
+          "cachedResultName": "Volt Schedule",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_YA8m7p6HZOvulFxDE_5s-e1tse2wsiP3nOM6EygrTY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1792,
+        2416
+      ],
+      "id": "9f3ba82e-956b-4f5e-9596-49213f2f2063",
+      "name": "get_row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        2384
+      ],
+      "id": "1b803eb6-4d41-4751-8ea4-4d2ed49225a0",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// \u8fd9\u4e2a Script \u653e\u5728 Google TTS \u8282\u70b9\u540e\u9762\uff0cMode: Run Once for Each Item\n\n// 1) \u62ff\u672c\u6761 item \u7684 meta\n// \u5982\u679c\u4f60\u5728\u4e0a\u6e38\u5df2\u7ecf\u6709 pairedItem\uff0c\u5c31\u7528\u5b83\uff1b\u6ca1\u6709\u5c31\u81ea\u5df1\u6539\u6210\u4f60\u5b9e\u9645\u7684\u8282\u70b9\u540d\nlet meta;\nif ($json.pairedItem && $json.pairedItem.item && $json.pairedItem.item.json) {\n  meta = $json.pairedItem.item.json;  // \u91cc\u9762\u6709 order / section / fileName\n} else {\n  // \u6ca1\u6709 pairedItem \u7684\u60c5\u51b5\uff0c\u5c31\u6309\u4f60\u4e4b\u524d\u7684 loop \u8282\u70b9\u540d\u79f0\u6539\n  meta = $('Loop Over Items1').item.json;\n}\n\n// 2) base64 -> Buffer\nconst audioBase64 = $json.audioContent;\nif (!audioBase64) {\n  throw new Error('audioContent is empty \u2013 TTS \u8282\u70b9\u6ca1\u8fd4\u56de\u4e1c\u897f');\n}\nconst buffer = Buffer.from(audioBase64, 'base64');\n\n// 3) \u751f\u6210\u6587\u4ef6\u540d\uff08\u5982\u679c meta \u91cc\u5df2\u7ecf\u6709\u5c31\u76f4\u63a5\u7528\uff09\nconst fileName = meta.fileName || `${meta.order}-${meta.section}.wav`;\n\n// 4) \u8fd4\u56de\u7ed9\u4e0b\u6e38\uff08\u6bcf\u4e2a item \u4e00\u4e2a\u6587\u4ef6\uff09\nreturn {\n  json: {\n    order: meta.order,\n    section: meta.section,\n    fileName,\n    data: \n  },\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        2144
+      ],
+      "id": "0fe1c063-fba7-443f-a323-c29e78e8cc39",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "audioContent",
+        "name": "={{ $json.order }}-{{ $json.section }}.wav",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('create_folder').first().json.id }}\n",
+          "mode": "id"
+        },
+        "options": {
+          "useContentAsIndexableText": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2144,
+        2416
+      ],
+      "id": "e7f6b447-25e7-49f2-9394-fd73104dbcba",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "WwvtG5cgsmvZj9Fz",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// \u5728 Google TTS \u4e4b\u540e\u6dfb\u52a0\u8fd9\u4e2a Script Node\n\n// \u4ece\u524d\u4e00\u4e2a\u8282\u70b9\uff08Loop\uff09\u83b7\u53d6\u5143\u6570\u636e\nconst loopData = $('Loop Over Items1').item;// \u6216\u60a8\u7684 Loop Node \u540d\u79f0\nconst audioBase64 = $json.audioContent;\nconst buffer = Buffer.from(audioBase64, 'base64');\nreturn {\n  // Google TTS \u7684\u97f3\u9891\u5185\u5bb9\n  audioContent: buffer,\n  // \u4fdd\u7559\u539f\u59cb\u7684 metadata\n  order: loopData.json.order, \n  section: loopData.json.section,\n  \n  // \u751f\u6210\u6587\u4ef6\u540d\n  fileName: `dialogue_${loopData.json.order}_${loopData.json.section}.wav`\n\n\n  \n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2128,
+        2096
+      ],
+      "id": "f6573831-92eb-4c0d-9b21-4d8b57a6d3bf",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f173c4f-8696-43ab-af1d-93537f707206",
+              "name": "audioContent",
+              "value": "",
+              "type": "binary"
+            },
+            {
+              "id": "4572182a-dd37-4613-be60-e67c57b74e65",
+              "name": "order",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "c551b5e7-2838-4f36-afdf-7ffb976edfeb",
+              "name": "section",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "e1280772-43f0-4bc5-80d9-140a458c49c2",
+              "name": "fileName",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1936,
+        2416
+      ],
+      "id": "de659bfa-b4c3-44db-ba20-cbce6a6cad6b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8000/webhook/n8n",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "bolt_english"
+            },
+            {
+              "name": "content_id",
+              "value": "test001"
+            },
+            {
+              "name": "title",
+              "value": "Test Video"
+            },
+            {
+              "name": "script",
+              "value": "Hello, this is a test video."
+            },
+            {
+              "name": "background_music",
+              "value": "/mnt/gdrive/bolt_english/assets/default_bg.mp3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -497.7247919795159,
+        2288
+      ],
+      "id": "e6c4526f-90a5-44da-ade8-57a91dd2e43a",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "get_row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Intro",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "core1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "outro",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "core2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intro": {
+      "main": [
+        [
+          {
+            "node": "core1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "core1": {
+      "main": [
+        [
+          {
+            "node": "core2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "core2": {
+      "main": [
+        [
+          {
+            "node": "outro",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "outro": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Google TTS (Gemini 2.5)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google TTS (Gemini 2.5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TTS_optimization": {
+      "main": [
+        [
+          {
+            "node": "inject_tts_voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "TTS_optimization",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "inject_tts_voice": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge_script": {
+      "main": [
+        [
+          {
+            "node": "TTS_optimization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_folder": {
+      "main": [
+        [
+          {
+            "node": "Intro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_row": {
+      "main": [
+        [
+          {
+            "node": "create_folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "merge_script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

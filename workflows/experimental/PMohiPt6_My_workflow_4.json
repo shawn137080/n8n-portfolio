@@ -1,0 +1,666 @@
+{
+  "id": "PMohiPt6DUpWk3q7",
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 30,
+        "filters": {
+          "includeSpamTrash": false,
+          "q": "receipt OR payment OR order -category:promotions -category:personal -category:social",
+          "readStatus": "unread",
+          "receivedAfter": "2026-04-01T00:00:00"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        96
+      ],
+      "id": "984df51c-29fc-4e26-af1b-24ebb8bb14e3",
+      "name": "Get many messages",
+      "webhookId": "1268c503-4e42-45e2-b4a3-e94a088cd3a5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo",
+          "mode": "list",
+          "cachedResultName": "Tax 2026 Receipts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount ($)",
+              "displayName": "Amount ($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Has Attachment",
+              "displayName": "Has Attachment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -320,
+        -240
+      ],
+      "id": "fb247cb6-ea55-427d-9279-442893e5e284",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "M554ZUWoyF12r7U7",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a business expense email analyzer for tax purposes.\n\nYour task is to identify emails related to business expenses (software subscriptions, equipment purchases, SaaS tools, cloud services, professional services, etc.).\n\nEXCLUDE: transportation, meals, personal purchases.\n\nINPUT:\n- Email list: {{ JSON.stringify($json.data) }}\n- Total emails: {{ $json.data.length }}\n- Current tax label format: tax2026\n\n---\n\nFollow these steps FOR EACH email IN ORDER. Do not skip steps unless explicitly instructed.\n\n---\n\nSTEP 0 \u2014 Mark as Read\nMark the email as read before processing.\n\n---\n\nSTEP 1 \u2014 Preliminary Filter (Quick Check)\nAnalyze: subject, sender (from), snippet only.\nIf the email looks related to a payment or charge:\n\u2192 Do a web search on the sender domain to identify the company type.\nDecision:\n- PASS \u2192 proceed to Step 2\n- FAIL \u2192 skip this email entirely, move to next\n\n---\n\nSTEP 2 \u2014 Full Content Analysis\nRetrieve the full email body.\nExtract:\n- Amount paid (convert to CAD if needed, show conversion rate used)\n- Tax rate applied (e.g. 13% HST, 5% GST)\n- Tax amount paid in CAD\n- Confirm: is this a business expense? (Yes / No)\n\nIf YES \u2192 proceed to Step 3\nIf NO \u2192 skip, move to next email\n\n---\n\nSTEP 3 \u2014 Check Existing Labels\nRetrieve current labels on this email.\nLook for label: \"tax2026\"\n- Found \u2192 note the label ID, go to Step 5\n- Not found \u2192 go to Step 4\n\n---\n\nSTEP 4 \u2014 Create Label\nCreate a new Gmail label: \"tax2026\"\nSave the new label ID, proceed to Step 5\n\n---\n\nSTEP 5 \u2014 Apply Label\nApply label \"tax2026\" to this email using the label ID from Step 3 or 4.\n\n---\n\nSTEP 6 \u2014 Log to Google Sheet\nAppend a new row with exactly these columns:\n\n| Date | From | Subject | Amount ($) | Has Attachment | Snippet | Account |\n\n- Date: email received date (YYYY-MM-DD)\n- Amount: in CAD, include tax breakdown in notes if available\n- Has Attachment: true / false\n- Account: email account used\n\n---\n\nSTEP 7 \u2014 Send Telegram Notification\nSend a Telegram message with this format:\n\n\u2705 Business Expense Found\n\ud83d\udcc5 Date: [date]\n\ud83c\udfe2 From: [sender]\n\ud83d\udce7 Subject: [subject]\n\ud83d\udcb0 Amount: $[amount] CAD\n\ud83c\udff7\ufe0f Label: tax2026\n\n---\n\nPROCESSING RULES:\n- Process emails sequentially, one at a time\n- Never skip Step 0\n- Only retrieve full email content if Step 1 passes (minimize API calls)\n- If currency conversion is needed, state the rate used\n- If any step fails due to an error, log the error and continue to next email\n- At the end, output a summary: total emails processed, total expenses found, total amount in CAD",
+        "hasOutputParser": true,
+        "options": {
+          "maxIterations": 60
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        480,
+        96
+      ],
+      "id": "b413aaec-8a9d-4985-ba4d-bd83e0df0b34",
+      "name": "AI Agent",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 20,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -320,
+        640
+      ],
+      "id": "54a7ba15-e21d-4b6c-8114-ff41d214271a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "MiniMax-M2.7-highspeed",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMinimax",
+      "typeVersion": 1,
+      "position": [
+        128,
+        312
+      ],
+      "id": "e6511d70-8e29-4433-aa24-9602c25642f9",
+      "name": "MiniMax Chat Model",
+      "credentials": {
+        "minimaxApi": {
+          "id": "RhXfjMbUGWFvWAzo",
+          "name": "MMX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        96
+      ],
+      "id": "b57cb3f7-4235-4d87-9194-3b123c158bf4",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo",
+          "mode": "list",
+          "cachedResultName": "Tax 2026 Receipts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y0PljOYXPJEKzI8JIfgFaIcxiRiEuxA7UdzybPkJSAo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}",
+            "From": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('From', ``, 'string') }}",
+            "Subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+            "Amount ($)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Amount____', ``, 'string') }}",
+            "Has Attachment": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Has_Attachment', ``, 'string') }}",
+            "Snippet": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Snippet', ``, 'string') }}",
+            "Account": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Account', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount ($)",
+              "displayName": "Amount ($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Has Attachment",
+              "displayName": "Has Attachment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        312
+      ],
+      "id": "ab6cdddc-c998-47ee-8611-e35fe97f964c",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "M554ZUWoyF12r7U7",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        320
+      ],
+      "id": "fe56b484-b524-4f6a-bd64-958c197e2cc1",
+      "name": "Get a message in Gmail",
+      "webhookId": "0ab29942-3042-4851-a933-43b1d50278c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        312
+      ],
+      "id": "c537207b-09fb-4897-85e6-ae0f24232173",
+      "name": "Get many labels in Gmail",
+      "webhookId": "c117bfd3-8437-46bd-a41c-4d39a060154f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', `use label id`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        312
+      ],
+      "id": "72b325f6-8e27-4432-9b79-5b9488db4305",
+      "name": "Add label to message in Gmail",
+      "webhookId": "da39d313-0665-4817-935b-33e59ac0331b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        312
+      ],
+      "id": "73a8c3d1-f0cc-44f3-887a-efe732acafc3",
+      "name": "Mark a message as read in Gmail",
+      "webhookId": "24a07ec2-dade-446a-9593-fc460770dcb1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "74xtpCXyGhPWHkzJ",
+          "name": "shawn137080"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', `short message what has been to tax2026 spreadsheet, name and amount\n\ne.g \nNew item added to tax spreadsheet:\nname: \nfrom: \namount :\nlabel: `, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        312
+      ],
+      "id": "26b9dfe0-5057-4aff-9602-a50cb8f2b687",
+      "name": "Send a text message in Telegram",
+      "webhookId": "61d8989f-1256-4708-b364-1f4788c3cb27",
+      "credentials": {
+        "telegramApi": {
+          "id": "zJ0hh2kPPRpB2LtE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "632466753",
+        "text": "=New item added to tax spreadsheet:\nname: {{ $json.output.item }}\nfrom: {{ $json.output.item_from }}\namount :{{ $json.output.amount }}\nlabel: {{ $json.output.tag }}\n\n\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        416
+      ],
+      "id": "d9f01d01-4f9f-4ad2-a895-0c9593dcef55",
+      "name": "Send a text message",
+      "webhookId": "331f5bdf-b19e-47ef-907a-a03e0fcfb6b1",
+      "credentials": {
+        "telegramApi": {
+          "id": "zJ0hh2kPPRpB2LtE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        88
+      ],
+      "id": "8e9fa368-e6d4-4c65-92bd-65ca8c690ad1",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9d7305d-db27-4110-9914-1572f06f50ce",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "30fe32fa-7dee-4fe8-bb2a-30e239365b24",
+              "name": "snippet",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "7aed0602-3033-40c5-b383-f85045b8a6aa",
+              "name": "From",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "927734ee-7378-4342-93f0-e6769bb1e3c2",
+              "name": "To",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "61c526ec-98c5-4516-b1d6-31d06f1512e3",
+              "name": "Subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "36a4ec29-e3ef-4b17-9dd1-e4ef1a848783",
+              "name": "internalDate",
+              "value": "={{ $json.internalDate }}",
+              "type": "string"
+            },
+            {
+              "id": "30930fde-471a-415b-adec-beaa357a967c",
+              "name": "labels[3]",
+              "value": "={{ $json.labels[3] }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        96
+      ],
+      "id": "502fec2a-2697-4133-a391-eb799fb111ca",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MiniMax Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many labels in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message in Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

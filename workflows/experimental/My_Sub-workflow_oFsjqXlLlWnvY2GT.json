@@ -1,0 +1,37 @@
+{
+  "id": "oFsjqXlLlWnvY2GT",
+  "name": "My Sub-workflow",
+  "nodes": [
+    {
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        1008
+      ],
+      "id": "f0eb17ab-3d1d-4b1b-a36c-aca292bf9dda",
+      "name": "Sticky Note3",
+      "disabled": false,
+      "parameters": {
+        "content": "## I'm a note \n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 160,
+        "width": 240,
+        "color": 1
+      }
+    },
+    {
+      "id": "5cc07e38-7e4a-4add-a536-dcfd3cd1fd7f",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -80,
+        1008
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    }
+  ],
+  "node_count": 2
+}

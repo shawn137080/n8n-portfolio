@@ -1,0 +1,219 @@
+{
+  "id": "7Z7aVApBJoRm2NpE",
+  "name": "AllDayAnswer \u2014 ElevenLabs demo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "elevenlabs-call-ended",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4001-8001-000000000001",
+      "name": "ElevenLabs Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "ada00001-e11b-4b05-8000-a11dayanswer1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse ElevenLabs post-call webhook payload\nconst body = $input.first().json.body || $input.first().json;\n\nconst agentId = body.agent_id || '';\nconst conversationId = body.conversation_id || '';\n\nconst dataCollection = body.analysis?.data_collection || {};\nconst customerName = dataCollection.customer_name?.value || dataCollection.customer_name || '';\nconst location = dataCollection.location?.value || dataCollection.location || '';\nconst issue = dataCollection.issue?.value || dataCollection.issue || '';\n\nconst transcriptArr = body.transcript || [];\nconst transcript = transcriptArr.map(t => t.role + ': ' + t.message).join('\\n');\n\nconst callDuration = body.metadata?.call_duration_secs || 0;\nconst recordingUrl = body.metadata?.recording?.url || '';\nconst callerNumber =\n  body.conversation_initiation_client_data?.custom_llm_extra_body?.caller_number ||\n  body.metadata?.caller_number ||\n  body.call?.from_number ||\n  '';\n\nreturn [{\n  json: {\n    agent_id: agentId,\n    conversation_id: conversationId,\n    customer_name: customerName,\n    location: location,\n    issue: issue,\n    transcript: transcript,\n    call_duration: callDuration,\n    recording_url: recordingUrl,\n    caller_number: callerNumber,\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0002-4001-8001-000000000002",
+      "name": "Parse Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://fjjcwooebuhapugpopud.supabase.co/rest/v1/clients?agent_id=eq.{{$json.agent_id}}&limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4001-8001-000000000003",
+      "name": "Get Client",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst clients = Array.isArray(response) ? response : [response];\n\nif (clients.length === 0 || !clients[0].agent_id) {\n  throw new Error('Client not found for agent_id: ' + $('Parse Payload').first().json.agent_id);\n}\n\nconst c = clients[0];\nconst p = $('Parse Payload').first().json;\n\nreturn [{\n  json: {\n    owner_name: c.owner_name,\n    owner_email: c.owner_email,\n    tg_chat_id: c.tg_chat_id,\n    agent_id: p.agent_id,\n    conversation_id: p.conversation_id,\n    customer_name: p.customer_name || 'Unknown',\n    location: p.location || 'Not provided',\n    issue: p.issue || 'Not described',\n    transcript: p.transcript,\n    call_duration: p.call_duration,\n    recording_url: p.recording_url,\n    caller_number: p.caller_number || 'Unknown',\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0004-4001-8001-000000000004",
+      "name": "Validate & Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fjjcwooebuhapugpopud.supabase.co/rest/v1/call_logs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "agent_id",
+              "value": "={{ $json.agent_id }}"
+            },
+            {
+              "name": "owner_email",
+              "value": "={{ $json.owner_email }}"
+            },
+            {
+              "name": "caller_number",
+              "value": "={{ $json.caller_number }}"
+            },
+            {
+              "name": "customer_name",
+              "value": "={{ $json.customer_name }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "name": "issue",
+              "value": "={{ $json.issue }}"
+            },
+            {
+              "name": "transcript",
+              "value": "={{ $json.transcript }}"
+            },
+            {
+              "name": "recording_url",
+              "value": "={{ $json.recording_url }}"
+            },
+            {
+              "name": "call_duration",
+              "value": "={{ $json.call_duration }}"
+            },
+            {
+              "name": "elevenlabs_conversation_id",
+              "value": "={{ $json.conversation_id }}"
+            },
+            {
+              "name": "tg_message_sent",
+              "value": "=false"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0005-4001-8001-000000000005",
+      "name": "Insert Call Log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('Validate & Merge').first().json;\nconst recording = d.recording_url ? '\\n\ud83c\udf99\ufe0f \u5f55\u97f3\uff1a' + d.recording_url : '';\nconst text =\n  '\ud83d\udea8 <b>\u65b0\u5de5\u5355\u6765\u5566\uff01' + d.owner_name + '\u8001\u677f\u8bf7\u6ce8\u610f</b>\\n\\n' +\n  '\ud83d\udc64 \u5ba2\u6237\uff1a' + d.customer_name + '\\n' +\n  '\ud83d\udccd \u4f4d\u7f6e\uff1a' + d.location + '\\n' +\n  '\ud83d\udd27 \u63cf\u8ff0\uff1a' + d.issue + '\\n' +\n  '\ud83d\udcde \u7535\u8bdd\uff1a' + d.caller_number + recording;\n\nreturn [{ json: { tg_chat_id: d.tg_chat_id, tg_message: text } }];"
+      },
+      "id": "a1b2c3d4-0006-4001-8001-000000000006",
+      "name": "Format Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8394361363:AAGo88x8ll-Cwq5mQdqrHJAUVKlVkdUqHBA/sendMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $json.tg_chat_id }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.tg_message }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "HTML"
+            },
+            {
+              "name": "disable_web_page_preview",
+              "value": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0007-4001-8001-000000000007",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        304
+      ]
+    }
+  ],
+  "node_count": 7
+}

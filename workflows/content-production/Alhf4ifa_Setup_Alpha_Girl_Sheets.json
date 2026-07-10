@@ -1,0 +1,150 @@
+{
+  "id": "Alhf4ifax0uyGb5q",
+  "name": "Setup Alpha Girl Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "setup-alpha-sheet-now",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1WGOyjvDl1vIQcf3g6_3e4sERoEveAcjEpqouglmXQ0k:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"requests\": [\n    {\n      \"updateSheetProperties\": {\n        \"properties\": {\n          \"sheetId\": 0,\n          \"title\": \"StoryQueue\"\n        },\n        \"fields\": \"title\"\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"UsedStories\",\n          \"gridProperties\": {\n            \"rowCount\": 1000,\n            \"columnCount\": 3\n          }\n        }\n      }\n    },\n    {\n      \"addSheet\": {\n        \"properties\": {\n          \"title\": \"Episodes\",\n          \"gridProperties\": {\n            \"rowCount\": 1000,\n            \"columnCount\": 12\n          }\n        }\n      }\n    },\n    {\n      \"updateCells\": {\n        \"range\": {\n          \"sheetId\": 0,\n          \"startRowIndex\": 0,\n          \"endRowIndex\": 1,\n          \"startColumnIndex\": 0,\n          \"endColumnIndex\": 12\n        },\n        \"rows\": [\n          {\n            \"values\": [\n              {\"userEnteredValue\": {\"stringValue\": \"story_id\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"generated_at\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"subreddit\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"original_title\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"original_url\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"upvotes\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"rewrite_level\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"drama_score\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"viral_potential\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"word_count\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"duration_seconds\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}},\n              {\"userEnteredValue\": {\"stringValue\": \"status\"}, \"userEnteredFormat\": {\"textFormat\": {\"bold\": true}}}\n            ]\n          }\n        ],\n        \"fields\": \"*\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "setup-structure",
+      "name": "Create Sheets Structure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        460,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WGOyjvDl1vIQcf3g6_3e4sERoEveAcjEpqouglmXQ0k",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "UsedStories",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "story_id": "story_id",
+            "used_at": "used_at",
+            "subreddit": "subreddit"
+          }
+        },
+        "options": {}
+      },
+      "id": "setup-usedstories",
+      "name": "Setup UsedStories Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        680,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WGOyjvDl1vIQcf3g6_3e4sERoEveAcjEpqouglmXQ0k",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Episodes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_date": "episode_date",
+            "story_id": "story_id",
+            "video_id": "video_id",
+            "video_url": "video_url",
+            "hook_short_id": "hook_short_id",
+            "climax_short_id": "climax_short_id",
+            "aftermath_short_id": "aftermath_short_id",
+            "views_24h": "views_24h",
+            "views_total": "views_total",
+            "ctr": "ctr",
+            "avg_view_duration": "avg_view_duration",
+            "status": "status"
+          }
+        },
+        "options": {}
+      },
+      "id": "setup-episodes",
+      "name": "Setup Episodes Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        680,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create Sheets Structure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

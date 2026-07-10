@@ -1,0 +1,1622 @@
+{
+  "id": "nqzhaUUpHwKmz5g2",
+  "name": "Hero",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        1200
+      ],
+      "id": "1d64f2fd-1cea-4c8a-bf0c-66333d5c6b30",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json\n\n// \u9a57\u8b49\u5fc5\u8981\u6b04\u4f4d\nconst errors = [];\nif (!data.Topic) errors.push(\"Topic is required\");\nif (!data.Topic_Desc || data.Topic_Desc.length < 50) errors.push(\"Topic_Desc must be > 50 chars\");\nif (![\"Elementary\", \"Intermediate\", \"Advanced\"].includes(data.Level)) errors.push(\"Invalid Level\");\nif (!data.Keywords || data.Keywords.split(\",\").length < 2) errors.push(\"Need 2+ keywords\");\n\nif (errors.length > 0) {\n  throw new Error(errors.join(\", \"));\n}\n\nreturn [{ json: data }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        1272
+      ],
+      "id": "43918162-70a2-424f-830b-f6c19165936b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $json.Row }}",
+            "Status": "processing"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        1272
+      ],
+      "id": "c8a7fc0a-54a6-4964-a21f-8022cb4c4d1b",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-pro-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-pro-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate exactly 12 JSON objects for a Hero English Podcast episode about: {{ $json.Topic }}, content with KEYWORDS: {{ $json.Keywords }}\n\nOUTPUT FORMAT (STRICT):\n{\n\"section\": \"[SECTION_NAME]\",\n\"prompt\": \"one sentence describing tone\",\n\"turns\": [\n{\"speaker\": \"Speaker1\", \"text\": \"dialogue line with [tags] embedded\"},\n{\"speaker\": \"Speaker2\", \"text\": \"dialogue line with [tags] embedded\"}\n]\n}\n\nSPEAKER ASSIGNMENTS:\nSpeaker1 = Jordan (energetic, fun, occasionally funny)\nSpeaker2 = Riley (professional, warm, knowledgeable)\nSpeaker3 = Tom (casual, friendly)\nSpeaker4 = Anna (professional, warm)\n\nCRITICAL RULES:\n\nEmbed markup tags INSIDE text, not as separate fields. Example: \"That's interesting [laughing]\" NOT \"[laughing] That's interesting\"\n\nUse tags: [laughing] [uhm] [short pause] [long pause] naturally in the turns.\n\nMaintain approximately 70% teaching, 30% humor and entertainment \u2013 learning is always the priority.\n\nEach host (Jordan, Riley, Tom, Anna) should mention their name naturally at least once per episode.\n\nBack-and-forth conversation only \u2013 no long monologues, no blocks longer than 3 sentences per turn.\n\nNo explanations outside JSON \u2013 ONLY output the JSON array with the 12 objects.\n\nRespect the word-count range for each section as strictly as possible.\n\nSECTIONS (in order):\n\n[INTRO]\nJordan & Riley greet listeners, introduce the topic and preview the Hero Phrase and main activities.\nWord count: 225\u2013270\n\n[NEW_VOCABULARY]\nRiley teaches 3 key words with at least 2 example sentences each. Jordan asks clarifying questions, adds one relatable comment per word, and makes one common learner mistake per word that Riley corrects.\nWord count: 560\u2013675\n\n[DIALOGUE]\nTom & Anna use the vocabulary and Hero Phrase naturally in an authentic multi-part conversation (for example: planning, small problem, solution). The dialogue should feel like real life, not a textbook.\nWord count: 450-500\n\n[VOCABULARY_EXPANSION]\nRiley explains 3\u20134 related phrases or collocations. For each phrase: short definition, 1\u20132 examples, a typical misuse, and Jordan reacting with a brief observation or question.\nWord count: 560\u2013600\n\n[HERO_PHRASE]\nBoth hosts teach one key Hero Phrase and 3\u20134 useful variations. They present at least 3 mini-dialogues that show how to use the phrase at work, with friends, and in more formal situations. At the end, Jordan repeats the Hero Phrase slowly 3 times.\nWord count: 450\u2013500\n\n[PRE_DIALOGUE_SLOW]\nJordan expresses curiosity or confusion and Riley calmly explains why a slow version of the dialogue is helpful. They briefly coach the listener on how to shadow and what to pay attention to (stress, rhythm, linking).\nWord count: 225\u2013250\n\n[DIALOGUE_SLOW]\nTom & Anna repeat the earlier dialogue much more slowly, adding clear [short pause] and [long pause] tags so learners can repeat. Include the Hero Phrase and its variations again.\nWord count: 450-500\n\n[CULTURAL_INSIGHTS]\nJordan asks curious questions about culture around the vocabulary and Hero Phrase. Riley explains culture, typical situations, and contrasts with Chinese or Asian contexts. Each shares at least one short anecdote.\nWord count: 560\u2013600\n\n[LISTENER_QUESTION]\nJordan reads one \"listener question\" related to the topic. Riley answers with clear structure (problem \u2192 explanation \u2192 examples), then Jordan summarizes the key point in simple learner-friendly English.\nWord count: 350\u2013400\n\n[QUICK_QUIZ]\nRiley runs a quick quiz with 3\u20134 questions about words, phrases, or culture from this episode. Jordan answers, gets at least one question wrong, and Riley corrects and explains why. End by inviting the listener to answer out loud.\nWord count: 225\u2013250\n\n[OUTRO]\nJordan and Riley thank listeners, quickly recap the main vocabulary and the Hero Phrase, give a simple homework task (\"Use this phrase 3 times today\"), and preview the next episode.\nWord count: 225\u2013250\n\n[BEHIND_THE_SCENE]\nPure entertainment. Jordan shares a funny or relatable behind-the-scenes story from recording or language learning. Riley reacts with genuine laughter and clever comments. No explicit teaching, just natural comprehensible English.\nWord count: 225\u2013250\n\nTONE GUIDELINES:\n\nINTRO: \"Jordan and Riley warmly greet listeners and introduce the topic with genuine excitement and a clear promise of what listeners will learn\"\n\nNEW_VOCABULARY: \"Riley teaches clearly, Jordan asks practical questions, makes one common mistake per word, and reacts with relatable comments\"\n\nDIALOGUE: \"Authentic, lively conversation between two friends dealing with a real situation\"\n\nVOCABULARY_EXPANSION: \"Riley explains phrases in depth, Jordan asks one clarifying or story-based question per phrase\"\n\nHERO_PHRASE: \"Both hosts enthusiastic teachers, taking equal turns showing variations and mini-dialogues\"\n\nPRE_DIALOGUE_SLOW: \"Jordan curious, Riley calmly transitions to a slow, learner-friendly version\"\n\nDIALOGUE_SLOW: \"Same dialogue, much slower, with clear pauses for repetition and practice\"\n\nCULTURAL_INSIGHTS: \"Jordan is a curious student, Riley a patient native speaker sharing stories and contrasts\"\n\nLISTENER_QUESTION: \"Jordan reads a listener\u2019s doubt, Riley answers like a kind, expert coach, Jordan summarizes simply\"\n\nQUICK_QUIZ: \"Fun, energetic mini-quiz with friendly pressure and playful correction\"\n\nOUTRO: \"Warm, encouraging, motivational wrap-up with a simple action step, soft sub/like CTA\"\n\nBEHIND_THE_SCENE: \"Pure entertainment\u2014Jordan tells a funny story, Riley reacts with genuine laughter and witty comments\"\n\nTOPIC: {{ $json.Topic }}\nLEVEL: {{ $json.Level }}\nKEYWORDS: {{ $json.Keywords }}\n\nStart generating NOW. Output ONLY the JSON array, no other text."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=CRITICAL TTS FORMATTING RULES:\n- DO NOT use any markdown formatting (no backticks, asterisks, brackets, or hashtags)\n- DO NOT use special symbols like `, *, **, _, __, #, [], ()\n- Write all text in plain, natural spoken language\n- Numbers: Write \"five hundred dollars\" not \"$500\" or \"`$500`\"\n- Technical terms: Write \"the word budget\" not \"`budget`\"\n- Emphasis: Use natural speech patterns and word choice, not formatting\n- Keep it conversational and speakable\n\nExample:\n\u274c BAD: \"The `budget` is around **$500** for this project.\"\n\u2705 GOOD: \"The budget is around five hundred dollars for this project.\"\n\nYou are a Hero English Podcast Script Generator.\n\nYour job: Create educational English podcast episodes with hosts Jordan and Riley.\n\nCORE PRINCIPLES:\n\n70% teaching, 30% entertainment\n\nNatural conversation between two people (not lectures)\n\nHosts mention their names naturally at least once per episode\n\nClear, engaging English for language learners\n\nNo explanations outside JSON, only structured script\n\nENGAGEMENT TACTICS:\n\nJordan makes 1\u20132 relatable learner mistakes per episode (corrected by Riley)\n\nRepeat the Hero Phrase and key vocabulary multiple times across sections\n\nUse rhetorical questions: \"Have you ever felt confused about X?\"\n\nEnd major sections with a small hook for the next one\n\nOUTPUT:\nAlways produce 12 valid JSON objects, one per section, in this exact format:\n{\n\"section\": \"[SECTION_NAME]\",\n\"prompt\": \"one sentence describing the tone\",\n\"turns\": [\n{\"speaker\": \"Speaker1\", \"text\": \"line with [tags] embedded\"},\n{\"speaker\": \"Speaker2\", \"text\": \"line with [tags] embedded\"}\n]\n}\n\nSPEAKERS:\n\nSpeaker1 = Jordan (energetic, occasionally funny, asks good questions)\n\nSpeaker2 = Riley (expert, warm, explains clearly)\n\nSpeaker3 = Tom (casual, friendly) [DIALOGUE and DIALOGUE_SLOW only]\n\nSpeaker4 = Anna (professional, warm) [DIALOGUE and DIALOGUE_SLOW only]\n\nCRITICAL:\n\nEmbed markup tags INSIDE text: \"That's interesting [laughing]\" not \"[laughing] That's interesting\"\n\nTags: [laughing] [uhm] [short pause] [long pause]\n\nBack-and-forth conversation only\u2014no monologues longer than 3 sentences\n\nHosts should interact in all non-dialogue sections\n\nKeep banter minimal\u2014focus on teaching the content\n\nOutput ONLY the JSON array with the 12 section objects\n\nRespect word-count ranges for each section\n\nSECTIONS (in order, word counts scaled for a 15\u201320 minute episode):\n\n[INTRO] 225\u2013270 words \u2014 Jordan & Riley warmly greet listeners, introduce the topic, and preview the Hero Phrase and activities.\n\n[NEW_VOCABULARY] 560\u2013675 words \u2014 Riley teaches 3 core words with at least 2 examples each. Jordan asks clarifying questions, makes one common learner mistake per word, and Riley gently corrects and expands.\n\n[DIALOGUE] 560\u2013675 words \u2014 Tom & Anna have an authentic multi-part conversation that naturally uses the new vocabulary and Hero Phrase in at least three different mini-situations.\n\n[VOCABULARY_EXPANSION] 560\u2013600 words \u2014 Riley explains 3\u20134 related phrases or collocations. For each phrase: definition, 1\u20132 examples, one typical mistake, and Jordan\u2019s quick \"I used to say it like this, was I wrong?\" moment.\n\n[HERO_PHRASE] 450\u2013500 words \u2014 Both hosts teach one key Hero Phrase plus 3\u20134 variations. They show the phrase in work, casual, and formal mini-dialogues. At the end, Jordan repeats the Hero Phrase slowly 3 times for learners.\n\n[PRE_DIALOGUE_SLOW] 225\u2013250 words \u2014 Jordan shares curiosity or confusion, Riley explains why a slow version helps. They preview what to listen for (stress, linking, intonation) and invite the listener to shadow along.\n\n[DIALOGUE_SLOW] 560\u2013675 words \u2014 Tom & Anna repeat the earlier dialogue much more slowly, with clear pauses and slight rephrasing for learners. Include Hero Phrase variations and insert [short pause] and [long pause] tags to support shadowing.\n\n[CULTURAL_INSIGHTS] 560\u2013600 words \u2014 Jordan asks curious questions about culture around the vocabulary and Hero Phrase. Riley explains norms, typical situations, and contrasts with Chinese or Asian contexts. Include at least one short anecdote from each.\n\n[LISTENER_QUESTION] 350\u2013400 words \u2014 Jordan reads a \"listener question\" related to the topic. Riley answers in depth with examples, then Jordan summarizes the key takeaway in learner-friendly language.\n\n[QUICK_QUIZ] 225\u2013250 words \u2014 Riley runs a quick quiz with 3\u20134 questions about vocabulary, phrases, or culture. Jordan answers (getting at least one wrong). Riley corrects and explains, then invites the actual listener to answer out loud.\n\n[OUTRO] 225\u2013250 words \u2014 Both thank listeners, quickly recap main vocabulary and the Hero Phrase, give a simple homework task (\"Use this phrase 3 times today\"), and soft CTA on next topic.\n\n[BEHIND_THE_SCENE] 225\u2013250 words \u2014 100% entertainment. Jordan tells a funny or relatable story connected to language learning or the recording, Riley reacts with witty comments and genuine laughter. No explicit teaching, just natural, comprehensible English.\n\nGenerate all 12 sections now."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        1272
+      ],
+      "id": "2aa1d7e9-ff91-47dc-ae3c-035c0dbdd186",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// ---- 1) Parse Gemini output ----\nconst textContent = data.content?.parts?.[0]?.text;\nif (!textContent) {\n  return [{ json: { error: \"No text content from Gemini\" } }];\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(textContent);\n} catch (e) {\n  return [{ json: { error: \"Failed to parse JSON: \" + e.message, raw: textContent } }];\n}\nif (!Array.isArray(parsed)) parsed = [parsed];\n\n// ---- 2) Build episode_id from Sheets row ----\nconst sheetRow = $('Edit Fields').first().json.ID;\nconst episodeId = `ep_${String(sheetRow).padStart(3, '0')}`;\n\n// ---- 3) Speaker mapping ----\nconst DEFAULT_SPEAKER_MAPPING = {\n  Jordan: \"Achird\",\n  Riley: \"Kore\",\n  Tom: \"Charon\",\n  Anna: \"Aoede\",\n  Speaker1: \"Achird\",\n  Speaker2: \"Kore\",\n  Speaker3: \"Charon\",\n  Speaker4: \"Aoede\",\n};\n\nfunction generateSpeakerConfigs(turns) {\n  const unique = new Set();\n  (turns || []).forEach(t => t?.speaker && unique.add(t.speaker));\n  return Array.from(unique).map(alias => ({\n    speakerAlias: alias,\n    speakerId: DEFAULT_SPEAKER_MAPPING[alias] || \"Kore\",\n  }));\n}\n\n// ---- 4) Convert each section -> ONE item payload for VPS /generate ----\n// NOTE: We IGNORE `type` as a routing key. We route by presence of turns/text.\nconst channel = \"bolt_english\";\n\nconst items = parsed.map((section, idx) => {\n  const name = section.section || section.name || \"SECTION\";\n\n  // Prefer Gemini-provided index if exists; otherwise assign sequential\n  const index = Number.isFinite(section.index) ? Number(section.index) : (idx + 1);\n\n  const prompt = section.prompt || \"\";\n\n  const turns = Array.isArray(section.turns) ? section.turns : [];\n  const hasTurns = turns.length > 0;\n\n  let oneSection;\n\n  if (hasTurns) {\n    // MULTI\n    let speakerConfigs = Array.isArray(section.speaker_configs) ? section.speaker_configs : [];\n    if (speakerConfigs.length === 0) {\n      speakerConfigs = generateSpeakerConfigs(turns);\n    }\n\n    oneSection = {\n      name,\n      index,\n      episode_id: episodeId,\n      prompt,\n      turns,\n      speaker_configs: speakerConfigs,\n      // keep `type` if\u4f60\u8fd8\u60f3\u770b\uff0c\u4f46\u670d\u52a1\u7aef\u4e0d\u4f9d\u8d56\u5b83\n      type: \"multi\",\n    };\n  } else {\n    // SINGLE\n    const text = section.text || \"\";\n    if (!text) {\n      // \u6ca1 turns \u53c8\u6ca1 text\uff0c\u8fd9\u6bb5\u5c31\u662f\u574f\u6570\u636e\uff0c\u76f4\u63a5\u6807\u8bb0\u51fa\u6765\n      oneSection = {\n        name,\n        index,\n        episode_id: episodeId,\n        error: \"Section has neither turns nor text\",\n        raw: section,\n      };\n    } else {\n      oneSection = {\n        name,\n        index,\n        episode_id: episodeId,\n        prompt, // 3.7 single \u8d70 Chirp3-HD \u65f6 prompt \u4f1a\u88ab\u5ffd\u7565\uff0c\u4f46\u7559\u7740\u65e0\u5bb3\n        text,\n        // single \u6a21\u5f0f\u4e0b\u6211\u5efa\u8bae\u4f60\u672a\u6765\u4f20 chirp3-hd \u7684 voice\uff0c\u4e0d\u8981\u518d\u4f20 Kore/Achird\n        // voice: \"Charon\"\n        type: \"single\",\n      };\n    }\n  }\n\n  // IMPORTANT: output must be exactly what /generate expects, but ONLY one section each time\n  return {\n    json: {\n      channel,\n      episode_id: episodeId,\n      sections: [oneSection],\n    }\n  };\n});\n\n// This makes n8n output multiple items => downstream HTTP node can \"Run Once for Each Item\"\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        1272
+      ],
+      "id": "287d690f-0e46-4a03-8762-2c9f7b621581",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "a75fe08a-3ca6-4efb-b2a1-3ba54870d859",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fd3835c2-e9ce-41e8-94bb-96aa45fe8714",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        2064
+      ],
+      "id": "f8c39ae3-ba33-4fbf-b1e5-5b6e939c3ae3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        2064
+      ],
+      "id": "c52755bc-c728-4be2-a3fa-7f491ff0b582",
+      "name": "Wait1",
+      "webhookId": "e911bd41-7f62-43dc-aa24-47f89b87e0e3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "sections",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        2288
+      ],
+      "id": "a8387226-ff3b-475f-9fd0-1aa39dcf9248",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "planning"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        1280
+      ],
+      "id": "763c2d9c-caca-43b2-8b11-6cc30400e3d1",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c4dda4c-55fb-4465-a80c-7eabcba6d2c8",
+              "name": "ID",
+              "value": "={{ $('Get row(s) in sheet').item.json.Row }}",
+              "type": "number"
+            },
+            {
+              "id": "a3bba72e-3fec-465d-af75-b3e015aee8ca",
+              "name": "Topic",
+              "value": "={{ $('Get row(s) in sheet').item.json.Topic }}",
+              "type": "string"
+            },
+            {
+              "id": "6a252dd9-7783-4482-9a6d-4655cf32fd4a",
+              "name": "Topic_Desc",
+              "value": "={{ $('Get row(s) in sheet').item.json.Topic_Desc }}",
+              "type": "string"
+            },
+            {
+              "id": "d30a7cc7-fd29-4212-962f-8e24fc142b6e",
+              "name": "Keywords",
+              "value": "={{ $('Get row(s) in sheet').item.json.Keywords }}",
+              "type": "string"
+            },
+            {
+              "id": "356ece45-6349-4398-9dbc-ae6b6ec9d6e3",
+              "name": "Level",
+              "value": "={{ $('Get row(s) in sheet').item.json.Level }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        1272
+      ],
+      "id": "83cafcfa-3807-4c98-8e77-65d15a6ec1f3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $('Get row(s) in sheet').item.json.Row }}",
+            "Status": "audio ready"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        1408
+      ],
+      "id": "e4a1a5cc-b4b9-4081-b8e4-c834ca9cd2c5",
+      "name": "Update row in sheet1",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        1392
+      ],
+      "id": "724931d5-ed68-4b3d-a975-b8d69705b3de",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## set channel\n## set voice id",
+        "height": 288,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1288,
+        1144
+      ],
+      "typeVersion": 1,
+      "id": "6b363d9b-892a-4b2d-86c4-b523b76ad717",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate YouTube metadata for a Hero English podcast episode.\n\nEpisode Details:\n- Topic: {{ $('Get row(s) in sheet').item.json.Topic }}\n- Topic Description: {{ $('Get row(s) in sheet').item.json.Topic }}\n- Target Keywords: {{ $('Get row(s) in sheet').item.json.Keywords }}\n- English Level: {{ $('Get row(s) in sheet').item.json.Level }}\n\nThe output must:\n- Include title, description, and tags\n- Be written for elementary English learners (A1\u2013A2)\n- Use simple, clear, slow English\n- Follow the exact rules and structure defined in the system prompt\n- Output ONLY valid JSON\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=You are an expert YouTube SEO specialist and English learning content creator.\n\nCHANNEL IDENTITY:\n- Channel name: Hero English\n- Format: English learning podcast\n- Target learners: Elementary English learners (A1\u2013A2)\n- Teaching style: Slow, clear, friendly, supportive\n- Goal: Help beginners build confidence with basic vocabulary and simple sentences\n\nYOUR TASK:\nGenerate a complete YouTube metadata package (title + description + tags) for one episode.\n\nOUTPUT FORMAT (STRICT):\nYou MUST output valid JSON in this exact structure:\n{\n  \"title\": \"SEO-optimized YouTube title\",\n  \"description\": \"full formatted YouTube description\",\n  \"tags\": \"comma separated tags only\"\n}\n\nTITLE RULES (VERY IMPORTANT):\n- Length: 55\u201370 characters\n- Must start with a clear learning intent (e.g. Learn English Fast)\n- Must include the episode topic naturally\n- Must be suitable for elementary learners\n- Avoid episode numbers at the beginning\n- Avoid emojis\n- Optimize for search, not creativity\n- add EP.{{ $('Get row(s) in sheet').item.json.Row }}\n\nGood title patterns:\n- Learn English Vocabulary Fast \u2013 [Topic] | Elementary Listening Practice - EP.2\n- Learn English Conversation Fast \u2013 [Topic] | Easy English Podcast - EP.2\n- English Listening Fast \u2013 [Topic] for Beginners - EP.2\n\nDESCRIPTION RULES:\n- Total length: 180\u2013260 words\n- Use \\\\n for line breaks\n- No markdown formatting\n- Emojis: maximum 3 total\n- First 2 lines must hook the viewer and clearly state the learning benefit\n\nDESCRIPTION STRUCTURE:\n1. HOOK (first 2 lines):\n   - Clear learning benefit\n   - Mention the topic naturally\n   - Simple language, beginner-friendly\n\n2. MAIN DESCRIPTION:\n   - Explain what learners will practice and improve\n   - Clearly state this episode is for elementary learners\n   - Mention Hero English once naturally\n   - Use each provided keyword at most 1\u20132 times total\n\n3. WHAT YOU\u2019LL LEARN:\n   - 4\u20135 bullet points\n   - Focus on vocabulary or simple phrases\n   - Very clear and concrete\n\n\n\n4. CALL TO ACTION:\n   - Encourage subscribing\n   - Encourage turning on notifications\n   - Encourage practicing in comments\n\n5. HASHTAGS:\n   - Add 8\u201312 hashtags at the very end of the description\n   - Hashtags must start with #\n   - Focus on English learning, beginner level, podcast format\n\nTAGS FIELD RULES:\n- 15\u201320 tags\n- Comma-separated\n- NO hashtag symbols (#)\n- Mix of English learning, topic-specific, elementary level, podcast/listening\n- Place most important tags first\n\nSEO RULES:\n- Front-load the main topic in the title and first 100 characters\n- Avoid keyword stuffing\n- Use natural variations only\n- Optimize for \u201clearn English [topic]\u201d searches\n\nTONE:\n- Friendly, calm, and encouraging\n- Simple sentences\n- No hype, no sales language\n\nWhen given Topic, Topic_Desc, Keywords, and Level, generate the JSON exactly as specified.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        1392
+      ],
+      "id": "d75b1309-ffcd-40bb-80d7-a52381ead727",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PnxMgu8rEdsmMpaw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn JSON.parse($input.first().json.content.parts[0].text);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4192,
+        1392
+      ],
+      "id": "9d029fa9-5a7c-459e-a2b4-a3c1f047bdc1",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Row": "={{ $('Get row(s) in sheet').item.json.Row }}",
+            "Title": "={{ $json.title }}",
+            "Desciption": "={{ $json.description }}",
+            "Tags": "={{ $json.tags }}"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4416,
+        1392
+      ],
+      "id": "6efbef3a-d455-4ad2-8c19-c2ab472a1ba3",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u53ea\u9700\u8981\u6307\u5b9a script \u548c task_id\uff0c\u8abf\u5ea6\u5668\u6703\u81ea\u52d5\u5206\u914d CPU\nreturn [\n  {\n    json: {\n      script_path: '/root/scripts/podcast_compose.sh',\n      task_id: 'ep_003'\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        160
+      ],
+      "id": "7339ce61-1240-495f-843d-054bdde9b280",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a349153f-2b0e-4d0b-b7c5-93d889ed8a1f",
+              "name": "task_id",
+              "value": "=ep_{{ String($json.Row).padStart(3, '0') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2512,
+        1440
+      ],
+      "id": "8bb7de69-a481-4688-a975-8a0308158449",
+      "name": "Edit Fields1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2944,
+        1392
+      ],
+      "id": "535bbcd0-d5e1-4cb7-9d7f-8cb24491eefc",
+      "name": "Wait",
+      "webhookId": "266bec6a-1071-47be-abb1-e1c19e84c7f1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed8ca47a-f432-4a2b-91e4-89d2f640e96d",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3392,
+        1392
+      ],
+      "id": "53496214-e2a2-46ba-840b-5efe0f4b2577",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8031/compose",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "bolt_english"
+            },
+            {
+              "name": "episode_id",
+              "value": "={{ $json.task_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2720,
+        1424
+      ],
+      "id": "c6d519a4-cb13-43b0-ae44-1cba87629690",
+      "name": "create_video"
+    },
+    {
+      "parameters": {
+        "url": "=http://72.61.74.110:8031/status/{{ $('create_video').item.json.job_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3168,
+        1368
+      ],
+      "id": "52f26184-cd87-452f-91c2-16c367214a6a",
+      "name": "check_video_status"
+    },
+    {
+      "parameters": {
+        "url": "=http://72.61.74.110:8000/job-status/{{ $('Split Out1').item.json.job_ids }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -96,
+        1616
+      ],
+      "id": "7c512ffe-aecd-4f27-9951-ae1f72aa79ce",
+      "name": "get_tts_status"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        384
+      ],
+      "id": "28aa76df-2374-4928-a192-d0889bd83bb9",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "qRw4X65RTSRAbnvj",
+          "name": "Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo",
+          "mode": "list",
+          "cachedResultName": "status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f0fZFsma9v9_oWBoTMK35FhLoDbxyTuKTFtcaN5Tazo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "upload ready",
+            "Row": "={{ $('Get row(s) in sheet').item.json.Row }}",
+            "Video_URL": "=/mnt/{{ $json.channel }}/video/{{ $json.episode_id }}/{{ $json.episode_id }}.mp4"
+          },
+          "matchingColumns": [
+            "Row"
+          ],
+          "schema": [
+            {
+              "id": "Row",
+              "displayName": "Row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desciption",
+              "displayName": "Desciption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video_URL",
+              "displayName": "Video_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Topic_Desc",
+              "displayName": "Topic_Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Level",
+              "displayName": "Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3616,
+        1392
+      ],
+      "id": "7da1ead5-a9d8-4598-9078-0a8fc7225c3c",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "on65Hv2H3qKsUiAk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const hostPath = $json.video_host_path;\nconst containerPath = hostPath.replace('/mnt/gdrive', '/data/gdrive');\nreturn [{ ...$json, video_container_path: containerPath }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        832
+      ],
+      "id": "2029c9c2-c2d7-491b-a0a8-eb19cc475ea6",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83dd2ba2-8f2e-464d-82f4-a6b20d1f5315",
+              "name": "job_id",
+              "value": "a289e484-fc15-432d-8a78-d9a0ed627ab7",
+              "type": "string"
+            },
+            {
+              "id": "c7c9ee40-0bdf-4011-8d3c-cab21c05d6f6",
+              "name": "episode_id",
+              "value": "ep_008",
+              "type": "string"
+            },
+            {
+              "id": "ed6103cf-8f6c-4a1e-bd53-79ab7d46fa76",
+              "name": "status",
+              "value": "queued",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        608
+      ],
+      "id": "483638d5-5e3b-4d4e-9da8-2a4c3fda3ca2",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        1056
+      ],
+      "id": "452ade3c-ac28-4686-8216-38a74dca0fbc",
+      "name": "Wait2",
+      "webhookId": "94a6478b-9fef-4309-a8b3-9e1cd3632dbd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b7b45a9-6540-47a0-bfc7-3e2bb3e4369a",
+              "leftValue": "={{ $json.results[0].status }}",
+              "rightValue": "=success",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2720,
+        1200
+      ],
+      "id": "842bf3ba-a0e7-4ad7-a28d-c3847efa3468",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        128,
+        1840
+      ],
+      "id": "0d675dc6-b2de-4f7a-b01a-60cdff13ca46",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        1840
+      ],
+      "id": "aeec4367-fefa-46fc-b1d9-fab6b41368cc"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.61.74.110:8011/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}\n",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1600,
+        1272
+      ],
+      "id": "30466969-eefe-4c05-b25c-b76252274789",
+      "name": "get_audio",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "url": "=http://72.61.74.110:8011/status/{{ $json.job_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2496,
+        1056
+      ],
+      "id": "f9e14242-1cf0-48b4-8ccc-ba103e3d6007",
+      "name": "check_audio",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2048,
+        1272
+      ],
+      "id": "c46f9557-a98b-4ec6-bff3-a49d43aad2bf",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        1272
+      ],
+      "id": "7869a9ab-9fbf-47d0-a962-7ba48de2d73d"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "get_audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        []
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "create_video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "check_video_status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_video_status": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_tts_status": {
+      "main": [
+        []
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        []
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "check_audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_audio": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_audio": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
