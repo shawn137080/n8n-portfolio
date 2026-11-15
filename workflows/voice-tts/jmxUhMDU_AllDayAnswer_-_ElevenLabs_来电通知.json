@@ -54,7 +54,7 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+              "value": "<SUPABASE_SERVICE_ROLE_KEY>"
             },
             {
               "name": "Authorization",
@@ -95,7 +95,7 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqamN3b29lYnVoYXB1Z3BvcHVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkzMzEyNywiZXhwIjoyMDg5NTA5MTI3fQ.4lttS_L7-iP6YodCza3g2-LoTrk2Dyg_SWqQfNSrEh0"
+              "value": "<SUPABASE_SERVICE_ROLE_KEY>"
             },
             {
               "name": "Authorization",
